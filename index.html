@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="theme-color" content="#0a0e1a">
-    <title>Portal de Mídia — v2.6</title>
+    <title>Portal de Mídia — v2.7</title>
 
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%A7%3C/text%3E%3C/svg%3E">
 
@@ -48,8 +48,11 @@
         .search-clear.visible { display: flex; }
         .section { margin: 18px 14px; padding: 20px 16px; background: linear-gradient(145deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.7) 100%); border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 18px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05); transition: opacity 0.2s; }
         .section.hidden { display: none; }
-        .section-title { font-size: 0.9em; font-weight: 700; margin: 0 0 16px; display: flex; align-items: center; gap: 12px; color: #f1f5f9; }
+        .section-title { font-size: 0.9em; font-weight: 700; margin: 0 0 16px; display: flex; align-items: center; justify-content: space-between; color: #f1f5f9; }
+        .section-title .left-group { display: flex; align-items: center; gap: 12px; }
         .section-title .icon { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 11px; font-size: 1em; background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(236, 72, 153, 0.25)); border: 1px solid rgba(139, 92, 246, 0.3); }
+        .reset-cache-btn { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; font-size: 0.75em; padding: 4px 8px; border-radius: 8px; cursor: pointer; }
+        
         .radio-grid { display: flex; flex-direction: column; gap: 10px; }
         .media-item { display: flex; align-items: stretch; gap: 8px; }
         .radio-btn { flex: 1; display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: linear-gradient(145deg, rgba(51, 65, 85, 0.5), rgba(30, 41, 59, 0.7)); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 15px; color: #f1f5f9; font-size: 1em; font-weight: 600; text-align: left; cursor: pointer; transition: all 0.2s; font-family: inherit; min-height: 65px; position: relative; overflow: hidden; }
@@ -62,14 +65,11 @@
         .radio-btn.playing, .radio-btn.active-yt { background: linear-gradient(145deg, rgba(139, 92, 246, 0.25), rgba(236, 72, 153, 0.15)); border-color: rgba(139, 92, 246, 0.5); box-shadow: 0 8px 24px -8px rgba(139, 92, 246, 0.4); }
         .radio-btn.error { border-color: rgba(239, 68, 68, 0.5); background: rgba(127, 29, 29, 0.2); }
         .radio-btn .icon { display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 13px; font-size: 1.3em; flex-shrink: 0; background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.2)); border: 1px solid rgba(139, 92, 246, 0.3); }
-        .radio-btn.playing .icon { background: linear-gradient(135deg, #8b5cf6, #ec4899); animation: iconPulse 2s infinite; }
-        @keyframes iconPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.5); } 50% { box-shadow: 0 0 0 8px rgba(139, 92, 246, 0); } }
         
         .radio-btn .thumb { width: 60px; height: 40px; border-radius: 8px; object-fit: cover; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.1); }
         .radio-btn .label { flex: 1; display: flex; flex-direction: column; min-width: 0; }
         .radio-btn .name { font-size: 0.95em; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .radio-btn small { font-size: 0.7em; color: #94a3b8; font-weight: 500; margin-top: 2px; }
-        .radio-btn .status { font-size: 0.65em; color: #64748b; margin-top: 2px; font-style: italic; }
         .radio-btn .freq { font-size: 0.85em; font-weight: 700; color: #c4b5fd; background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.25); padding: 5px 10px; border-radius: 10px; flex-shrink: 0; }
         
         .fav-btn { width: 52px; min-height: 65px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 15px; color: #64748b; font-size: 1.4em; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
@@ -122,7 +122,7 @@
 
     <header>
         <h1>🎧 Portal de Mídia</h1>
-        <span class="version-tag">v2.6 (Stable Player)</span>
+        <span class="version-tag">v2.7 (Fix Final de Cache & Player)</span>
         <div class="clock-display" id="clock">
             --:--
             <small id="clock-date">Carregando…</small>
@@ -136,7 +136,9 @@
 
     <!-- SEÇÃO FAVORITOS -->
     <div class="section" id="section-favoritos" style="display:none;" data-section="favoritos">
-        <h2 class="section-title"><span class="icon">⭐</span> Favoritos</h2>
+        <h2 class="section-title">
+            <div class="left-group"><span class="icon">⭐</span> Favoritos</div>
+        </h2>
         <div class="radio-grid" id="favoritos-grid">
             <div class="empty-state">Toque na ☆ de uma rádio para adicionar aqui</div>
         </div>
@@ -144,9 +146,11 @@
 
     <!-- SEÇÃO: YOUTUBE -->
     <div class="section" data-section="youtube">
-        <h2 class="section-title"><span class="icon">📺</span> YouTube Dinâmico</h2>
+        <h2 class="section-title">
+            <div class="left-group"><span class="icon">📺</span> YouTube Dinâmico</div>
+            <button class="reset-cache-btn" onclick="limparCacheYT()" title="Limpa links corrompidos salvos">🔄 Resetar Links YT</button>
+        </h2>
         
-        <!-- Presets com IDs de vídeos estáveis (Lofi Girl, Chillhop, etc) -->
         <div class="yt-presets">
             <button class="timer-btn" onclick="loadYouTubeId('jfKfPfyJRdk', this)">📚 Lofi Girl</button>
             <button class="timer-btn" onclick="loadYouTubeId('7NOS8R0FPLY', this)">🦝 Chillhop</button>
@@ -166,7 +170,7 @@
         <div class="video-container">
             <iframe
                 id="yt-player"
-                src="https://www.youtube-nocookie.com/embed/jfKfPfyJRdk?controls=1&playsinline=1&rel=0&origin=https%3A%2F%2Fmidia-lac.vercel.app"
+                src="https://www.youtube-nocookie.com/embed/jfKfPfyJRdk?controls=1&playsinline=1&rel=0&autoplay=1&origin=https%3A%2F%2Fmidia-lac.vercel.app"
                 title="YouTube Player"
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -178,7 +182,9 @@
 
     <!-- SEÇÃO: CANAIS PERSONALIZADOS (ÁUDIO) -->
     <div class="section" data-section="custom">
-        <h2 class="section-title"><span class="icon">🌐</span> Adicionar Stream Manual (Rádio/Áudio)</h2>
+        <h2 class="section-title">
+            <div class="left-group"><span class="icon">🌐</span> Adicionar Stream Manual (Rádio/Áudio)</div>
+        </h2>
         <div class="custom-url-wrap" style="flex-direction: column; gap: 8px;">
             <div style="display: flex; gap: 8px;">
                 <input type="text" class="custom-url-input" id="custom-nome" placeholder="Nome da Rádio" style="flex: 0.6;">
@@ -189,9 +195,10 @@
         <div id="custom-salvos-grid" class="radio-grid" style="margin-top: 15px; display: none;"></div>
     </div>
 
-    <!-- Demais seções de rádios -->
     <div class="section" data-section="portoalegre">
-        <h2 class="section-title"><span class="icon">📻</span> Rádios Locais & Notícias</h2>
+        <h2 class="section-title">
+            <div class="left-group"><span class="icon">📻</span> Rádios Locais & Notícias</div>
+        </h2>
         <div class="radio-grid">
             <div class="media-item" data-nome="atlântida fm 94.3 pop rock porto alegre">
                 <button class="radio-btn" onclick="playChannel('atlantida_poa', this)">
@@ -268,7 +275,9 @@
 
     <!-- SEÇÃO: MÚSICA ELETRÔNICA -->
     <div class="section" data-section="eletronica">
-        <h2 class="section-title"><span class="icon">🚀</span> Música Eletrônica</h2>
+        <h2 class="section-title">
+            <div class="left-group"><span class="icon">🚀</span> Música Eletrônica</div>
+        </h2>
         <div class="radio-grid">
             <div class="media-item" data-nome="progressive house beats">
                 <button class="radio-btn" onclick="playChannel('progressive', this)">
@@ -308,7 +317,9 @@
 
     <!-- SEÇÃO: BEM ESTAR E FOCO -->
     <div class="section" data-section="foco">
-        <h2 class="section-title"><span class="icon">🧘</span> Meditação, Reiki & Foco</h2>
+        <h2 class="section-title">
+            <div class="left-group"><span class="icon">🧘</span> Meditação, Reiki & Foco</div>
+        </h2>
         <div class="radio-grid">
             <div class="media-item" data-nome="reiki alta frequencia curativa instrumental">
                 <button class="radio-btn" onclick="playChannel('reiki', this)">
@@ -359,7 +370,9 @@
 
     <!-- SEÇÃO: DANCE E INTERNACIONAIS -->
     <div class="section" data-section="dance">
-        <h2 class="section-title"><span class="icon">🕺</span> Dance 80 / 90 / 2000</h2>
+        <h2 class="section-title">
+            <div class="left-group"><span class="icon">🕺</span> Dance 80 / 90 / 2000</div>
+        </h2>
         <div class="radio-grid">
             <div class="media-item" data-nome="hits anos 80 clássicos década dance">
                 <button class="radio-btn" onclick="playChannel('anos80', this)">
@@ -398,7 +411,9 @@
     </div>
 
     <div class="section" data-section="intl">
-        <h2 class="section-title"><span class="icon">🌍</span> Estilos & Internacionais</h2>
+        <h2 class="section-title">
+            <div class="left-group"><span class="icon">🌍</span> Estilos & Internacionais</div>
+        </h2>
         <div class="radio-grid">
             <div class="media-item" data-nome="classic rock clássico">
                 <button class="radio-btn" onclick="playChannel('rock', this)">
@@ -448,7 +463,9 @@
     </div>
 
     <div class="section" data-section="timer">
-        <h2 class="section-title"><span class="icon">⏰</span> Sleep Timer</h2>
+        <h2 class="section-title">
+            <div class="left-group"><span class="icon">⏰</span> Sleep Timer</div>
+        </h2>
         <div class="timer-wrap">
             <button class="timer-btn" onclick="setSleepTimer(15, this)">15 min</button>
             <button class="timer-btn" onclick="setSleepTimer(30, this)">30 min</button>
@@ -518,16 +535,27 @@
 
         let radioAudio = null; let hlsInstance = null; let radioPlaying = false; let radioVolume = 0.5; let currentChannelId = ''; let currentChannelLabel = ''; let radioRequestId = 0; let hlsJsLoadPromise = null; let sleepTimerId = null; let sleepTimerEnd = 0; let sleepTimerInterval = null;
 
-        // ---------- SISTEMA DE PERSISTÊNCIA & CORREÇÃO DE IDS CORROMPIDOS ----------
+        // ---------- SISTEMA DE PERSISTÊNCIA & LIMPEZA DE CACHE ----------
         function getDadosSalvos() {
             try { 
                 let data = JSON.parse(localStorage.getItem('portal-dados-salvos')) || { radio: [], youtube: [] };
-                // Limpeza automática de IDs corrompidos (como links de live_stream antigos)
-                data.youtube = data.youtube.filter(v => v.id && !v.id.includes('live_stream'));
+                // Purga qualquer registro antigo contendo live_stream ou IDs inválidos
+                data.youtube = data.youtube.filter(v => v.id && !v.id.includes('live_stream') && v.id.length === 11);
                 return data;
             } catch(e) { return { radio: [], youtube: [] }; }
         }
         function setDadosSalvos(data) { localStorage.setItem('portal-dados-salvos', JSON.stringify(data)); }
+
+        function limparCacheYT() {
+            if(confirm("Deseja limpar os vídeos salvos antigos que estavam quebrando o player?")) {
+                let dados = getDadosSalvos();
+                dados.youtube = [];
+                setDadosSalvos(dados);
+                renderCanaisSalvos();
+                loadYouTubeId('jfKfPfyJRdk', null);
+                alert("Cache do YouTube limpo com sucesso!");
+            }
+        }
 
         function renderCanaisSalvos() {
             const dados = getDadosSalvos();
@@ -600,6 +628,10 @@
             
             if (match && match[1]) {
                 const videoId = match[1];
+                if (videoId.includes('live_stream')) {
+                    alert('Por favor, utilize o link de um vídeo específico ou de uma transmissão direta válida, e não o link genérico do canal.');
+                    return;
+                }
                 const tituloVid = nomeInput || ("Vídeo " + videoId.substring(0, 6));
                 let dados = getDadosSalvos();
                 
