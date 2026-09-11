@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="theme-color" content="#0a0e1a">
-    <title>Portal de Mídia — v2.3</title>
+    <title>Portal de Mídia — v2.4</title>
 
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%A7%3C/text%3E%3C/svg%3E">
 
@@ -122,7 +122,7 @@
 
     <header>
         <h1>🎧 Portal de Mídia</h1>
-        <span class="version-tag">v2.3 (YouTube Cards & Fix)</span>
+        <span class="version-tag">v2.4 (Fix & Custom Names)</span>
         <div class="clock-display" id="clock">
             --:--
             <small id="clock-date">Carregando…</small>
@@ -142,22 +142,25 @@
         </div>
     </div>
 
-    <!-- SEÇÃO: YOUTUBE (COM MINIATURAS E BOTÕES SALVOS) -->
+    <!-- SEÇÃO: YOUTUBE -->
     <div class="section" data-section="youtube">
         <h2 class="section-title"><span class="icon">📺</span> YouTube Dinâmico</h2>
         
         <div class="yt-presets">
-            <button class="timer-btn" onclick="loadYouTubeId('jfKfPfyJRdk', 'Lofi Girl (Relax)', this)">📚 Lofi Girl</button>
+            <button class="timer-btn" onclick="loadYouTubeId('jfKfPfyJRdk', 'Lofi Girl', this)">📚 Lofi Girl</button>
             <button class="timer-btn" onclick="loadYouTubeId('7NOS8R0FPLY', 'Chillhop Beats', this)">🦝 Chillhop</button>
             <button class="timer-btn" onclick="loadYouTubeId('5qap5aO4i9A', 'Lofi Hip Hop', this)">☕ Lofi Beats</button>
         </div>
 
-        <div class="custom-url-wrap" style="margin-bottom: 15px;">
-            <input type="text" class="custom-url-input" id="yt-input" placeholder="Cole qualquer link do YouTube (ex: youtube.com/watch?v=...)">
-            <button class="custom-url-btn" onclick="adicionarYouTubeSalvo()">💾 Salvar & Tocar</button>
+        <!-- Campos para Nome e Link do YouTube -->
+        <div class="custom-url-wrap" style="flex-direction: column; gap: 8px; margin-bottom: 15px;">
+            <div style="display: flex; gap: 8px;">
+                <input type="text" class="custom-url-input" id="yt-nome" placeholder="Nome do Vídeo ou Canal" style="flex: 0.6;">
+                <input type="text" class="custom-url-input" id="yt-input" placeholder="Cole o link do YouTube...">
+            </div>
+            <button class="custom-url-btn" onclick="adicionarYouTubeSalvo()" style="width: 100%;">💾 Salvar & Tocar</button>
         </div>
 
-        <!-- Grade de Vídeos do YT Salvos (Com Miniatura) -->
         <div id="yt-salvos-grid" class="radio-grid" style="margin-bottom: 15px; display: none;"></div>
 
         <div class="video-container">
@@ -176,14 +179,17 @@
     <!-- SEÇÃO: CANAIS PERSONALIZADOS (ÁUDIO) -->
     <div class="section" data-section="custom">
         <h2 class="section-title"><span class="icon">🌐</span> Adicionar Stream Manual (Rádio/Áudio)</h2>
-        <div class="custom-url-wrap">
-            <input type="text" class="custom-url-input" id="custom-nome" placeholder="Nome do Canal" style="flex: 0.6;">
-            <input type="url" class="custom-url-input" id="custom-url" placeholder="https://... (Link MP3/M3U8)">
-            <button class="custom-url-btn" onclick="adicionarRadioSalva()">💾 Salvar</button>
+        <div class="custom-url-wrap" style="flex-direction: column; gap: 8px;">
+            <div style="display: flex; gap: 8px;">
+                <input type="text" class="custom-url-input" id="custom-nome" placeholder="Nome da Rádio" style="flex: 0.6;">
+                <input type="url" class="custom-url-input" id="custom-url" placeholder="https://... (Link MP3/M3U8)">
+            </div>
+            <button class="custom-url-btn" onclick="adicionarRadioSalva()" style="width: 100%;">💾 Salvar Rádio</button>
         </div>
         <div id="custom-salvos-grid" class="radio-grid" style="margin-top: 15px; display: none;"></div>
     </div>
 
+    <!-- Demais seções de rádios padrão mantidas igual -->
     <div class="section" data-section="portoalegre">
         <h2 class="section-title"><span class="icon">📻</span> Rádios Locais & Notícias</h2>
         <div class="radio-grid">
@@ -351,6 +357,7 @@
         </div>
     </div>
 
+    <!-- SEÇÃO: DANCE E INTERNACIONAIS -->
     <div class="section" data-section="dance">
         <h2 class="section-title"><span class="icon">🕺</span> Dance 80 / 90 / 2000</h2>
         <div class="radio-grid">
@@ -545,7 +552,7 @@
                 });
             } else { radioGrid.style.display = 'none'; }
 
-            // YouTube Customizados (Com Miniatura Oficial)
+            // YouTube Customizados (Com Nome Customizado e Miniatura)
             const ytGrid = document.getElementById('yt-salvos-grid');
             ytGrid.innerHTML = '';
             if (dados.youtube.length > 0) {
@@ -581,17 +588,19 @@
         }
 
         function adicionarYouTubeSalvo() {
+            const nomeInput = document.getElementById('yt-nome').value.trim();
             const inputVal = document.getElementById('yt-input').value.trim();
             const match = inputVal.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/|.*embed\/))([^&?\s]+)/);
+            
             if (match && match[1]) {
                 const videoId = match[1];
-                const tituloVid = "Vídeo " + videoId;
+                const tituloVid = nomeInput || ("Vídeo " + videoId.substring(0, 6));
                 let dados = getDadosSalvos();
                 
-                if (!dados.youtube.find(v => v.id === videoId)) {
-                    dados.youtube.push({ id: videoId, titulo: tituloVid });
-                    setDadosSalvos(dados);
-                }
+                dados.youtube.push({ id: videoId, titulo: tituloVid });
+                setDadosSalvos(dados);
+                
+                document.getElementById('yt-nome').value = '';
                 document.getElementById('yt-input').value = '';
                 renderCanaisSalvos();
                 loadYouTubeId(videoId, tituloVid, null);
