@@ -6,7 +6,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <meta content="strict-origin-when-cross-origin" name="referrer"/>
 <meta content="#0a0e1a" name="theme-color"/>
-<title>Portal de Mídia — v2.19</title>
+<title>Portal de Mídia — v2.20</title>
 <link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%A7%3C/text%3E%3C/svg%3E" rel="icon" type="image/svg+xml"/>
 <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -58,6 +58,8 @@
         
         .radio-grid { display: flex; flex-direction: column; gap: 10px; }
         .media-item { display: flex; align-items: stretch; gap: 8px; }
+        .radio-btn.radio-disabled { opacity:.62; cursor:not-allowed; filter:saturate(.65); }
+        .radio-btn.radio-disabled .status { color: var(--muted); }
         .radio-btn { flex: 1; display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: linear-gradient(145deg, rgba(51, 65, 85, 0.5), rgba(30, 41, 59, 0.7)); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 15px; color: #f1f5f9; font-size: 1em; font-weight: 600; text-align: left; cursor: pointer; transition: all 0.2s; font-family: inherit; min-height: 65px; position: relative; overflow: hidden; }
         .radio-btn:active { transform: scale(0.98); }
         
@@ -179,7 +181,7 @@
 <body>
 <header>
 <h1>🎧 Portal de Mídia</h1>
-<span class="version-tag">v2.19 (Chromecast + compatibilidade móvel + layout responsivo)</span>
+<span class="version-tag">v2.20 (Chromecast + compatibilidade móvel + layout responsivo)</span>
 <div class="clock-display" id="clock">
             --:--
             <small id="clock-date">Carregando…</small>
@@ -301,12 +303,12 @@
 <button aria-label="Favoritar" class="fav-btn" onclick="toggleFav(this, 'antena1_poa')">☆</button>
 </div>
 <div class="media-item" data-nome="continental fm 98.3 clássicos 70 80 90 porto alegre">
-<button class="radio-btn" onclick="playChannel('continental_poa', this)">
+<button class="radio-btn radio-disabled" type="button" disabled aria-label="Continental FM indisponível neste player">
 <span class="icon">🎷</span>
 <span class="label">
 <span class="name">Continental FM</span>
-<small>Clássicos 70/80/90</small>
-<span class="status" id="status-continental_poa"></span>
+<small>Clássicos 70/80/90 • stream HTTPS indisponível</small>
+<span class="status" id="status-continental_poa">Disponível no site oficial / app</span>
 </span>
 <span class="freq">98.3</span>
 </button>
@@ -547,7 +549,7 @@
 </div>
 <div class="timer-status" id="timer-status"></div>
 </div>
-<footer>Portal de Mídia • v2.19 • Criado por Break Troy</footer>
+<footer>Portal de Mídia • v2.20 • Criado por Break Troy</footer>
 <div class="mini-player" id="mini-player">
 <div class="mini-info">
 <div class="playing-dot" id="playing-dot"></div>
@@ -565,23 +567,23 @@
 <script>
         const RADIO_CHANNELS = {
             atlantida_poa: { label: 'Atlântida FM 94.3', needsHls: true, urls: ['https://liverdatlpoa.rbsdirect.com.br/primary/atl_poa.sdp/playlist.m3u8'] },
-            antena1_poa: { label: 'Antena 1', needsHls: false, urls: ['https://stream.antena1.com.br/stream14', 'https://antenaone.crossradio.com.br/stream/1', 'https://server3.webradios.com.br:19472/9472'] },
-            continental_poa: { label: 'Continental FM 98.3', needsHls: false, urls: ['http://rrdns-continental.webnow.com.br/imprensafm64k.mp3'] },
+            antena1_poa: { label: 'Antena 1', needsHls: false, urls: ['https://antenaone.crossradio.com.br/stream/1'] },
+            continental_poa: { label: 'Continental FM 98.3', needsHls: false, urls: [] },
             salamanca_quarai: { label: 'Salamanca FM 101.3', needsHls: false, urls: ['https://live.paineldj.com.br/proxy/salamancahd?mp=/stream'] },
             cbn: { label: 'CBN Rio', needsHls: false, urls: ['https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_RJ_ADP.mp3', 'https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_RJ.mp3', 'https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_RJ_ADP.m3u8'] },
             bandnews: { label: 'BandNews FM SP', needsHls: false, urls: ['https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.mp3', 'https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.aac', 'https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.m3u8'] },
-            progressive: { label: 'Progressive House', needsHls: false, urls: ['https://stream.laut.fm/house', 'https://stream.laut.fm/deepdesire'] },
-            trance: { label: 'Trance', needsHls: false, urls: ['https://stream.laut.fm/main', 'https://stream.laut.fm/trigger'] },
-            techno: { label: 'Techno', needsHls: false, urls: ['https://stream.laut.fm/techno', 'https://stream.laut.fm/electri-c-ity-studios'] },
-            reiki: { label: 'Reiki & Meditação', needsHls: false, urls: ['https://streaming.positivity.radio/pr/reiki/icecast.audio', 'https://ice5.somafm.com/dronezone-128-mp3'] },
-            anos80: { label: 'Hits Anos 80', needsHls: false, urls: ['https://stream.laut.fm/80er', 'https://stream.laut.fm/hitradio'] },
-            dance90: { label: "Dance 90's", needsHls: false, urls: ['https://stream.laut.fm/eurodance', 'https://stream.laut.fm/clubhits'] },
-            dance2000: { label: 'Dance / Club Hits', needsHls: false, urls: ['https://stream.laut.fm/clubhits', 'https://stream.laut.fm/eurodance'] },
+            progressive: { label: 'Progressive House', needsHls: false, urls: ['https://stream.laut.fm/house'] },
+            trance: { label: 'Trance', needsHls: false, urls: ['https://stream.laut.fm/main'] },
+            techno: { label: 'Techno', needsHls: false, urls: ['https://stream.laut.fm/techno'] },
+            reiki: { label: 'Reiki & Meditação', needsHls: false, urls: ['https://streaming.positivity.radio/pr/reiki/icecast.audio'] },
+            anos80: { label: 'Hits Anos 80', needsHls: false, urls: ['https://stream.laut.fm/80er'] },
+            dance90: { label: "Dance 90's", needsHls: false, urls: ['https://stream.laut.fm/eurodance'] },
+            dance2000: { label: 'Dance / Club Hits', needsHls: false, urls: ['https://stream.laut.fm/clubhits'] },
             rock: { label: 'Classic Rock', needsHls: false, urls: ['https://stream.laut.fm/classicrock'] },
-            pop: { label: 'Pop Hits', needsHls: false, urls: ['https://stream.laut.fm/pop', 'https://stream.laut.fm/hitradio'] },
-            lofi: { label: 'Lofi Beats', needsHls: false, urls: ['https://stream.laut.fm/lofi', 'https://ice5.somafm.com/dronezone-128-mp3'] },
-            classical: { label: 'Clássica / Foco', needsHls: false, urls: ['https://stream.laut.fm/klassik', 'https://ice5.somafm.com/dronezone-128-mp3'] },
-            mpb: { label: 'Chill / Groove', needsHls: false, urls: ['https://ice5.somafm.com/groovesalad-128-mp3', 'https://ice5.somafm.com/beatblender-128-mp3'] },
+            pop: { label: 'Pop Hits', needsHls: false, urls: ['https://stream.laut.fm/pop'] },
+            lofi: { label: 'Lofi Beats', needsHls: false, urls: ['https://stream.laut.fm/lofi'] },
+            classical: { label: 'Clássica / Foco', needsHls: false, urls: ['https://stream.laut.fm/klassik'] },
+            mpb: { label: 'Chill / Groove', needsHls: false, urls: ['https://ice5.somafm.com/groovesalad-128-mp3'] },
             soundscapes: { label: 'Soundscapes Ambient', needsHls: false, urls: ['https://ice5.somafm.com/dronezone-128-mp3'] },
             paradise: { label: 'Radio Paradise', needsHls: false, urls: ['https://stream.radioparadise.com/aac-128'] }
         };
@@ -589,6 +591,8 @@
         // ---------- ESTADO GLOBAL ----------
         let radioAudio = null;
         let hlsInstance = null;
+        const radioAudioPool = [];
+
         let radioPlaying = false;
         let radioVolume = 0.5;
         let currentChannelId = '';
@@ -1095,8 +1099,35 @@
         function canUseNativeHls(audio) { return !!audio && typeof audio.canPlayType === 'function' && !!audio.canPlayType('application/vnd.apple.mpegurl'); }
         function cleanupRadio() {
             if (hlsInstance) { try { hlsInstance.stopLoad(); } catch (_) {} try { hlsInstance.detachMedia(); } catch (_) {} try { hlsInstance.destroy(); } catch (_) {} hlsInstance = null; }
-            if (radioAudio) { try { radioAudio.pause(); radioAudio.removeAttribute('src'); radioAudio.load(); } catch (_) {} radioAudio = null; }
+            // Há navegadores antigos em que uma promessa de play() pode resolver depois
+            // que o próximo stream já começou. Por isso encerramos TODOS os elementos
+            // de áudio criados pelo Portal, e não apenas o último.
+            while (radioAudioPool.length) {
+                const audio = radioAudioPool.pop();
+                try {
+                    audio.__portalInvalid = true;
+                    audio.pause();
+                    audio.removeAttribute('src');
+                    audio.load();
+                } catch (_) {}
+            }
+            radioAudio = null;
             radioPlaying = false;
+        }
+        function createRadioAudio() {
+            const audio = new Audio();
+            audio.preload = 'none';
+            audio.volume = radioVolume;
+            audio.__portalInvalid = false;
+            radioAudioPool.push(audio);
+            return audio;
+        }
+        function invalidateStaleAudio() {
+            radioAudioPool.forEach(function(audio) {
+                if (audio !== radioAudio) {
+                    try { audio.__portalInvalid = true; audio.pause(); audio.removeAttribute('src'); audio.load(); } catch (_) {}
+                }
+            });
         }
         function updateMiniPlayer(title, isPaused) {
             const mini = document.getElementById('mini-player'); const dot = document.getElementById('playing-dot'); const btn = document.getElementById('btn-play-pause'); const titleEl = document.getElementById('mini-title');
@@ -1127,7 +1158,7 @@
 
             const handleError = (message) => {
                 if (myReqId !== radioRequestId) return;
-                if (urlIndex + 1 < channel.urls.length) { cleanupRadio(); urlIndex++; setTimeout(tryNextUrl, 450); return; }
+                if (urlIndex + 1 < channel.urls.length) { cleanupRadio(); urlIndex++; setTimeout(tryNextUrl, 250); return; }
                 setStatus(statusId, message || 'Indisponível');
                 if (btnEl) { btnEl.classList.remove('playing'); btnEl.classList.add('error'); }
                 updateMiniPlayer(message || ('Indisponível: ' + channel.label), true); radioPlaying = false;
@@ -1136,7 +1167,12 @@
 
             function tryNextUrl() {
                 if (myReqId !== radioRequestId) return;
-                if (urlIndex >= channel.urls.length) { handleError('Indisponível'); return; }
+                if (urlIndex >= channel.urls.length) {
+                    setStatus(statusId, channelId === 'continental_poa' ? 'Stream HTTPS não disponível' : 'Indisponível');
+                    if (btnEl) { btnEl.classList.remove('playing'); btnEl.classList.add('error'); }
+                    updateMiniPlayer(channel.label, true); radioPlaying = false;
+                    return;
+                }
                 const url = channel.urls[urlIndex];
                 currentRadioUrl = url;
                 if (/^http:/i.test(url) && window.location.protocol === 'https:') {
@@ -1148,37 +1184,41 @@
                 setStatus(statusId, 'Tentando ' + (urlIndex + 1) + '/' + channel.urls.length + '…');
 
                 if (needsHls) {
-                    radioAudio = new Audio(); radioAudio.preload = 'none'; radioAudio.volume = radioVolume;
-                    if (canUseNativeHls(radioAudio)) {
-                        const timeout = setTimeout(() => { if (myReqId === radioRequestId && !radioPlaying) { cleanupRadio(); handleError('Tempo esgotado'); } }, 10000);
-                        radioAudio.addEventListener('playing', () => { clearTimeout(timeout); onPlaySuccess(); }, { once: true });
-                        radioAudio.addEventListener('error', () => { clearTimeout(timeout); handleError('Erro no stream'); }, { once: true });
-                        try { radioAudio.src = url; radioAudio.load(); radioAudio.play().catch(() => { clearTimeout(timeout); handleError('Reprodução bloqueada'); }); } catch (_) { clearTimeout(timeout); handleError('Erro no stream'); }
+                    const audio = createRadioAudio();
+                    radioAudio = audio;
+                    invalidateStaleAudio();
+                    if (canUseNativeHls(audio)) {
+                        const timeout = setTimeout(() => { if (myReqId === radioRequestId && radioAudio === audio && !radioPlaying) { cleanupRadio(); handleError('Tempo esgotado'); } }, 10000);
+                        audio.addEventListener('playing', () => { if (audio.__portalInvalid || radioAudio !== audio) return; clearTimeout(timeout); onPlaySuccess(); }, { once: true });
+                        audio.addEventListener('error', () => { if (audio.__portalInvalid || radioAudio !== audio) return; clearTimeout(timeout); handleError('Erro no stream'); }, { once: true });
+                        try { audio.src = url; audio.load(); audio.play().catch(() => { if (audio.__portalInvalid || radioAudio !== audio) return; clearTimeout(timeout); handleError('Reprodução bloqueada'); }); } catch (_) { clearTimeout(timeout); handleError('Erro no stream'); }
                         return;
                     }
                     loadHlsJs().then(HlsLib => {
-                        if (myReqId !== radioRequestId) return;
+                        if (myReqId !== radioRequestId || radioAudio !== audio || audio.__portalInvalid) return;
                         if (!HlsLib.isSupported()) { handleError('HLS não suportado neste navegador'); return; }
                         hlsInstance = new HlsLib({ enableWorker: !document.documentElement.classList.contains('lite-mode'), maxBufferLength: document.documentElement.classList.contains('lite-mode') ? 12 : 25, maxMaxBufferLength: document.documentElement.classList.contains('lite-mode') ? 24 : 50, lowLatencyMode: false });
-                        hlsInstance.loadSource(url); hlsInstance.attachMedia(radioAudio);
-                        const timeout = setTimeout(() => { if (myReqId === radioRequestId && !radioPlaying) { cleanupRadio(); handleError('Tempo esgotado'); } }, 12000);
-                        hlsInstance.on(HlsLib.Events.MANIFEST_PARSED, () => { if (myReqId !== radioRequestId) return; radioAudio.play().then(onPlaySuccess).catch(() => { clearTimeout(timeout); handleError('Reprodução bloqueada'); }); });
-                        hlsInstance.on(HlsLib.Events.ERROR, (_evt, data) => { if (data.fatal && myReqId === radioRequestId) { clearTimeout(timeout); cleanupRadio(); handleError('Erro HLS'); } });
-                    }).catch(() => handleError('Falha ao carregar HLS'));
+                        hlsInstance.loadSource(url); hlsInstance.attachMedia(audio);
+                        const timeout = setTimeout(() => { if (myReqId === radioRequestId && radioAudio === audio && !radioPlaying) { cleanupRadio(); handleError('Tempo esgotado'); } }, 12000);
+                        hlsInstance.on(HlsLib.Events.MANIFEST_PARSED, () => { if (myReqId !== radioRequestId || radioAudio !== audio || audio.__portalInvalid) return; audio.play().then(() => { if (radioAudio === audio && !audio.__portalInvalid) onPlaySuccess(); }).catch(() => { clearTimeout(timeout); handleError('Reprodução bloqueada'); }); });
+                        hlsInstance.on(HlsLib.Events.ERROR, (_evt, data) => { if (data.fatal && myReqId === radioRequestId && radioAudio === audio && !audio.__portalInvalid) { clearTimeout(timeout); cleanupRadio(); handleError('Erro HLS'); } });
+                    }).catch(() => { if (myReqId === radioRequestId && radioAudio === audio && !audio.__portalInvalid) handleError('Falha ao carregar HLS'); });
                     return;
                 }
 
-                radioAudio = new Audio(); radioAudio.preload = 'none'; radioAudio.volume = radioVolume;
-                const timeout = setTimeout(() => { if (myReqId === radioRequestId && !radioPlaying) { cleanupRadio(); handleError('Tempo esgotado'); } }, 10000);
-                radioAudio.addEventListener('playing', () => { clearTimeout(timeout); onPlaySuccess(); }, { once: true });
-                radioAudio.addEventListener('error', () => { clearTimeout(timeout); handleError('Erro no stream'); }, { once: true });
-                try { radioAudio.src = url; radioAudio.load(); radioAudio.play().catch(() => { clearTimeout(timeout); handleError('Reprodução bloqueada'); }); } catch (_) { clearTimeout(timeout); handleError('Erro no stream'); }
+                const audio = createRadioAudio();
+                radioAudio = audio;
+                invalidateStaleAudio();
+                const timeout = setTimeout(() => { if (myReqId === radioRequestId && radioAudio === audio && !radioPlaying) { cleanupRadio(); handleError('Tempo esgotado'); } }, 10000);
+                audio.addEventListener('playing', () => { if (audio.__portalInvalid || radioAudio !== audio) return; clearTimeout(timeout); onPlaySuccess(); }, { once: true });
+                audio.addEventListener('error', () => { if (audio.__portalInvalid || radioAudio !== audio) return; clearTimeout(timeout); handleError('Erro no stream'); }, { once: true });
+                try { audio.src = url; audio.load(); audio.play().catch(() => { if (audio.__portalInvalid || radioAudio !== audio) return; clearTimeout(timeout); handleError('Reprodução bloqueada'); }); } catch (_) { clearTimeout(timeout); handleError('Erro no stream'); }
             }
             tryNextUrl();
         }
         function togglePlayPause() {
             if (!radioAudio) return;
-            if (radioAudio.paused) { radioAudio.play().then(() => { radioPlaying = true; updateMiniPlayer(currentChannelLabel, false); }).catch(() => {}); }
+            if (radioAudio.paused) { radioAudio.play().then(() => { if (!radioAudio || radioAudio.__portalInvalid) return; radioPlaying = true; updateMiniPlayer(currentChannelLabel, false); }).catch(() => {}); }
             else { radioAudio.pause(); radioPlaying = false; updateMiniPlayer(currentChannelLabel, true); }
         }
         function stopRadio() {
