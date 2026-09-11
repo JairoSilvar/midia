@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="theme-color" content="#0a0e1a">
-    <title>Portal de Mídia — v2.0</title>
+    <title>Portal de Mídia — v2.1</title>
 
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%A7%3C/text%3E%3C/svg%3E">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%A7%3C/text%3E%3C/svg%3E">
 
     <style>
+        /* ... (todo o CSS da versão anterior) ... */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html, body { margin: 0; padding: 0; height: 100%; }
         body {
@@ -26,7 +26,6 @@
             -webkit-overflow-scrolling: touch;
             padding-bottom: 140px;
         }
-
         header {
             padding: 20px 20px 16px; text-align: center;
             position: sticky; top: 0; z-index: 10;
@@ -39,255 +38,75 @@
             background: linear-gradient(135deg, #a5b4fc 0%, #f0abfc 50%, #67e8f9 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-        header .version-tag {
-            font-size: 0.55em;
-            color: #64748b;
-            font-weight: 500;
-            letter-spacing: 0.08em;
-            margin-top: 2px;
-            display: block;
-        }
-        .clock-display {
-            margin-top: 6px; font-size: 2em; font-weight: 700;
-            letter-spacing: -0.02em; color: #f1f5f9;
-            font-variant-numeric: tabular-nums; line-height: 1;
-        }
-        .clock-display small {
-            display: block; font-size: 0.4em; color: #64748b;
-            font-weight: 500; margin-top: 4px;
-            letter-spacing: 0.05em; text-transform: uppercase;
-        }
-
+        header .version-tag { font-size: 0.55em; color: #64748b; font-weight: 500; letter-spacing: 0.08em; margin-top: 2px; display: block; }
+        .clock-display { margin-top: 6px; font-size: 2em; font-weight: 700; letter-spacing: -0.02em; color: #f1f5f9; font-variant-numeric: tabular-nums; line-height: 1; }
+        .clock-display small { display: block; font-size: 0.4em; color: #64748b; font-weight: 500; margin-top: 4px; letter-spacing: 0.05em; text-transform: uppercase; }
         .search-wrap { margin: 14px 14px 0; position: relative; }
-        .search-input {
-            width: 100%; padding: 14px 44px 14px 16px;
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 14px; color: #f1f5f9;
-            font-size: 0.95em; outline: none; font-family: inherit;
-            transition: border-color 0.2s;
-        }
-        .search-input:focus {
-            border-color: rgba(139, 92, 246, 0.5);
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
-        }
+        .search-input { width: 100%; padding: 14px 44px 14px 16px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; color: #f1f5f9; font-size: 0.95em; outline: none; font-family: inherit; transition: border-color 0.2s; }
+        .search-input:focus { border-color: rgba(139, 92, 246, 0.5); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1); }
         .search-input::placeholder { color: #64748b; }
-        .search-clear {
-            position: absolute; right: 8px; top: 50%;
-            transform: translateY(-50%);
-            background: rgba(100, 116, 139, 0.3);
-            border: none; color: #94a3b8;
-            width: 32px; height: 32px; border-radius: 50%;
-            font-size: 1em; cursor: pointer;
-            display: none; align-items: center; justify-content: center;
-        }
+        .search-clear { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: rgba(100, 116, 139, 0.3); border: none; color: #94a3b8; width: 32px; height: 32px; border-radius: 50%; font-size: 1em; cursor: pointer; display: none; align-items: center; justify-content: center; }
         .search-clear.visible { display: flex; }
-
-        .section {
-            margin: 18px 14px; padding: 20px 16px;
-            background: linear-gradient(145deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.7) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.07);
-            border-radius: 18px;
-            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
-            transition: opacity 0.2s;
-        }
+        .section { margin: 18px 14px; padding: 20px 16px; background: linear-gradient(145deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.7) 100%); border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 18px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05); transition: opacity 0.2s; }
         .section.hidden { display: none; }
-        .section-title {
-            font-size: 0.9em; font-weight: 700; margin: 0 0 16px;
-            display: flex; align-items: center; gap: 12px; color: #f1f5f9;
-        }
-        .section-title .icon {
-            display: flex; align-items: center; justify-content: center;
-            width: 34px; height: 34px; border-radius: 11px; font-size: 1em;
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(236, 72, 153, 0.25));
-            border: 1px solid rgba(139, 92, 246, 0.3);
-        }
-
+        .section-title { font-size: 0.9em; font-weight: 700; margin: 0 0 16px; display: flex; align-items: center; gap: 12px; color: #f1f5f9; }
+        .section-title .icon { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 11px; font-size: 1em; background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(236, 72, 153, 0.25)); border: 1px solid rgba(139, 92, 246, 0.3); }
         .radio-grid { display: flex; flex-direction: column; gap: 10px; }
         .media-item { display: flex; align-items: stretch; gap: 8px; }
-        .radio-btn {
-            flex: 1; display: flex; align-items: center; gap: 14px;
-            padding: 16px;
-            background: linear-gradient(145deg, rgba(51, 65, 85, 0.5), rgba(30, 41, 59, 0.7));
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 15px; color: #f1f5f9;
-            font-size: 1em; font-weight: 600; text-align: left;
-            cursor: pointer; transition: all 0.2s;
-            font-family: inherit; min-height: 70px;
-            position: relative; overflow: hidden;
-        }
+        .radio-btn { flex: 1; display: flex; align-items: center; gap: 14px; padding: 16px; background: linear-gradient(145deg, rgba(51, 65, 85, 0.5), rgba(30, 41, 59, 0.7)); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 15px; color: #f1f5f9; font-size: 1em; font-weight: 600; text-align: left; cursor: pointer; transition: all 0.2s; font-family: inherit; min-height: 70px; position: relative; overflow: hidden; }
         .radio-btn:active { transform: scale(0.98); }
-        .radio-btn.playing {
-            background: linear-gradient(145deg, rgba(139, 92, 246, 0.25), rgba(236, 72, 153, 0.15));
-            border-color: rgba(139, 92, 246, 0.5);
-            box-shadow: 0 8px 24px -8px rgba(139, 92, 246, 0.4);
-        }
-        .radio-btn.error {
-            border-color: rgba(239, 68, 68, 0.5);
-            background: rgba(127, 29, 29, 0.2);
-        }
-        .radio-btn .icon {
-            display: flex; align-items: center; justify-content: center;
-            width: 46px; height: 46px; border-radius: 13px; font-size: 1.3em;
-            flex-shrink: 0;
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.2));
-            border: 1px solid rgba(139, 92, 246, 0.3);
-        }
-        .radio-btn.playing .icon {
-            background: linear-gradient(135deg, #8b5cf6, #ec4899);
-            animation: iconPulse 2s infinite;
-        }
-        @keyframes iconPulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.5); }
-            50% { box-shadow: 0 0 0 8px rgba(139, 92, 246, 0); }
-        }
+        .radio-btn.playing { background: linear-gradient(145deg, rgba(139, 92, 246, 0.25), rgba(236, 72, 153, 0.15)); border-color: rgba(139, 92, 246, 0.5); box-shadow: 0 8px 24px -8px rgba(139, 92, 246, 0.4); }
+        .radio-btn.error { border-color: rgba(239, 68, 68, 0.5); background: rgba(127, 29, 29, 0.2); }
+        .radio-btn .icon { display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 13px; font-size: 1.3em; flex-shrink: 0; background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.2)); border: 1px solid rgba(139, 92, 246, 0.3); }
+        .radio-btn.playing .icon { background: linear-gradient(135deg, #8b5cf6, #ec4899); animation: iconPulse 2s infinite; }
+        @keyframes iconPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.5); } 50% { box-shadow: 0 0 0 8px rgba(139, 92, 246, 0); } }
         .radio-btn .label { flex: 1; display: flex; flex-direction: column; min-width: 0; }
         .radio-btn .name { font-size: 0.95em; font-weight: 600; }
         .radio-btn small { font-size: 0.7em; color: #94a3b8; font-weight: 500; margin-top: 2px; }
         .radio-btn .status { font-size: 0.65em; color: #64748b; margin-top: 2px; font-style: italic; }
-        .radio-btn .freq {
-            font-size: 0.85em; font-weight: 700; color: #c4b5fd;
-            background: rgba(139, 92, 246, 0.15);
-            border: 1px solid rgba(139, 92, 246, 0.25);
-            padding: 5px 10px; border-radius: 10px; flex-shrink: 0;
-        }
-        .radio-btn.playing .freq {
-            color: #fff; background: rgba(255,255,255,0.2);
-            border-color: rgba(255,255,255,0.3);
-        }
-
-        .fav-btn {
-            width: 52px; min-height: 70px;
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 15px; color: #64748b;
-            font-size: 1.4em; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0; transition: all 0.15s;
-        }
+        .radio-btn .freq { font-size: 0.85em; font-weight: 700; color: #c4b5fd; background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.25); padding: 5px 10px; border-radius: 10px; flex-shrink: 0; }
+        .radio-btn.playing .freq { color: #fff; background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.3); }
+        .fav-btn { width: 52px; min-height: 70px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 15px; color: #64748b; font-size: 1.4em; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
         .fav-btn:active { transform: scale(0.92); }
-        .fav-btn.active {
-            color: #fbbf24;
-            background: rgba(251, 191, 36, 0.15);
-            border-color: rgba(251, 191, 36, 0.4);
-        }
-
+        .fav-btn.active { color: #fbbf24; background: rgba(251, 191, 36, 0.15); border-color: rgba(251, 191, 36, 0.4); }
         .custom-url-wrap { display: flex; gap: 8px; margin-top: 4px; }
-        .custom-url-input {
-            flex: 1; padding: 12px 14px;
-            background: rgba(15, 23, 42, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px; color: #f1f5f9;
-            font-size: 0.9em; outline: none; font-family: inherit;
-        }
+        .custom-url-input { flex: 1; padding: 12px 14px; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; color: #f1f5f9; font-size: 0.9em; outline: none; font-family: inherit; }
         .custom-url-input::placeholder { color: #64748b; }
-        .custom-url-btn {
-            padding: 12px 18px;
-            background: linear-gradient(135deg, #8b5cf6, #ec4899);
-            border: none; border-radius: 12px;
-            color: #fff; font-weight: 700; font-size: 0.9em;
-            cursor: pointer; white-space: nowrap;
-        }
+        .custom-url-btn { padding: 12px 18px; background: linear-gradient(135deg, #8b5cf6, #ec4899); border: none; border-radius: 12px; color: #fff; font-weight: 700; font-size: 0.9em; cursor: pointer; white-space: nowrap; }
         .custom-url-btn:active { transform: scale(0.96); }
-
-        .video-container {
-            position: relative; padding-bottom: 56.25%;
-            height: 0; overflow: hidden;
-            border-radius: 14px; background: #000;
-            margin-bottom: 12px;
-        }
-        .video-container iframe {
-            position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%; border: 0;
-        }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 14px; background: #000; margin-bottom: 12px; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
         .yt-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
-        .yt-btn {
-            flex: 1; min-width: 100px;
-            text-align: center; padding: 12px 8px;
-            background: rgba(196, 48, 43, 0.6);
-            border: none; border-radius: 10px;
-            color: #fff; text-decoration: none;
-            font-size: 0.85em; font-weight: 600;
-            cursor: pointer; font-family: inherit;
-            transition: background 0.15s;
-        }
+        .yt-btn { flex: 1; min-width: 100px; text-align: center; padding: 12px 8px; background: rgba(196, 48, 43, 0.6); border: none; border-radius: 10px; color: #fff; text-decoration: none; font-size: 0.85em; font-weight: 600; cursor: pointer; font-family: inherit; transition: background 0.15s; }
         .yt-btn:active { background: rgba(196, 48, 43, 0.9); }
-
         .timer-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
-        .timer-btn {
-            flex: 1 1 30%; padding: 12px 8px;
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px; color: #e2e8f0;
-            font-size: 0.85em; font-weight: 600;
-            cursor: pointer; text-align: center;
-            font-family: inherit; transition: all 0.15s;
-        }
+        .timer-btn { flex: 1 1 30%; padding: 12px 8px; background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; color: #e2e8f0; font-size: 0.85em; font-weight: 600; cursor: pointer; text-align: center; font-family: inherit; transition: all 0.15s; }
         .timer-btn:active { transform: scale(0.96); }
-        .timer-btn.active {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.2));
-            border-color: rgba(139, 92, 246, 0.5); color: #fff;
-        }
-        .timer-status {
-            margin-top: 10px; font-size: 0.8em;
-            color: #94a3b8; text-align: center; min-height: 1em;
-        }
+        .timer-btn.active { background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.2)); border-color: rgba(139, 92, 246, 0.5); color: #fff; }
+        .timer-status { margin-top: 10px; font-size: 0.8em; color: #94a3b8; text-align: center; min-height: 1em; }
         .timer-status.active { color: #fbbf24; font-weight: 600; }
-
-        .mini-player {
-            position: fixed; bottom: 12px; left: 12px; right: 12px;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px; padding: 14px 16px;
-            z-index: 20;
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
-            display: none;
-        }
+        .mini-player { position: fixed; bottom: 12px; left: 12px; right: 12px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 14px 16px; z-index: 20; box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6); display: none; }
         .mini-player.visible { display: block; }
         .mini-info { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .playing-dot {
-            width: 8px; height: 8px; background: #4ade80; border-radius: 50%;
-            box-shadow: 0 0 8px #4ade80; animation: pulse 1.5s infinite;
-        }
+        .playing-dot { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 8px #4ade80; animation: pulse 1.5s infinite; }
         .playing-dot.paused { background: #64748b; box-shadow: none; animation: none; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         .mini-title { flex: 1; font-size: 0.85em; color: #e2e8f0; font-weight: 600; }
         .mini-controls { display: flex; align-items: center; gap: 10px; }
-        .mini-controls button {
-            background: rgba(51, 65, 85, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #f1f5f9;
-            width: 42px; height: 42px; border-radius: 50%;
-            font-size: 1em; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-        }
+        .mini-controls button { background: rgba(51, 65, 85, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); color: #f1f5f9; width: 42px; height: 42px; border-radius: 50%; font-size: 1em; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .mini-controls button:active { transform: scale(0.92); }
         .mini-controls button.stop-btn { background: rgba(127, 29, 29, 0.6); }
         .volume-wrap { flex: 1; display: flex; align-items: center; gap: 6px; }
-        input[type="range"].volume-slider {
-            flex: 1; -webkit-appearance: none;
-            height: 4px; background: rgba(100, 116, 139, 0.4);
-            border-radius: 2px; outline: none;
-        }
-        input[type="range"].volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 18px; height: 18px;
-            background: linear-gradient(135deg, #8b5cf6, #ec4899);
-            border-radius: 50%; border: 2px solid #fff;
-        }
-
-        .empty-state {
-            text-align: center; color: #64748b;
-            font-size: 0.85em; padding: 16px 0; font-style: italic;
-        }
+        input[type="range"].volume-slider { flex: 1; -webkit-appearance: none; height: 4px; background: rgba(100, 116, 139, 0.4); border-radius: 2px; outline: none; }
+        input[type="range"].volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: linear-gradient(135deg, #8b5cf6, #ec4899); border-radius: 50%; border: 2px solid #fff; }
+        .empty-state { text-align: center; color: #64748b; font-size: 0.85em; padding: 16px 0; font-style: italic; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>🎧 Portal de Mídia</h1>
-        <span class="version-tag">v2.0</span>
+        <span class="version-tag">v2.1</span>
         <div class="clock-display" id="clock">
             --:--
             <small id="clock-date">Carregando…</small>
@@ -309,7 +128,6 @@
     <div class="section" data-section="portoalegre">
         <h2 class="section-title"><span class="icon">📻</span> Rádio Porto Alegre</h2>
         <div class="radio-grid">
-
             <div class="media-item" data-nome="atlântida fm 94.3 pop rock porto alegre">
                 <button class="radio-btn" onclick="playChannel('atlantida_poa', this)">
                     <span class="icon">⚡</span>
@@ -322,7 +140,6 @@
                 </button>
                 <button class="fav-btn" onclick="toggleFav(this, 'atlantida_poa')" aria-label="Favoritar">☆</button>
             </div>
-
             <div class="media-item" data-nome="antena 1 89.3 música contemporânea nacional">
                 <button class="radio-btn" onclick="playChannel('antena1_poa', this)">
                     <span class="icon">🎶</span>
@@ -335,7 +152,6 @@
                 </button>
                 <button class="fav-btn" onclick="toggleFav(this, 'antena1_poa')" aria-label="Favoritar">☆</button>
             </div>
-
             <div class="media-item" data-nome="continental fm 98.3 clássicos 70 80 90 porto alegre">
                 <button class="radio-btn" onclick="playChannel('continental_poa', this)">
                     <span class="icon">🎷</span>
@@ -348,7 +164,6 @@
                 </button>
                 <button class="fav-btn" onclick="toggleFav(this, 'continental_poa')" aria-label="Favoritar">☆</button>
             </div>
-
             <div class="media-item" data-nome="salamanca fm 101.3 quaraí rs">
                 <button class="radio-btn" onclick="playChannel('salamanca_quarai', this)">
                     <span class="icon">📻</span>
@@ -361,7 +176,6 @@
                 </button>
                 <button class="fav-btn" onclick="toggleFav(this, 'salamanca_quarai')" aria-label="Favoritar">☆</button>
             </div>
-
             <div class="media-item" data-nome="cbn rio notícias 24h">
                 <button class="radio-btn" onclick="playChannel('cbn', this)">
                     <span class="icon">📰</span>
@@ -373,7 +187,6 @@
                 </button>
                 <button class="fav-btn" onclick="toggleFav(this, 'cbn')" aria-label="Favoritar">☆</button>
             </div>
-
             <div class="media-item" data-nome="bandnews fm sp jornalismo">
                 <button class="radio-btn" onclick="playChannel('bandnews', this)">
                     <span class="icon">📡</span>
@@ -385,14 +198,12 @@
                 </button>
                 <button class="fav-btn" onclick="toggleFav(this, 'bandnews')" aria-label="Favoritar">☆</button>
             </div>
-
         </div>
     </div>
 
     <div class="section" data-section="dance">
         <h2 class="section-title"><span class="icon">🕺</span> Dance 80 / 90 / 2000</h2>
         <div class="radio-grid">
-
             <div class="media-item" data-nome="hits anos 80 clássicos década dance">
                 <button class="radio-btn" onclick="playChannel('anos80', this)">
                     <span class="icon">🕺</span>
@@ -404,7 +215,6 @@
                 </button>
                 <button class="fav-btn" onclick="toggleFav(this, 'anos80')" aria-label="Favoritar">☆</button>
             </div>
-
             <div class="media-item" data-nome="dance 90s eurodance club">
                 <button class="radio-btn" onclick="playChannel('dance90', this)">
                     <span class="icon">🪩</span>
@@ -416,7 +226,6 @@
                 </button>
                 <button class="fav-btn" onclick="toggleFav(this, 'dance90')" aria-label="Favoritar">☆</button>
             </div>
-
             <div class="media-item" data-nome="dance club hits 2000s">
                 <button class="radio-btn" onclick="playChannel('dance2000', this)">
                     <span class="icon">🎧</span>
@@ -428,14 +237,12 @@
                 </button>
                 <button class="fav-btn" onclick="toggleFav(this, 'dance2000')" aria-label="Favoritar">☆</button>
             </div>
-
         </div>
     </div>
 
     <div class="section" data-section="intl">
         <h2 class="section-title"><span class="icon">🌍</span> Estilos & Internacionais</h2>
         <div class="radio-grid">
-
             <div class="media-item" data-nome="classic rock clássico">
                 <button class="radio-btn" onclick="playChannel('rock', this)">
                     <span class="icon">🎸</span>
@@ -447,7 +254,6 @@
                 </button>
                 <button class="fav-btn" onclick="toggleFav(this, 'rock')" aria-label="Favoritar">☆</button>
             </div>
-
             <div class="media-item" data-nome="pop hits internacional">
                 <button class="radio-btn" onclick="playChannel('pop', this)">
                     <span class="icon">🎤</span>
@@ -459,7 +265,6 @@
                 </button>
                 <button class="fav-btn" onclick="toggleFav(this, 'pop')" aria-label="Favoritar">☆</button>
             </div>
-
             <div class="media-item" data-nome="lofi beats relaxar focar">
                 <button class="radio-btn" onclick="playChannel('lofi', this)">
                     <span class="icon">☕</span>
@@ -471,7 +276,6 @@
                 </button>
                 <button class="fav-btn" onclick="toggleFav(this, 'lofi')" aria-label="Favoritar">☆</button>
             </div>
-
             <div class="media-item" data-nome="jazz clássico">
                 <button class="radio-btn" onclick="playChannel('jazz', this)">
                     <span class="icon">🎷</span>
@@ -483,7 +287,6 @@
                 </button>
                 <button class="fav-btn" onclick="toggleFav(this, 'jazz')" aria-label="Favoritar">☆</button>
             </div>
-
             <div class="media-item" data-nome="clássica foco música erudita">
                 <button class="radio-btn" onclick="playChannel('classical', this)">
                     <span class="icon">🎻</span>
@@ -495,7 +298,6 @@
                 </button>
                 <button class="fav-btn" onclick="toggleFav(this, 'classical')" aria-label="Favoritar">☆</button>
             </div>
-
             <div class="media-item" data-nome="chill groove brasileiro mpb">
                 <button class="radio-btn" onclick="playChannel('mpb', this)">
                     <span class="icon">🌴</span>
@@ -507,7 +309,6 @@
                 </button>
                 <button class="fav-btn" onclick="toggleFav(this, 'mpb')" aria-label="Favoritar">☆</button>
             </div>
-
             <div class="media-item" data-nome="radio paradise eclética">
                 <button class="radio-btn" onclick="playChannel('paradise', this)">
                     <span class="icon">🌈</span>
@@ -519,7 +320,6 @@
                 </button>
                 <button class="fav-btn" onclick="toggleFav(this, 'paradise')" aria-label="Favoritar">☆</button>
             </div>
-
             <div class="media-item" data-nome="fip radio france">
                 <button class="radio-btn" onclick="playChannel('fip', this)">
                     <span class="icon">🇫🇷</span>
@@ -531,7 +331,6 @@
                 </button>
                 <button class="fav-btn" onclick="toggleFav(this, 'fip')" aria-label="Favoritar">☆</button>
             </div>
-
             <div class="media-item" data-nome="somafm groove salad ambient downtempo">
                 <button class="radio-btn" onclick="playChannel('somafm_groove', this)">
                     <span class="icon">🥗</span>
@@ -543,7 +342,6 @@
                 </button>
                 <button class="fav-btn" onclick="toggleFav(this, 'somafm_groove')" aria-label="Favoritar">☆</button>
             </div>
-
         </div>
     </div>
 
@@ -568,27 +366,18 @@
         <div class="timer-status" id="timer-status"></div>
     </div>
 
-    <!-- YOUTUBE — usa busca do YouTube (nunca dá "video unavailable") -->
     <div class="section" data-section="youtube">
         <h2 class="section-title"><span class="icon">📺</span> YouTube</h2>
-
         <div class="video-container">
             <iframe
                 id="yt-player"
-                src="https://www.youtube.com/embed?listType=search&list=dance+80s+hits&controls=1&playsinline=1&rel=0"
+                src="https://www.youtube-nocookie.com/embed/jfKfPfyJRdk?controls=1&playsinline=1&rel=0&origin=https://midia-lac.vercel.app"
                 title="YouTube"
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 referrerpolicy="strict-origin-when-cross-origin"
                 allowfullscreen>
             </iframe>
-        </div>
-
-        <div class="yt-buttons">
-            <button class="yt-btn" onclick="buscarYoutube('dance 80s hits')">🕺 Dance 80</button>
-            <button class="yt-btn" onclick="buscarYoutube('dance 90s eurodance')">🪩 Dance 90</button>
-            <button class="yt-btn" onclick="buscarYoutube('dance 2000s club hits')">🎧 Dance 2000</button>
-            <button class="yt-btn" onclick="buscarYoutube('jazz music')">🎷 Jazz</button>
         </div>
     </div>
 
@@ -629,16 +418,6 @@
             somafm_groove: { label: 'SomaFM Groove Salad', needsHls: false, urls: ['https://ice1.somafm.com/groovesalad-128-mp3'] }
         };
 
-        // ==================== YOUTUBE — busca em vez de vídeo fixo ====================
-        function buscarYoutube(termo) {
-            const iframe = document.getElementById('yt-player');
-            if (!iframe) return;
-            const query = encodeURIComponent(termo);
-            iframe.src = 'https://www.youtube.com/embed?listType=search&list=' + query +
-                         '&controls=1&playsinline=1&rel=0&autoplay=1';
-        }
-
-        // ==================== RELÓGIO ====================
         function atualizarRelogio() {
             const agora = new Date();
             const hh = String(agora.getHours()).padStart(2, '0');
@@ -646,342 +425,151 @@
             const dias = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
             const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
             document.getElementById('clock').firstChild.textContent = hh + ':' + mm;
-            document.getElementById('clock-date').textContent =
-                dias[agora.getDay()] + ', ' + agora.getDate() + ' de ' + meses[agora.getMonth()];
+            document.getElementById('clock-date').textContent = dias[agora.getDay()] + ', ' + agora.getDate() + ' de ' + meses[agora.getMonth()];
         }
         atualizarRelogio();
         setInterval(atualizarRelogio, 30000);
 
-        // ==================== ESTADO ====================
-        let radioAudio = null;
-        let hlsInstance = null;
-        let radioPlaying = false;
-        let radioVolume = 0.5;
-        let currentChannelId = '';
-        let currentChannelLabel = '';
-        let radioRequestId = 0;
-        let hlsJsLoadPromise = null;
-        let sleepTimerId = null;
-        let sleepTimerEnd = 0;
-        let sleepTimerInterval = null;
+        let radioAudio = null; let hlsInstance = null; let radioPlaying = false; let radioVolume = 0.5; let currentChannelId = ''; let currentChannelLabel = ''; let radioRequestId = 0; let hlsJsLoadPromise = null; let sleepTimerId = null; let sleepTimerEnd = 0; let sleepTimerInterval = null;
 
-        // ==================== FAVORITOS ====================
-        function carregarFavoritos() {
-            try { return JSON.parse(localStorage.getItem('portal-favoritos') || '[]'); }
-            catch(e) { return []; }
-        }
-        function salvarFavoritos(favs) {
-            try { localStorage.setItem('portal-favoritos', JSON.stringify(favs)); } catch(e) {}
-        }
+        function carregarFavoritos() { try { return JSON.parse(localStorage.getItem('portal-favoritos') || '[]'); } catch(e) { return []; } }
+        function salvarFavoritos(favs) { try { localStorage.setItem('portal-favoritos', JSON.stringify(favs)); } catch(e) {} }
         function toggleFav(btn, channelId) {
             let favs = carregarFavoritos();
             const idx = favs.indexOf(channelId);
-            if (idx >= 0) {
-                favs.splice(idx, 1);
-                btn.textContent = '☆';
-                btn.classList.remove('active');
-            } else {
-                favs.push(channelId);
-                btn.textContent = '★';
-                btn.classList.add('active');
-            }
-            salvarFavoritos(favs);
-            renderizarFavoritos();
+            if (idx >= 0) { favs.splice(idx, 1); btn.textContent = '☆'; btn.classList.remove('active'); }
+            else { favs.push(channelId); btn.textContent = '★'; btn.classList.add('active'); }
+            salvarFavoritos(favs); renderizarFavoritos();
         }
         function renderizarFavoritos() {
             const favs = carregarFavoritos();
             const section = document.getElementById('section-favoritos');
             const grid = document.getElementById('favoritos-grid');
             if (favs.length === 0) { section.style.display = 'none'; return; }
-            section.style.display = 'block';
-            grid.innerHTML = '';
+            section.style.display = 'block'; grid.innerHTML = '';
             favs.forEach(id => {
-                const ch = RADIO_CHANNELS[id];
-                if (!ch) return;
-                const item = document.createElement('div');
-                item.className = 'media-item';
-                item.dataset.nome = ch.label.toLowerCase();
-                const btn = document.createElement('button');
-                btn.className = 'radio-btn';
+                const ch = RADIO_CHANNELS[id]; if (!ch) return;
+                const item = document.createElement('div'); item.className = 'media-item'; item.dataset.nome = ch.label.toLowerCase();
+                const btn = document.createElement('button'); btn.className = 'radio-btn';
                 btn.innerHTML = '<span class="icon">⭐</span><span class="label"><span class="name">' + ch.label + '</span><small>Favorito</small><span class="status" id="status-fav-' + id + '"></span></span>';
                 btn.onclick = () => playChannel(id, btn, 'status-fav-' + id);
-                const favBtn = document.createElement('button');
-                favBtn.className = 'fav-btn active';
-                favBtn.textContent = '★';
-                favBtn.onclick = () => toggleFav(favBtn, id);
-                item.appendChild(btn);
-                item.appendChild(favBtn);
-                grid.appendChild(item);
+                const favBtn = document.createElement('button'); favBtn.className = 'fav-btn active'; favBtn.textContent = '★'; favBtn.onclick = () => toggleFav(favBtn, id);
+                item.appendChild(btn); item.appendChild(favBtn); grid.appendChild(item);
             });
         }
         function sincronizarEstrelas() {
             const favs = carregarFavoritos();
             document.querySelectorAll('.fav-btn').forEach(btn => {
-                const onclick = btn.getAttribute('onclick') || '';
-                const match = onclick.match(/'([^']+)'/);
-                if (match && match[1]) {
-                    if (favs.includes(match[1])) {
-                        btn.textContent = '★';
-                        btn.classList.add('active');
-                    } else {
-                        btn.textContent = '☆';
-                        btn.classList.remove('active');
-                    }
-                }
+                const onclick = btn.getAttribute('onclick') || ''; const match = onclick.match(/'([^']+)'/);
+                if (match && match[1]) { if (favs.includes(match[1])) { btn.textContent = '★'; btn.classList.add('active'); } else { btn.textContent = '☆'; btn.classList.remove('active'); } }
             });
         }
-
-        // ==================== BUSCA ====================
         function filtrarRadios(termo) {
-            const t = termo.trim().toLowerCase();
-            const clearBtn = document.getElementById('search-clear');
+            const t = termo.trim().toLowerCase(); const clearBtn = document.getElementById('search-clear');
             clearBtn.classList.toggle('visible', t.length > 0);
-            document.querySelectorAll('.media-item').forEach(item => {
-                const nome = item.dataset.nome || '';
-                item.style.display = (!t || nome.includes(t)) ? '' : 'none';
-            });
+            document.querySelectorAll('.media-item').forEach(item => { const nome = item.dataset.nome || ''; item.style.display = (!t || nome.includes(t)) ? '' : 'none'; });
             document.querySelectorAll('.section[data-section]').forEach(sec => {
                 if (sec.id === 'section-favoritos') return;
-                const visiveis = Array.from(sec.querySelectorAll('.media-item'))
-                    .filter(i => i.style.display !== 'none').length;
-                if (t && visiveis === 0) sec.classList.add('hidden');
-                else sec.classList.remove('hidden');
+                const visiveis = Array.from(sec.querySelectorAll('.media-item')).filter(i => i.style.display !== 'none').length;
+                if (t && visiveis === 0) sec.classList.add('hidden'); else sec.classList.remove('hidden');
             });
         }
-        function limparBusca() {
-            document.getElementById('search-input').value = '';
-            filtrarRadios('');
-        }
-
-        // ==================== HLS ====================
+        function limparBusca() { document.getElementById('search-input').value = ''; filtrarRadios(''); }
         function loadHlsJs() {
             if (typeof Hls !== 'undefined') return Promise.resolve(Hls);
             if (hlsJsLoadPromise) return hlsJsLoadPromise;
             hlsJsLoadPromise = new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js';
-                script.async = true;
-                script.onload = () => {
-                    if (typeof Hls !== 'undefined') resolve(Hls);
-                    else { hlsJsLoadPromise = null; reject(new Error('Hls não definido')); }
-                };
+                const script = document.createElement('script'); script.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js'; script.async = true;
+                script.onload = () => { if (typeof Hls !== 'undefined') resolve(Hls); else { hlsJsLoadPromise = null; reject(new Error('Hls não definido')); } };
                 script.onerror = () => { hlsJsLoadPromise = null; reject(new Error('Falha HLS.js')); };
                 document.head.appendChild(script);
             });
             return hlsJsLoadPromise;
         }
-        function urlNeedsHls(url) {
-            return typeof url === 'string' && (url.indexOf('.m3u8') >= 0 || url.toLowerCase().indexOf('mpegurl') >= 0);
-        }
-
-        // ==================== PLAYER ====================
+        function urlNeedsHls(url) { return typeof url === 'string' && (url.indexOf('.m3u8') >= 0 || url.toLowerCase().indexOf('mpegurl') >= 0); }
         function cleanupRadio() {
-            if (hlsInstance) {
-                try { hlsInstance.stopLoad(); } catch(e) {}
-                try { hlsInstance.detachMedia(); } catch(e) {}
-                try { hlsInstance.destroy(); } catch(e) {}
-                hlsInstance = null;
-            }
-            if (radioAudio) {
-                try {
-                    radioAudio.onerror = null;
-                    radioAudio.onplaying = null;
-                    radioAudio.pause();
-                    radioAudio.removeAttribute('src');
-                    radioAudio.load();
-                } catch(e) {}
-                radioAudio = null;
-            }
+            if (hlsInstance) { try { hlsInstance.stopLoad(); } catch(e) {} try { hlsInstance.detachMedia(); } catch(e) {} try { hlsInstance.destroy(); } catch(e) {} hlsInstance = null; }
+            if (radioAudio) { try { radioAudio.onerror = null; radioAudio.onplaying = null; radioAudio.pause(); radioAudio.removeAttribute('src'); radioAudio.load(); } catch(e) {} radioAudio = null; }
             radioPlaying = false;
         }
         function updateMiniPlayer(title, isPaused) {
-            const mini = document.getElementById('mini-player');
-            const dot = document.getElementById('playing-dot');
-            const btn = document.getElementById('btn-play-pause');
-            const titleEl = document.getElementById('mini-title');
+            const mini = document.getElementById('mini-player'); const dot = document.getElementById('playing-dot'); const btn = document.getElementById('btn-play-pause'); const titleEl = document.getElementById('mini-title');
             if (!mini) return;
             if (!currentChannelId) { mini.classList.remove('visible'); return; }
-            mini.classList.add('visible');
-            titleEl.textContent = title || currentChannelId;
-            if (isPaused) { dot.classList.add('paused'); btn.textContent = '▶'; }
-            else { dot.classList.remove('paused'); btn.textContent = '❚❚'; }
+            mini.classList.add('visible'); titleEl.textContent = title || currentChannelId;
+            if (isPaused) { dot.classList.add('paused'); btn.textContent = '▶'; } else { dot.classList.remove('paused'); btn.textContent = '❚❚'; }
         }
-        function setStatus(id, text) {
-            const el = document.getElementById('status-' + id);
-            if (el) el.textContent = text;
-        }
-
+        function setStatus(id, text) { const el = document.getElementById('status-' + id); if (el) el.textContent = text; }
         function playChannel(channelId, btnEl, statusIdOverride) {
-            const channel = RADIO_CHANNELS[channelId];
-            if (!channel) return;
-            if (currentChannelId === channelId && radioPlaying) {
-                togglePlayPause();
-                return;
-            }
-            cleanupRadio();
-            currentChannelId = channelId;
-            currentChannelLabel = channel.label;
-            const myReqId = ++radioRequestId;
-            let urlIndex = 0;
-            const statusId = statusIdOverride || channelId;
-
+            const channel = RADIO_CHANNELS[channelId]; if (!channel) return;
+            if (currentChannelId === channelId && radioPlaying) { togglePlayPause(); return; }
+            cleanupRadio(); currentChannelId = channelId; currentChannelLabel = channel.label;
+            const myReqId = ++radioRequestId; let urlIndex = 0; const statusId = statusIdOverride || channelId;
             document.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('playing', 'error'));
             if (btnEl) btnEl.classList.add('playing');
-            setStatus(statusId, 'Conectando...');
-            updateMiniPlayer('Conectando… ' + channel.label, false);
-
+            setStatus(statusId, 'Conectando...'); updateMiniPlayer('Conectando… ' + channel.label, false);
             const handleError = () => {
                 if (myReqId !== radioRequestId) return;
-                if (urlIndex + 1 < channel.urls.length) {
-                    urlIndex++;
-                    setTimeout(tryNextUrl, 400);
-                } else {
-                    setStatus(statusId, 'Indisponível');
-                    if (btnEl) { btnEl.classList.remove('playing'); btnEl.classList.add('error'); }
-                    updateMiniPlayer('Indisponível: ' + channel.label, true);
-                    radioPlaying = false;
-                }
+                if (urlIndex + 1 < channel.urls.length) { urlIndex++; setTimeout(tryNextUrl, 400); }
+                else { setStatus(statusId, 'Indisponível'); if (btnEl) { btnEl.classList.remove('playing'); btnEl.classList.add('error'); } updateMiniPlayer('Indisponível: ' + channel.label, true); radioPlaying = false; }
             };
-            const onPlaySuccess = () => {
-                if (myReqId !== radioRequestId) return;
-                radioPlaying = true;
-                setStatus(statusId, '✅ Tocando');
-                updateMiniPlayer(channel.label, false);
-            };
-
+            const onPlaySuccess = () => { if (myReqId !== radioRequestId) return; radioPlaying = true; setStatus(statusId, '✅ Tocando'); updateMiniPlayer(channel.label, false); };
             function tryNextUrl() {
                 if (myReqId !== radioRequestId) return;
                 if (urlIndex >= channel.urls.length) { handleError(); return; }
-                const url = channel.urls[urlIndex];
-                const needsHls = channel.needsHls || urlNeedsHls(url);
+                const url = channel.urls[urlIndex]; const needsHls = channel.needsHls || urlNeedsHls(url);
                 setStatus(statusId, 'Tentando ' + (urlIndex + 1) + '/' + channel.urls.length + '...');
-
                 if (needsHls) {
                     loadHlsJs().then(HlsLib => {
                         if (myReqId !== radioRequestId) return;
                         if (!HlsLib.isSupported()) { handleError(); return; }
-                        radioAudio = new Audio();
-                        radioAudio.volume = radioVolume;
+                        radioAudio = new Audio(); radioAudio.volume = radioVolume;
                         hlsInstance = new HlsLib({ enableWorker: true, maxBufferLength: 25, maxMaxBufferLength: 50 });
-                        hlsInstance.loadSource(url);
-                        hlsInstance.attachMedia(radioAudio);
-                        hlsInstance.on(HlsLib.Events.MANIFEST_PARSED, () => {
-                            if (myReqId !== radioRequestId) return;
-                            radioAudio.play().then(onPlaySuccess).catch(() => handleError());
-                        });
-                        hlsInstance.on(HlsLib.Events.ERROR, (evt, data) => {
-                            if (data.fatal && myReqId === radioRequestId) {
-                                try { hlsInstance.destroy(); } catch(e) {}
-                                hlsInstance = null;
-                                handleError();
-                            }
-                        });
+                        hlsInstance.loadSource(url); hlsInstance.attachMedia(radioAudio);
+                        hlsInstance.on(HlsLib.Events.MANIFEST_PARSED, () => { if (myReqId !== radioRequestId) return; radioAudio.play().then(onPlaySuccess).catch(() => handleError()); });
+                        hlsInstance.on(HlsLib.Events.ERROR, (evt, data) => { if (data.fatal && myReqId === radioRequestId) { try { hlsInstance.destroy(); } catch(e) {} hlsInstance = null; handleError(); } });
                     }).catch(() => handleError());
                     return;
                 }
-
-                radioAudio = new Audio();
-                radioAudio.volume = radioVolume;
-                const timeout = setTimeout(() => {
-                    if (myReqId === radioRequestId && !radioPlaying) {
-                        cleanupRadio();
-                        handleError();
-                    }
-                }, 8000);
+                radioAudio = new Audio(); radioAudio.volume = radioVolume;
+                const timeout = setTimeout(() => { if (myReqId === radioRequestId && !radioPlaying) { cleanupRadio(); handleError(); } }, 8000);
                 radioAudio.addEventListener('playing', () => { clearTimeout(timeout); onPlaySuccess(); }, { once: true });
                 radioAudio.addEventListener('error', () => { clearTimeout(timeout); handleError(); }, { once: true });
-                try {
-                    radioAudio.src = url;
-                    radioAudio.load();
-                    radioAudio.play().catch(() => { clearTimeout(timeout); handleError(); });
-                } catch(e) { clearTimeout(timeout); handleError(); }
+                try { radioAudio.src = url; radioAudio.load(); radioAudio.play().catch(() => { clearTimeout(timeout); handleError(); }); } catch(e) { clearTimeout(timeout); handleError(); }
             }
             tryNextUrl();
         }
-
-        function togglePlayPause() {
-            if (!radioAudio) return;
-            if (radioAudio.paused) {
-                radioAudio.play();
-                radioPlaying = true;
-                updateMiniPlayer(currentChannelLabel, false);
-            } else {
-                radioAudio.pause();
-                radioPlaying = false;
-                updateMiniPlayer(currentChannelLabel, true);
-            }
-        }
-        function stopRadio() {
-            radioRequestId++;
-            cleanupRadio();
-            currentChannelId = '';
-            currentChannelLabel = '';
-            document.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('playing', 'error'));
-            document.querySelectorAll('[id^="status-"]').forEach(el => el.textContent = '');
-            document.getElementById('mini-player').classList.remove('visible');
-        }
-        function setVolume(v) {
-            radioVolume = parseInt(v, 10) / 100;
-            if (radioAudio) radioAudio.volume = radioVolume;
-            try { localStorage.setItem('radio-vol', v); } catch(e) {}
-        }
-
-        // ==================== URL PERSONALIZADA ====================
+        function togglePlayPause() { if (!radioAudio) return; if (radioAudio.paused) { radioAudio.play(); radioPlaying = true; updateMiniPlayer(currentChannelLabel, false); } else { radioAudio.pause(); radioPlaying = false; updateMiniPlayer(currentChannelLabel, true); } }
+        function stopRadio() { radioRequestId++; cleanupRadio(); currentChannelId = ''; currentChannelLabel = ''; document.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('playing', 'error')); document.querySelectorAll('[id^="status-"]').forEach(el => el.textContent = ''); document.getElementById('mini-player').classList.remove('visible'); }
+        function setVolume(v) { radioVolume = parseInt(v, 10) / 100; if (radioAudio) radioAudio.volume = radioVolume; try { localStorage.setItem('radio-vol', v); } catch(e) {} }
         function playCustomUrl() {
-            const input = document.getElementById('custom-url');
-            const url = (input.value || '').trim();
-            if (!url || !/^https?:\/\//i.test(url)) {
-                alert('Digite uma URL válida começando com http:// ou https://');
-                return;
-            }
-            RADIO_CHANNELS['custom_user'] = {
-                label: 'URL personalizada',
-                needsHls: url.indexOf('.m3u8') >= 0,
-                urls: [url]
-            };
+            const input = document.getElementById('custom-url'); const url = (input.value || '').trim();
+            if (!url || !/^https?:\/\//i.test(url)) { alert('Digite uma URL válida começando com http:// ou https://'); return; }
+            RADIO_CHANNELS['custom_user'] = { label: 'URL personalizada', needsHls: url.indexOf('.m3u8') >= 0, urls: [url] };
             playChannel('custom_user', null, 'custom_user');
         }
-
-        // ==================== SLEEP TIMER ====================
         function setSleepTimer(minutos, btnEl) {
-            cancelSleepTimer();
-            sleepTimerEnd = Date.now() + minutos * 60 * 1000;
+            cancelSleepTimer(); sleepTimerEnd = Date.now() + minutos * 60 * 1000;
             document.querySelectorAll('.timer-btn').forEach(b => b.classList.remove('active'));
             if (btnEl) btnEl.classList.add('active');
-            sleepTimerInterval = setInterval(atualizarTimerStatus, 1000);
-            atualizarTimerStatus();
-            sleepTimerId = setTimeout(() => {
-                stopRadio();
-                cancelSleepTimer();
-                alert('⏰ Sleep timer: rádio desligada.');
-            }, minutos * 60 * 1000);
+            sleepTimerInterval = setInterval(atualizarTimerStatus, 1000); atualizarTimerStatus();
+            sleepTimerId = setTimeout(() => { stopRadio(); cancelSleepTimer(); alert('⏰ Sleep timer: rádio desligada.'); }, minutos * 60 * 1000);
         }
         function cancelSleepTimer() {
             if (sleepTimerId) { clearTimeout(sleepTimerId); sleepTimerId = null; }
             if (sleepTimerInterval) { clearInterval(sleepTimerInterval); sleepTimerInterval = null; }
-            sleepTimerEnd = 0;
-            document.querySelectorAll('.timer-btn').forEach(b => b.classList.remove('active'));
-            const status = document.getElementById('timer-status');
-            status.textContent = '';
-            status.classList.remove('active');
+            sleepTimerEnd = 0; document.querySelectorAll('.timer-btn').forEach(b => b.classList.remove('active'));
+            const status = document.getElementById('timer-status'); status.textContent = ''; status.classList.remove('active');
         }
         function atualizarTimerStatus() {
-            const status = document.getElementById('timer-status');
-            if (!sleepTimerEnd) { status.textContent = ''; return; }
-            const restante = Math.max(0, sleepTimerEnd - Date.now());
-            const min = Math.floor(restante / 60000);
-            const seg = Math.floor((restante % 60000) / 1000);
-            status.textContent = '⏰ Desliga em ' + min + 'm ' + String(seg).padStart(2,'0') + 's';
-            status.classList.add('active');
+            const status = document.getElementById('timer-status'); if (!sleepTimerEnd) { status.textContent = ''; return; }
+            const restante = Math.max(0, sleepTimerEnd - Date.now()); const min = Math.floor(restante / 60000); const seg = Math.floor((restante % 60000) / 1000);
+            status.textContent = '⏰ Desliga em ' + min + 'm ' + String(seg).padStart(2,'0') + 's'; status.classList.add('active');
         }
-
-        // ==================== INICIALIZAÇÃO ====================
         window.addEventListener('DOMContentLoaded', () => {
             const savedVol = localStorage.getItem('radio-vol') || '50';
-            document.getElementById('volume-slider').value = savedVol;
-            radioVolume = parseInt(savedVol, 10) / 100;
-            renderizarFavoritos();
-            sincronizarEstrelas();
+            document.getElementById('volume-slider').value = savedVol; radioVolume = parseInt(savedVol, 10) / 100;
+            renderizarFavoritos(); sincronizarEstrelas();
         });
     </script>
 </body>
