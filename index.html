@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, ">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="theme-color" content="#0a0e1a">
-    <title>Portal de Mídia — v2.12</title>
+    <title>Portal de Mídia — v2.13</title>
 
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%A7%3C/text%3E%3C/svg%3E">
 
@@ -134,7 +134,7 @@
 
     <header>
         <h1>🎧 Portal de Mídia</h1>
-        <span class="version-tag">v2.12 (YouTube interno + Continental restaurada)</span>
+        <span class="version-tag">v2.13 (streams revisados + rádios resilientes)</span>
         <div class="clock-display" id="clock">
             --:--
             <small id="clock-date">Carregando…</small>
@@ -532,17 +532,17 @@
     <script>
         const RADIO_CHANNELS = {
             atlantida_poa: { label: 'Atlântida FM 94.3', needsHls: true, urls: ['https://liverdatlpoa.rbsdirect.com.br/primary/atl_poa.sdp/playlist.m3u8'] },
-            antena1_poa: { label: 'Antena 1', needsHls: false, urls: ['https://antenaone.crossradio.com.br/stream/1', 'https://server3.webradios.com.br:19472/9472'] },
+            antena1_poa: { label: 'Antena 1', needsHls: false, urls: ['https://antenaone.crossradio.com.br/stream/1', 'https://stream.antena1.com.br/stream14', 'https://server3.webradios.com.br:19472/9472'] },
             continental_poa: { label: 'Continental FM 98.3', needsHls: false, urls: ['http://rrdns-continental.webnow.com.br/imprensafm64k.mp3'] },
             salamanca_quarai: { label: 'Salamanca FM 101.3', needsHls: false, urls: ['https://live.paineldj.com.br/proxy/salamancahd?mp=/stream'] },
-            cbn: { label: 'CBN Rio', needsHls: false, urls: ['https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_RJ.mp3'] },
-            bandnews: { label: 'BandNews FM SP', needsHls: false, urls: ['https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.aac'] },
+            cbn: { label: 'CBN Rio', needsHls: true, urls: ['https://26643.live.streamtheworld.com:443/CBN_RJ_ADP/HLS/playlist.m3u8', 'https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_RJ_ADP.m3u8'] },
+            bandnews: { label: 'BandNews FM SP', needsHls: false, urls: ['https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC_SC', 'https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.aac'] },
             
             progressive: { label: 'Progressive House', needsHls: false, urls: ['https://stream.laut.fm/progressive'] },
             trance: { label: 'Trance Vocal', needsHls: false, urls: ['https://stream.laut.fm/trance'] },
             techno: { label: 'Techno Underground', needsHls: false, urls: ['https://stream.laut.fm/techno'] },
             reiki: { label: 'Reiki & Meditação', needsHls: false, urls: ['https://stream.laut.fm/meditation'] },
-            soundscapes: { label: 'Soundscapes Ambient', needsHls: false, urls: ['https://ice1.somafm.com/dronezone-128-mp3'] },
+            soundscapes: { label: 'Soundscapes Ambient', needsHls: false, urls: ['https://ice5.somafm.com/dronezone-128-mp3', 'https://ice6.somafm.com/dronezone-128-mp3'] },
 
             anos80: { label: 'Hits Anos 80', needsHls: false, urls: ['https://stream.laut.fm/80er', 'https://stream.laut.fm/hitradio'] },
             dance90: { label: "Dance 90's", needsHls: false, urls: ['https://stream.laut.fm/eurodance', 'https://stream.laut.fm/clubhits'] },
@@ -551,8 +551,8 @@
             pop: { label: 'Pop Hits', needsHls: false, urls: ['https://stream.laut.fm/pop', 'https://stream.laut.fm/hitradio'] },
             lofi: { label: 'Lofi Beats', needsHls: false, urls: ['https://stream.laut.fm/lofi'] },
             classical: { label: 'Clássica / Foco', needsHls: false, urls: ['https://stream.laut.fm/klassik'] },
-            mpb: { label: 'Chill / Groove', needsHls: false, urls: ['https://ice1.somafm.com/groovesalad-128-mp3'] },
-            paradise: { label: 'Radio Paradise', needsHls: false, urls: ['https://stream.radioparadise.com/aac-128'] }
+            mpb: { label: 'Chill / Groove', needsHls: false, urls: ['https://ice5.somafm.com/groovesalad-128-mp3', 'https://ice6.somafm.com/groovesalad-128-mp3'] },
+            paradise: { label: 'Radio Paradise', needsHls: false, urls: ['https://stream.radioparadise.com/aac-128', 'https://stream-dc1.radioparadise.com/aac-128'] }
         };
 
         // ---------- ESTADO GLOBAL ----------
