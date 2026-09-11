@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="theme-color" content="#0a0e1a">
-    <title>Portal de Mídia — v2.4</title>
+    <title>Portal de Mídia — v2.5</title>
 
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%A7%3C/text%3E%3C/svg%3E">
 
@@ -76,7 +76,7 @@
         .fav-btn:active { transform: scale(0.92); }
         .fav-btn.active { color: #fbbf24; background: rgba(251, 191, 36, 0.15); border-color: rgba(251, 191, 36, 0.4); }
 
-        .delete-btn { width: 52px; min-height: auto; background: rgba(127, 29, 29, 0.4); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 15px; color: #fca5a5; font-size: 1.2em; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
+        .delete-btn { width: 52px; min-height: 65px; background: rgba(127, 29, 29, 0.4); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 15px; color: #fca5a5; font-size: 1.2em; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
         .delete-btn:active { transform: scale(0.92); }
 
         .custom-url-wrap { display: flex; gap: 8px; margin-top: 4px; margin-bottom: 12px; }
@@ -122,7 +122,7 @@
 
     <header>
         <h1>🎧 Portal de Mídia</h1>
-        <span class="version-tag">v2.4 (Fix & Custom Names)</span>
+        <span class="version-tag">v2.5 (Optimized & Secure)</span>
         <div class="clock-display" id="clock">
             --:--
             <small id="clock-date">Carregando…</small>
@@ -135,7 +135,7 @@
     </div>
 
     <!-- SEÇÃO FAVORITOS -->
-    <div class="section" id="section-favoritos" style="display:none;">
+    <div class="section" id="section-favoritos" style="display:none;" data-section="favoritos">
         <h2 class="section-title"><span class="icon">⭐</span> Favoritos</h2>
         <div class="radio-grid" id="favoritos-grid">
             <div class="empty-state">Toque na ☆ de uma rádio para adicionar aqui</div>
@@ -147,12 +147,11 @@
         <h2 class="section-title"><span class="icon">📺</span> YouTube Dinâmico</h2>
         
         <div class="yt-presets">
-            <button class="timer-btn" onclick="loadYouTubeId('jfKfPfyJRdk', 'Lofi Girl', this)">📚 Lofi Girl</button>
-            <button class="timer-btn" onclick="loadYouTubeId('7NOS8R0FPLY', 'Chillhop Beats', this)">🦝 Chillhop</button>
-            <button class="timer-btn" onclick="loadYouTubeId('5qap5aO4i9A', 'Lofi Hip Hop', this)">☕ Lofi Beats</button>
+            <button class="timer-btn" onclick="loadYouTubeId('jfKfPfyJRdk', this)">📚 Lofi Girl</button>
+            <button class="timer-btn" onclick="loadYouTubeId('7NOS8R0FPLY', this)">🦝 Chillhop</button>
+            <button class="timer-btn" onclick="loadYouTubeId('5qap5aO4i9A', this)">☕ Lofi Beats</button>
         </div>
 
-        <!-- Campos para Nome e Link do YouTube -->
         <div class="custom-url-wrap" style="flex-direction: column; gap: 8px; margin-bottom: 15px;">
             <div style="display: flex; gap: 8px;">
                 <input type="text" class="custom-url-input" id="yt-nome" placeholder="Nome do Vídeo ou Canal" style="flex: 0.6;">
@@ -166,7 +165,7 @@
         <div class="video-container">
             <iframe
                 id="yt-player"
-                src="https://www.youtube-nocookie.com/embed/jfKfPfyJRdk?autoplay=1&controls=1&playsinline=1&rel=0"
+                src="https://www.youtube-nocookie.com/embed/jfKfPfyJRdk?controls=1&playsinline=1&rel=0&origin=https%3A%2F%2Fmidia-lac.vercel.app"
                 title="YouTube Player"
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -189,7 +188,6 @@
         <div id="custom-salvos-grid" class="radio-grid" style="margin-top: 15px; display: none;"></div>
     </div>
 
-    <!-- Demais seções de rádios padrão mantidas igual -->
     <div class="section" data-section="portoalegre">
         <h2 class="section-title"><span class="icon">📻</span> Rádios Locais & Notícias</h2>
         <div class="radio-grid">
@@ -478,6 +476,8 @@
     </div>
 
     <script>
+        const YT_ORIGIN = 'https://midia-lac.vercel.app';
+
         const RADIO_CHANNELS = {
             atlantida_poa: { label: 'Atlântida FM 94.3', needsHls: true, urls: ['https://liverdatlpoa.rbsdirect.com.br/primary/atl_poa.sdp/playlist.m3u8'] },
             antena1_poa: { label: 'Antena 1', needsHls: false, urls: ['https://antenaone.crossradio.com.br/stream/1', 'https://server3.webradios.com.br:19472/9472'] },
@@ -552,7 +552,7 @@
                 });
             } else { radioGrid.style.display = 'none'; }
 
-            // YouTube Customizados (Com Nome Customizado e Miniatura)
+            // YouTube Customizados
             const ytGrid = document.getElementById('yt-salvos-grid');
             ytGrid.innerHTML = '';
             if (dados.youtube.length > 0) {
@@ -562,7 +562,7 @@
                     const div = document.createElement('div');
                     div.className = 'media-item';
                     div.innerHTML = `
-                        <button class="radio-btn" onclick="loadYouTubeId('${video.id}', '${video.titulo}', this)">
+                        <button class="radio-btn" onclick="loadYouTubeId('${video.id}', this)">
                             <img src="${thumbUrl}" class="thumb" alt="Thumb">
                             <span class="label">
                                 <span class="name">${video.titulo}</span>
@@ -603,7 +603,7 @@
                 document.getElementById('yt-nome').value = '';
                 document.getElementById('yt-input').value = '';
                 renderCanaisSalvos();
-                loadYouTubeId(videoId, tituloVid, null);
+                loadYouTubeId(videoId, null);
             } else { alert('Por favor, cole um link válido do YouTube.'); }
         }
 
@@ -616,10 +616,12 @@
             renderCanaisSalvos();
         }
 
-        function loadYouTubeId(id, titulo, btnEl = null) {
-            document.getElementById('yt-player').src = "https://www.youtube-nocookie.com/embed/" + id + "?autoplay=1&controls=1&playsinline=1&rel=0";
-            document.querySelectorAll('.yt-presets button, #yt-salvos-grid button').forEach(b => b.classList.remove('active-yt'));
-            if(btnEl) btnEl.classList.add('active-yt');
+        function loadYouTubeId(id, btnEl = null) {
+            document.getElementById('yt-player').src = 
+                "https://www.youtube-nocookie.com/embed/" + id + 
+                "?controls=1&playsinline=1&rel=0&autoplay=1&origin=" + encodeURIComponent(YT_ORIGIN);
+            document.querySelectorAll('.yt-presets button, #yt-salvos-grid button').forEach(b => b.classList.remove('active', 'playing', 'active-yt'));
+            if (btnEl) btnEl.classList.add('active', 'active-yt');
         }
 
         // ---------- FAVORITOS ----------
@@ -656,13 +658,21 @@
 
         // ---------- AUDIO E BUSCA ----------
         function filtrarRadios(termo) {
-            const t = termo.trim().toLowerCase(); const clearBtn = document.getElementById('search-clear');
+            const t = termo.trim().toLowerCase(); 
+            const clearBtn = document.getElementById('search-clear');
             clearBtn.classList.toggle('visible', t.length > 0);
-            document.querySelectorAll('.media-item').forEach(item => { const nome = item.dataset.nome || ''; item.style.display = (!t || nome.includes(t)) ? '' : 'none'; });
+            
+            document.querySelectorAll('.media-item').forEach(item => { 
+                const nome = item.dataset.nome || ''; 
+                item.style.display = (!t || nome.includes(t)) ? '' : 'none'; 
+            });
+
             document.querySelectorAll('.section[data-section]').forEach(sec => {
-                if (['section-youtube', 'section-timer', 'section-custom'].includes(sec.id)) return;
+                const tipo = sec.dataset.section;
+                if (['youtube', 'timer', 'custom', 'favoritos'].includes(tipo)) return;
                 const visiveis = Array.from(sec.querySelectorAll('.media-item')).filter(i => i.style.display !== 'none').length;
-                if (t && visiveis === 0) sec.classList.add('hidden'); else sec.classList.remove('hidden');
+                if (t && visiveis === 0) sec.classList.add('hidden'); 
+                else sec.classList.remove('hidden');
             });
         }
         function limparBusca() { document.getElementById('search-input').value = ''; filtrarRadios(''); }
