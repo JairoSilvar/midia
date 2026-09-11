@@ -6,7 +6,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <meta content="strict-origin-when-cross-origin" name="referrer"/>
 <meta content="#0a0e1a" name="theme-color"/>
-<title>Portal de Mídia — v2.21</title>
+<title>Portal de Mídia — v2.22</title>
 <link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%A7%3C/text%3E%3C/svg%3E" rel="icon" type="image/svg+xml"/>
 <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -104,7 +104,7 @@
         .diag-grid strong { color:#e2e8f0; overflow-wrap:anywhere; font-weight:600; }
         .secondary-action { background:rgba(51,65,85,.75); border:1px solid rgba(255,255,255,.1); }
         
-        .yt-presets { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+        .yt-presets { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin-bottom:15px; }
         .timer-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
         .timer-btn { flex: 1 1 30%; min-width: 100px; padding: 12px 8px; background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; color: #e2e8f0; font-size: 0.85em; font-weight: 600; cursor: pointer; text-align: center; font-family: inherit; transition: all 0.15s; }
         .timer-btn:active { transform: scale(0.96); }
@@ -133,7 +133,6 @@
         .cast-action.connected { border-color:rgba(34,197,94,.45); background:rgba(20,83,45,.24); color:#bbf7d0; }
         .cast-note { margin:-4px 0 12px; color:#64748b; font-size:.72em; line-height:1.35; text-align:center; }
         .cast-action[disabled] { opacity:.55; cursor:default; }
-        .yt-presets { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
         .yt-presets .timer-btn { min-width:0; width:100%; }
         .custom-url-wrap, .custom-url-wrap > div { min-width:0; max-width:100%; }
         .custom-url-input, .custom-url-btn, select.custom-url-input { min-width:0 !important; max-width:100%; }
@@ -168,45 +167,13 @@
         }
 
 
-
-        /* Fallbacks de espaçamento para navegadores sem gap em flex */
-        .radio-grid > .media-item + .media-item { margin-top: 10px; }
-        .media-item > .fav-btn,
-        .media-item > .delete-btn { margin-left: 8px; }
-        .timer-wrap > .timer-btn { margin: 4px; }
-        .yt-presets > .timer-btn { margin: 4px; }
-        .custom-url-wrap > * + * { margin-top: 8px; }
-        @supports (gap: 1px) {
-            .radio-grid > .media-item + .media-item { margin-top: 0; }
-            .media-item > .fav-btn,
-            .media-item > .delete-btn { margin-left: 0; }
-            .timer-wrap > .timer-btn { margin: 0; }
-            .yt-presets > .timer-btn { margin: 0; }
-            .custom-url-wrap > * + * { margin-top: 0; }
-        }
-
-        .backup-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
-        .backup-wrap .timer-btn { flex: 1 1 40%; min-width: 120px; }
-        .backup-note { margin-top: 10px; font-size: 0.75em; color: #64748b; text-align: center; line-height: 1.4; }
-        .yt-activate-wrap {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 12px; padding: 28px 16px; margin-bottom: 12px;
-            border-radius: 14px; background: rgba(15, 23, 42, 0.55);
-            border: 1px dashed rgba(148, 163, 184, 0.25); text-align: center;
-        }
-        .yt-activate-wrap[hidden] { display: none !important; }
-        .yt-activate-wrap p { margin: 0; color: #94a3b8; font-size: 0.88em; max-width: 420px; line-height: 1.45; }
-        .yt-activate-btn {
-            padding: 12px 22px; background: linear-gradient(135deg, #8b5cf6, #ec4899);
-            border: none; border-radius: 12px; color: #fff; font-weight: 700;
-            font-size: 0.95em; cursor: pointer; font-family: inherit;
-        }
-        .yt-activate-btn:active { transform: scale(0.96); }
-
         html.lite-mode body { background-image: none; background-attachment: scroll; }
         html.lite-mode header, html.lite-mode .mini-player { backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: 0 4px 12px rgba(0,0,0,.35); }
-        html.lite-mode .section { box-shadow: none; }
-        html.lite-mode .radio-btn, html.lite-mode .fav-btn, html.lite-mode .delete-btn, html.lite-mode .timer-btn { transition: none; }
+        html.lite-mode .section { box-shadow: none; background: rgba(15,23,42,.88); }
+        html.lite-mode header { background: #0a0e1a; }
+        html.lite-mode .radio-btn, html.lite-mode .fav-btn, html.lite-mode .delete-btn, html.lite-mode .timer-btn { transition: none; box-shadow: none; }
+        html.lite-mode .radio-btn.playing, html.lite-mode .radio-btn.active-yt { box-shadow: none; }
+        html.lite-mode .playing-dot { animation: none; }
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
         }
@@ -216,9 +183,9 @@
 <body>
 <header>
 <h1>🎧 Portal de Mídia</h1>
-<span class="version-tag">v2.21 (compatibilidade antiga + YouTube sob demanda + backup)</span>
+<span class="version-tag">v2.22 (estabilidade + Chromecast + compatibilidade móvel)</span>
 <div class="clock-display" id="clock">
-            --:--
+            <span id="clock-time">--:--</span>
             <small id="clock-date">Carregando…</small>
 </div>
 </header>
@@ -272,11 +239,7 @@
 </div>
 <div id="yt-salvos-title" style="display:none; margin:4px 0 8px; color:#cbd5e1; font-size:.82em; font-weight:700;">⭐ Meus YouTube salvos</div>
 <div class="radio-grid" id="yt-salvos-grid" style="margin-bottom: 15px; display: none;"></div>
-<div class="yt-activate-wrap" id="yt-activate-wrap">
-<p>O player do YouTube só carrega quando você quiser — isso deixa o portal mais leve em aparelhos antigos.</p>
-<button class="yt-activate-btn" type="button" onclick="ativarYouTubePlayer()">▶ Ativar player do YouTube</button>
-</div>
-<div class="video-container" id="yt-video-container" hidden="">
+<div class="video-container" id="yt-video-container">
 <div aria-label="Player do YouTube" id="yt-player"></div>
 <div class="yt-overlay" hidden="" id="yt-overlay">
 <div class="yt-overlay-icon">▶</div>
@@ -286,8 +249,8 @@
 
 </div>
 </div>
-<div aria-live="polite" class="yt-status ready" id="yt-status">Player em espera — toque em Ativar quando quiser usar o YouTube.</div>
-<details class="yt-diagnostics" hidden="">
+<div aria-live="polite" class="yt-status ready" id="yt-status">Preparando o player…</div>
+<details class="yt-diagnostics">
 <summary>🔎 Diagnóstico técnico</summary>
 <div class="diag-grid">
 <span>ID atual</span><strong id="yt-diag-id">—</strong>
@@ -342,12 +305,12 @@
 <button aria-label="Favoritar" class="fav-btn" onclick="toggleFav(this, 'antena1_poa')">☆</button>
 </div>
 <div class="media-item" data-nome="continental fm 98.3 clássicos 70 80 90 porto alegre">
-<button class="radio-btn radio-disabled" type="button" disabled aria-label="Continental FM indisponível neste player">
+<button class="radio-btn" onclick="playChannel('continental_poa', this)">
 <span class="icon">🎷</span>
 <span class="label">
 <span class="name">Continental FM</span>
-<small>Clássicos 70/80/90 • stream HTTPS indisponível</small>
-<span class="status" id="status-continental_poa">Disponível no site oficial / app</span>
+<small>Clássicos 70/80/90</small>
+<span class="status" id="status-continental_poa"></span>
 </span>
 <span class="freq">98.3</span>
 </button>
@@ -588,23 +551,11 @@
 </div>
 <div class="timer-status" id="timer-status"></div>
 </div>
-
-<div class="section" data-section="backup">
-<h2 class="section-title">
-<div class="left-group"><span class="icon">💾</span> Backup &amp; Dados</div>
-</h2>
-<div class="backup-wrap">
-<button class="timer-btn" type="button" onclick="exportarDadosPortal()">⬇ Exportar backup</button>
-<button class="timer-btn" type="button" onclick="document.getElementById('import-file-input').click()">⬆ Importar backup</button>
-<input id="import-file-input" type="file" accept="application/json,.json" style="display:none" onchange="importarDadosPortal(event)"/>
-</div>
-<div class="backup-note">Salva favoritos, rádios manuais, YouTube salvos e volume. Útil antes de limpar dados do navegador ou trocar de aparelho.</div>
-</div>
-<footer>Portal de Mídia • v2.21 • Criado por Break Troy</footer>
+<footer>Portal de Mídia • v2.22 • Criado por Break Troy</footer>
 <div class="mini-player" id="mini-player">
 <div class="mini-info">
 <div class="playing-dot" id="playing-dot"></div>
-<div class="mini-title" id="mini-title">Nada tocando</div>
+<div class="mini-title" id="mini-title" aria-live="polite">Nada tocando</div>
 </div>
 <div class="mini-controls">
 <button id="btn-play-pause" aria-label="Pausar ou continuar rádio" onclick="togglePlayPause()">▶</button>
@@ -619,7 +570,7 @@
         const RADIO_CHANNELS = {
             atlantida_poa: { label: 'Atlântida FM 94.3', needsHls: true, urls: ['https://liverdatlpoa.rbsdirect.com.br/primary/atl_poa.sdp/playlist.m3u8'] },
             antena1_poa: { label: 'Antena 1', needsHls: false, urls: ['https://antenaone.crossradio.com.br/stream/1'] },
-            continental_poa: { label: 'Continental FM 98.3', needsHls: false, urls: [] },
+            continental_poa: { label: 'Continental FM 98.3', needsHls: false, urls: ['https://rrdns-continental.webnow.com.br/imprensafm64k.mp3'] },
             salamanca_quarai: { label: 'Salamanca FM 101.3', needsHls: false, urls: ['https://live.paineldj.com.br/proxy/salamancahd?mp=/stream'] },
             cbn: { label: 'CBN Rio', needsHls: false, urls: ['https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_RJ_ADP.mp3', 'https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_RJ.mp3', 'https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_RJ_ADP.m3u8'] },
             bandnews: { label: 'BandNews FM SP', needsHls: false, urls: ['https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.mp3', 'https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.aac', 'https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.m3u8'] },
@@ -659,57 +610,6 @@
         let sleepTimerInterval = null;
 
 
-
-        // ---------- POLYFILLS (Chrome antigo / WebView) ----------
-        (function polyfills() {
-            if (!String.prototype.padStart) {
-                String.prototype.padStart = function(targetLength, padString) {
-                    targetLength = targetLength >> 0;
-                    padString = String(typeof padString !== 'undefined' ? padString : ' ');
-                    if (this.length >= targetLength) return String(this);
-                    targetLength = targetLength - this.length;
-                    if (targetLength > padString.length) {
-                        padString += padString.repeat
-                            ? padString.repeat(targetLength / padString.length)
-                            : Array(Math.ceil(targetLength / padString.length) + 1).join(padString);
-                    }
-                    return padString.slice(0, targetLength) + String(this);
-                };
-            }
-            if (!Array.prototype.includes) {
-                Array.prototype.includes = function(searchElement, fromIndex) {
-                    if (this == null) throw new TypeError('Array.prototype.includes called on null or undefined');
-                    var o = Object(this);
-                    var len = parseInt(o.length, 10) || 0;
-                    if (len === 0) return false;
-                    var n = parseInt(fromIndex, 10) || 0;
-                    var k = n >= 0 ? n : Math.max(len + n, 0);
-                    while (k < len) {
-                        if (o[k] === searchElement || (searchElement !== searchElement && o[k] !== o[k])) return true;
-                        k++;
-                    }
-                    return false;
-                };
-            }
-            if (typeof Object.assign !== 'function') {
-                Object.assign = function(target) {
-                    if (target == null) throw new TypeError('Cannot convert undefined or null to object');
-                    var to = Object(target);
-                    for (var i = 1; i < arguments.length; i++) {
-                        var nextSource = arguments[i];
-                        if (nextSource != null) {
-                            for (var nextKey in nextSource) {
-                                if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
-                                    to[nextKey] = nextSource[nextKey];
-                                }
-                            }
-                        }
-                    }
-                    return to;
-                };
-            }
-        }());
-
         // ---------- COMPATIBILIDADE / DESEMPENHO ----------
         function clearElement(el) {
             if (!el) return;
@@ -736,8 +636,8 @@
             const mm = String(agora.getMinutes()).padStart(2, '0');
             const dias = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
             const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-            const clock = document.getElementById('clock');
-            if (clock) clock.firstChild.textContent = hh + ':' + mm;
+            const time = document.getElementById('clock-time');
+            if (time) time.textContent = hh + ':' + mm;
             const date = document.getElementById('clock-date');
             if (date) date.textContent = dias[agora.getDay()] + ', ' + agora.getDate() + ' de ' + meses[agora.getMonth()];
         }
@@ -750,7 +650,6 @@
         let ytApiPromise = null;
         let ytCurrentId = '';
         let ytLoadToken = 0;
-        let ytPlayerActivated = false;
 
         function youtubeErrorMessage(code) {
             const map = {
@@ -949,10 +848,6 @@
             if (typeof autoPlay === 'undefined') autoPlay = false;
             const videoId = extrairYouTubeId(id);
             if (!videoId) { setYouTubeStatus('❌ Link/ID do YouTube inválido.', 'error'); return; }
-            if (!ytPlayerActivated) {
-                ytPlayerActivated = true;
-                showYouTubeUi(true);
-            }
             stopRadio();
             document.querySelectorAll('.yt-presets button, #yt-salvos-grid button').forEach(function(b) { b.classList.remove('active', 'playing', 'active-yt'); });
             if (btnEl) btnEl.classList.add('active', 'active-yt');
@@ -1154,7 +1049,7 @@
             const sections = document.querySelectorAll('.section[data-section]');
             sections.forEach(sec => {
                 const tipo = sec.dataset.section;
-                if (['youtube', 'timer', 'search-results', 'backup'].includes(tipo)) return;
+                if (['youtube', 'timer', 'search-results'].includes(tipo)) return;
                 const items = Array.from(sec.querySelectorAll('.media-item'));
                 items.forEach(item => {
                     const nome = normalizarBusca(item.dataset.nome || '');
@@ -1194,7 +1089,7 @@
             if (hlsJsLoadPromise) return hlsJsLoadPromise;
             hlsJsLoadPromise = new Promise((resolve, reject) => {
                 const script = document.createElement('script');
-                script.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.7.2/dist/hls.min.js';
+                script.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.4.14/dist/hls.min.js';
                 script.async = true;
                 script.onload = () => { if (typeof Hls !== 'undefined') resolve(Hls); else { hlsJsLoadPromise = null; reject(new Error('Hls não definido')); } };
                 script.onerror = () => { hlsJsLoadPromise = null; reject(new Error('Falha ao carregar HLS.js')); };
@@ -1204,139 +1099,353 @@
         }
         function urlNeedsHls(url) { return typeof url === 'string' && (/\.m3u8(?:$|[?#])/i.test(url) || /mpegurl/i.test(url)); }
         function canUseNativeHls(audio) { return !!audio && typeof audio.canPlayType === 'function' && !!audio.canPlayType('application/vnd.apple.mpegurl'); }
-        function cleanupRadio() {
-            if (hlsInstance) { try { hlsInstance.stopLoad(); } catch (_) {} try { hlsInstance.detachMedia(); } catch (_) {} try { hlsInstance.destroy(); } catch (_) {} hlsInstance = null; }
-            // Há navegadores antigos em que uma promessa de play() pode resolver depois
-            // que o próximo stream já começou. Por isso encerramos TODOS os elementos
-            // de áudio criados pelo Portal, e não apenas o último.
-            while (radioAudioPool.length) {
-                const audio = radioAudioPool.pop();
-                try {
-                    audio.__portalInvalid = true;
-                    audio.pause();
-                    audio.removeAttribute('src');
-                    audio.load();
-                } catch (_) {}
+        // ---------- CONTROLADOR DE ÁUDIO / RÁDIO ----------
+        // Uma única sessão de rádio pode existir por vez. Cada tentativa recebe
+        // um token; qualquer promessa/evento antigo perde validade imediatamente.
+        const radioController = {
+            state: 'IDLE',
+            token: 0,
+            timeoutId: 0,
+            channelId: '',
+            audio: null,
+            hls: null
+        };
+
+        function safeStopAudio(audio) {
+            if (!audio) return;
+            try { audio.__portalInvalid = true; } catch (_) {}
+            try { audio.pause(); } catch (_) {}
+            try { audio.removeAttribute('src'); } catch (_) {}
+            try { audio.load(); } catch (_) {}
+        }
+
+        function clearRadioTimeout() {
+            if (radioController.timeoutId) {
+                clearTimeout(radioController.timeoutId);
+                radioController.timeoutId = 0;
             }
+        }
+
+        function destroyHls() {
+            if (!hlsInstance) return;
+            try { hlsInstance.stopLoad(); } catch (_) {}
+            try { hlsInstance.detachMedia(); } catch (_) {}
+            try { hlsInstance.destroy(); } catch (_) {}
+            hlsInstance = null;
+            radioController.hls = null;
+        }
+
+        function cleanupRadio() {
+            clearRadioTimeout();
+            destroyHls();
+            while (radioAudioPool.length) safeStopAudio(radioAudioPool.pop());
             radioAudio = null;
+            radioController.audio = null;
+            radioController.state = 'IDLE';
             radioPlaying = false;
         }
+
         function createRadioAudio() {
             const audio = new Audio();
             audio.preload = 'none';
+            audio.autoplay = false;
             audio.volume = radioVolume;
             audio.__portalInvalid = false;
             radioAudioPool.push(audio);
             return audio;
         }
+
         function invalidateStaleAudio() {
             radioAudioPool.forEach(function(audio) {
-                if (audio !== radioAudio) {
-                    try { audio.__portalInvalid = true; audio.pause(); audio.removeAttribute('src'); audio.load(); } catch (_) {}
-                }
+                if (audio !== radioAudio) safeStopAudio(audio);
             });
         }
+
         function updateMiniPlayer(title, isPaused) {
-            const mini = document.getElementById('mini-player'); const dot = document.getElementById('playing-dot'); const btn = document.getElementById('btn-play-pause'); const titleEl = document.getElementById('mini-title');
+            const mini = document.getElementById('mini-player');
+            const dot = document.getElementById('playing-dot');
+            const btn = document.getElementById('btn-play-pause');
+            const titleEl = document.getElementById('mini-title');
             if (!mini) return;
-            if (!currentChannelId) { mini.classList.remove('visible'); return; }
-            mini.classList.add('visible'); titleEl.textContent = title || currentChannelId;
-            if (isPaused) { dot.classList.add('paused'); btn.textContent = '▶'; } else { dot.classList.remove('paused'); btn.textContent = '❚❚'; }
+            if (!currentChannelId) {
+                mini.classList.remove('visible');
+                return;
+            }
+            mini.classList.add('visible');
+            if (titleEl) titleEl.textContent = title || currentChannelId;
+            if (dot) dot.classList.toggle('paused', !!isPaused);
+            if (btn) btn.textContent = isPaused ? '▶' : '❚❚';
         }
-        function setStatus(id, text) { const el = document.getElementById('status-' + id); if (el) el.textContent = text; }
+
+        function setStatus(id, text) {
+            const el = document.getElementById('status-' + id);
+            if (el) el.textContent = text;
+        }
+
+        function setRadioMediaSession(channel) {
+            if (!('mediaSession' in navigator) || !channel) return;
+            try {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: channel.label,
+                    artist: 'Portal de Mídia'
+                });
+                try { navigator.mediaSession.setActionHandler('play', function() { togglePlayPause(); }); } catch (_) {}
+                try { navigator.mediaSession.setActionHandler('pause', function() { togglePlayPause(); }); } catch (_) {}
+                try { navigator.mediaSession.setActionHandler('stop', stopRadio); } catch (_) {}
+            } catch (_) {}
+        }
+
+        function clearRadioUi() {
+            document.querySelectorAll('.radio-btn').forEach(function(b) {
+                b.classList.remove('playing', 'error');
+            });
+            document.querySelectorAll('[id^="status-"]').forEach(function(el) {
+                el.textContent = '';
+            });
+        }
+
+        function finishRadioError(token, channelId, btnEl, statusId, message) {
+            if (token !== radioController.token) return;
+            radioController.state = 'IDLE';
+            radioPlaying = false;
+            setStatus(statusId, message || 'Indisponível');
+            if (btnEl) {
+                btnEl.classList.remove('playing');
+                btnEl.classList.add('error');
+            }
+            updateMiniPlayer(message || ('Indisponível: ' + channelId), true);
+        }
 
         function playChannel(channelId, btnEl, statusIdOverride) {
-            const channel = RADIO_CHANNELS[channelId]; if (!channel) { setStatus(statusIdOverride || channelId, 'Canal indisponível'); return; }
-            if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') { try { ytPlayer.pauseVideo(); } catch (_) {} }
-            if (currentChannelId === channelId && radioAudio) { togglePlayPause(); return; }
-            cleanupRadio(); currentChannelId = channelId; currentChannelLabel = channel.label;
-            const myReqId = ++radioRequestId; let urlIndex = 0; const statusId = statusIdOverride || channelId;
-            if ('mediaSession' in navigator) {
-                try {
-                    navigator.mediaSession.metadata = new MediaMetadata({ title: channel.label, artist: 'Portal de Mídia', artwork: [] });
-                    try { navigator.mediaSession.setActionHandler('play', function() { if (radioAudio) togglePlayPause(); }); } catch (_) {}
-                    try { navigator.mediaSession.setActionHandler('pause', function() { if (radioAudio) togglePlayPause(); }); } catch (_) {}
-                    try { navigator.mediaSession.setActionHandler('stop', stopRadio); } catch (_) {}
-                } catch (_) {}
+            const channel = RADIO_CHANNELS[channelId];
+            const statusId = statusIdOverride || channelId;
+            if (!channel) {
+                setStatus(statusId, 'Canal indisponível');
+                return;
             }
-            document.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('playing', 'error'));
-            if (btnEl) btnEl.classList.add('playing');
-            setStatus(statusId, 'Conectando…'); updateMiniPlayer('Conectando… ' + channel.label, true);
 
-            const handleError = (message) => {
-                if (myReqId !== radioRequestId) return;
-                if (urlIndex + 1 < channel.urls.length) { cleanupRadio(); urlIndex++; setTimeout(tryNextUrl, 250); return; }
-                setStatus(statusId, message || 'Indisponível');
-                if (btnEl) { btnEl.classList.remove('playing'); btnEl.classList.add('error'); }
-                updateMiniPlayer(message || ('Indisponível: ' + channel.label), true); radioPlaying = false;
-            };
-            const onPlaySuccess = () => { if (myReqId !== radioRequestId) return; radioPlaying = true; setStatus(statusId, '✅ Tocando'); updateMiniPlayer(channel.label, false); };
+            // YouTube e rádio são mutuamente exclusivos.
+            if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
+                try { ytPlayer.pauseVideo(); } catch (_) {}
+            }
+
+            if (currentChannelId === channelId && radioAudio) {
+                togglePlayPause();
+                return;
+            }
+
+            // Invalida imediatamente qualquer tentativa anterior.
+            radioController.token += 1;
+            const token = radioController.token;
+            cleanupRadio();
+            currentChannelId = channelId;
+            currentChannelLabel = channel.label;
+            radioController.channelId = channelId;
+            radioController.state = 'RADIO_LOADING';
+            let urlIndex = 0;
+
+            setRadioMediaSession(channel);
+            clearRadioUi();
+            if (btnEl) btnEl.classList.add('playing');
+            setStatus(statusId, 'Conectando…');
+            updateMiniPlayer('Conectando… ' + channel.label, true);
+
+            function stillCurrent(audio) {
+                return token === radioController.token &&
+                       currentChannelId === channelId &&
+                       radioAudio === audio &&
+                       !audio.__portalInvalid;
+            }
+
+            function failAttempt(message) {
+                if (token !== radioController.token) return;
+                clearRadioTimeout();
+                destroyHls();
+                if (radioAudio) safeStopAudio(radioAudio);
+                radioAudio = null;
+                radioController.audio = null;
+                radioPlaying = false;
+
+                urlIndex += 1;
+                if (urlIndex < channel.urls.length) {
+                    radioController.state = 'RADIO_LOADING';
+                    setStatus(statusId, 'Tentando ' + (urlIndex + 1) + '/' + channel.urls.length + '…');
+                    setTimeout(function() {
+                        if (token === radioController.token) tryNextUrl();
+                    }, 180);
+                    return;
+                }
+                currentRadioUrl = '';
+                finishRadioError(token, channelId, btnEl, statusId, message || 'Indisponível');
+            }
+
+            function markPlaying(audio) {
+                if (!stillCurrent(audio)) return;
+                clearRadioTimeout();
+                radioController.state = 'RADIO_PLAYING';
+                radioPlaying = true;
+                setStatus(statusId, '✅ Tocando');
+                updateMiniPlayer(channel.label, false);
+                currentRadioUrl = audio.__portalUrl || '';
+            }
+
+            function armTimeout(ms, message) {
+                clearRadioTimeout();
+                radioController.timeoutId = setTimeout(function() {
+                    if (token === radioController.token && !radioPlaying) failAttempt(message || 'Tempo esgotado');
+                }, ms);
+            }
 
             function tryNextUrl() {
-                if (myReqId !== radioRequestId) return;
+                if (token !== radioController.token) return;
                 if (urlIndex >= channel.urls.length) {
-                    setStatus(statusId, channelId === 'continental_poa' ? 'Stream HTTPS não disponível' : 'Indisponível');
-                    if (btnEl) { btnEl.classList.remove('playing'); btnEl.classList.add('error'); }
-                    updateMiniPlayer(channel.label, true); radioPlaying = false;
+                    currentRadioUrl = '';
+                    finishRadioError(token, channelId, btnEl, statusId, 'Indisponível');
                     return;
                 }
+
                 const url = channel.urls[urlIndex];
                 currentRadioUrl = url;
+
+                // Nunca tenta HTTP dentro do Portal HTTPS.
                 if (/^http:/i.test(url) && window.location.protocol === 'https:') {
-                    setStatus(statusId, 'Stream HTTP bloqueado pelo HTTPS…');
-                    handleError('Stream HTTP bloqueado');
+                    failAttempt('Stream HTTP bloqueado pelo HTTPS');
                     return;
                 }
+
                 const needsHls = channel.needsHls || urlNeedsHls(url);
                 setStatus(statusId, 'Tentando ' + (urlIndex + 1) + '/' + channel.urls.length + '…');
 
+                const audio = createRadioAudio();
+                audio.__portalUrl = url;
+                radioAudio = audio;
+                radioController.audio = audio;
+                invalidateStaleAudio();
+
+                const onPlaying = function() { markPlaying(audio); };
+                const onError = function() {
+                    if (!stillCurrent(audio)) return;
+                    failAttempt('Erro no stream');
+                };
+                audio.addEventListener('playing', onPlaying, { once: true });
+                audio.addEventListener('error', onError, { once: true });
+
                 if (needsHls) {
-                    const audio = createRadioAudio();
-                    radioAudio = audio;
-                    invalidateStaleAudio();
                     if (canUseNativeHls(audio)) {
-                        const timeout = setTimeout(() => { if (myReqId === radioRequestId && radioAudio === audio && !radioPlaying) { cleanupRadio(); handleError('Tempo esgotado'); } }, 10000);
-                        audio.addEventListener('playing', () => { if (audio.__portalInvalid || radioAudio !== audio) return; clearTimeout(timeout); onPlaySuccess(); }, { once: true });
-                        audio.addEventListener('error', () => { if (audio.__portalInvalid || radioAudio !== audio) return; clearTimeout(timeout); handleError('Erro no stream'); }, { once: true });
-                        try { audio.src = url; audio.load(); audio.play().catch(() => { if (audio.__portalInvalid || radioAudio !== audio) return; clearTimeout(timeout); handleError('Reprodução bloqueada'); }); } catch (_) { clearTimeout(timeout); handleError('Erro no stream'); }
+                        armTimeout(10000, 'Tempo esgotado');
+                        try {
+                            audio.src = url;
+                            audio.load();
+                            const p = audio.play();
+                            if (p && typeof p.catch === 'function') p.catch(function() {
+                                if (stillCurrent(audio)) failAttempt('Reprodução bloqueada');
+                            });
+                        } catch (_) {
+                            failAttempt('Erro no stream');
+                        }
                         return;
                     }
-                    loadHlsJs().then(HlsLib => {
-                        if (myReqId !== radioRequestId || radioAudio !== audio || audio.__portalInvalid) return;
-                        if (!HlsLib.isSupported()) { handleError('HLS não suportado neste navegador'); return; }
-                        hlsInstance = new HlsLib({ enableWorker: !document.documentElement.classList.contains('lite-mode'), maxBufferLength: document.documentElement.classList.contains('lite-mode') ? 12 : 25, maxMaxBufferLength: document.documentElement.classList.contains('lite-mode') ? 24 : 50, lowLatencyMode: false });
-                        hlsInstance.loadSource(url); hlsInstance.attachMedia(audio);
-                        const timeout = setTimeout(() => { if (myReqId === radioRequestId && radioAudio === audio && !radioPlaying) { cleanupRadio(); handleError('Tempo esgotado'); } }, 12000);
-                        hlsInstance.on(HlsLib.Events.MANIFEST_PARSED, () => { if (myReqId !== radioRequestId || radioAudio !== audio || audio.__portalInvalid) return; audio.play().then(() => { if (radioAudio === audio && !audio.__portalInvalid) onPlaySuccess(); }).catch(() => { clearTimeout(timeout); handleError('Reprodução bloqueada'); }); });
-                        hlsInstance.on(HlsLib.Events.ERROR, (_evt, data) => { if (data.fatal && myReqId === radioRequestId && radioAudio === audio && !audio.__portalInvalid) { clearTimeout(timeout); cleanupRadio(); handleError('Erro HLS'); } });
-                    }).catch(() => { if (myReqId === radioRequestId && radioAudio === audio && !audio.__portalInvalid) handleError('Falha ao carregar HLS'); });
+
+                    armTimeout(12000, 'Tempo esgotado');
+                    loadHlsJs().then(function(HlsLib) {
+                        if (!stillCurrent(audio)) return;
+                        if (!HlsLib || !HlsLib.isSupported()) {
+                            failAttempt('HLS não suportado neste navegador');
+                            return;
+                        }
+                        const lite = document.documentElement.classList.contains('lite-mode');
+                        hlsInstance = new HlsLib({
+                            enableWorker: !lite,
+                            maxBufferLength: lite ? 8 : 18,
+                            maxMaxBufferLength: lite ? 16 : 36,
+                            lowLatencyMode: false,
+                            backBufferLength: 0
+                        });
+                        radioController.hls = hlsInstance;
+                        hlsInstance.loadSource(url);
+                        hlsInstance.attachMedia(audio);
+                        hlsInstance.on(HlsLib.Events.MANIFEST_PARSED, function() {
+                            if (!stillCurrent(audio)) return;
+                            try {
+                                const p = audio.play();
+                                if (p && typeof p.then === 'function') {
+                                    p.then(function() { markPlaying(audio); }).catch(function() {
+                                        if (stillCurrent(audio)) failAttempt('Reprodução bloqueada');
+                                    });
+                                }
+                            } catch (_) {
+                                failAttempt('Erro HLS');
+                            }
+                        });
+                        hlsInstance.on(HlsLib.Events.ERROR, function(_evt, data) {
+                            if (!stillCurrent(audio) || !data || !data.fatal) return;
+                            failAttempt('Erro HLS');
+                        });
+                    }).catch(function() {
+                        if (stillCurrent(audio)) failAttempt('Falha ao carregar HLS');
+                    });
                     return;
                 }
 
-                const audio = createRadioAudio();
-                radioAudio = audio;
-                invalidateStaleAudio();
-                const timeout = setTimeout(() => { if (myReqId === radioRequestId && radioAudio === audio && !radioPlaying) { cleanupRadio(); handleError('Tempo esgotado'); } }, 10000);
-                audio.addEventListener('playing', () => { if (audio.__portalInvalid || radioAudio !== audio) return; clearTimeout(timeout); onPlaySuccess(); }, { once: true });
-                audio.addEventListener('error', () => { if (audio.__portalInvalid || radioAudio !== audio) return; clearTimeout(timeout); handleError('Erro no stream'); }, { once: true });
-                try { audio.src = url; audio.load(); audio.play().catch(() => { if (audio.__portalInvalid || radioAudio !== audio) return; clearTimeout(timeout); handleError('Reprodução bloqueada'); }); } catch (_) { clearTimeout(timeout); handleError('Erro no stream'); }
+                armTimeout(10000, 'Tempo esgotado');
+                try {
+                    audio.src = url;
+                    audio.load();
+                    const p = audio.play();
+                    if (p && typeof p.catch === 'function') p.catch(function() {
+                        if (stillCurrent(audio)) failAttempt('Reprodução bloqueada');
+                    });
+                } catch (_) {
+                    failAttempt('Erro no stream');
+                }
             }
+
             tryNextUrl();
         }
+
         function togglePlayPause() {
-            if (!radioAudio) return;
-            if (radioAudio.paused) { radioAudio.play().then(() => { if (!radioAudio || radioAudio.__portalInvalid) return; radioPlaying = true; updateMiniPlayer(currentChannelLabel, false); }).catch(() => {}); }
-            else { radioAudio.pause(); radioPlaying = false; updateMiniPlayer(currentChannelLabel, true); }
+            const audio = radioAudio;
+            if (!audio || audio.__portalInvalid || !currentChannelId) return;
+            if (audio.paused) {
+                radioController.state = 'RADIO_LOADING';
+                const p = audio.play();
+                if (p && typeof p.then === 'function') {
+                    p.then(function() {
+                        if (audio !== radioAudio || audio.__portalInvalid) return;
+                        radioController.state = 'RADIO_PLAYING';
+                        radioPlaying = true;
+                        updateMiniPlayer(currentChannelLabel, false);
+                    }).catch(function() {
+                        if (audio === radioAudio && !audio.__portalInvalid) updateMiniPlayer(currentChannelLabel, true);
+                    });
+                }
+            } else {
+                audio.pause();
+                radioController.state = 'RADIO_PAUSED';
+                radioPlaying = false;
+                updateMiniPlayer(currentChannelLabel, true);
+            }
         }
+
         function stopRadio() {
-            radioRequestId++; cleanupRadio(); currentChannelId = ''; currentChannelLabel = ''; currentRadioUrl = '';
-            document.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('playing', 'error'));
-            document.querySelectorAll('[id^="status-"]').forEach(el => el.textContent = '');
-            const mini = document.getElementById('mini-player'); if (mini) mini.classList.remove('visible');
+            radioController.token += 1;
+            radioController.state = 'RADIO_STOPPING';
+            cleanupRadio();
+            currentChannelId = '';
+            currentChannelLabel = '';
+            currentRadioUrl = '';
+            radioController.channelId = '';
+            clearRadioUi();
+            const mini = document.getElementById('mini-player');
+            if (mini) mini.classList.remove('visible');
+            radioController.state = 'IDLE';
         }
+
         function setVolume(v) {
             radioVolume = Math.max(0, Math.min(1, parseInt(v, 10) / 100));
-            if (radioAudio) radioAudio.volume = radioVolume;
+            radioAudioPool.forEach(function(audio) {
+                try { audio.volume = radioVolume; } catch (_) {}
+            });
             try { localStorage.setItem('radio-vol', String(v)); } catch (_) {}
         }
 
@@ -1499,110 +1608,14 @@
         }
 
         // ---------- INICIALIZAÇÃO ----------
-
-        function showYouTubeUi(activated) {
-            const wrap = document.getElementById('yt-activate-wrap');
-            const container = document.getElementById('yt-video-container');
-            const diag = document.querySelector('.yt-diagnostics');
-            if (wrap) wrap.hidden = !!activated;
-            if (container) container.hidden = !activated;
-            if (diag) diag.hidden = !activated;
-        }
-
-        function ativarYouTubePlayer(autoLoadEntry) {
-            if (typeof autoLoadEntry === 'undefined') autoLoadEntry = true;
-            ytPlayerActivated = true;
-            showYouTubeUi(true);
-            setYTDiag('origin', window.location.origin);
-            setYTDiag('api', 'aguardando');
-            setYouTubeStatus(autoLoadEntry ? 'Carregando player do YouTube…' : 'Player ativado.', autoLoadEntry ? 'loading' : 'ready');
-            if (autoLoadEntry) {
-                loadYouTubeId(YT_ENTRY_ID, null, false);
-            }
-        }
-
-        function ensureYouTubeReady(thenLoadId, btnEl, autoPlay) {
-            if (!ytPlayerActivated) {
-                ativarYouTubePlayer(false);
-            }
-            if (thenLoadId) loadYouTubeId(thenLoadId, btnEl, autoPlay);
-        }
-
-        function exportarDadosPortal() {
-            try {
-                const dados = getDadosSalvos();
-                const payload = {
-                    app: 'Portal de Mídia',
-                    version: 3,
-                    exportedAt: new Date().toISOString(),
-                    favoritos: carregarFavoritos(),
-                    dados: { version: 3, radio: dados.radio || [], youtube: dados.youtube || [] },
-                    volume: localStorage.getItem('radio-vol') || '50'
-                };
-                const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'portal-midia-backup-' + new Date().toISOString().slice(0, 10) + '.json';
-                document.body.appendChild(a);
-                a.click();
-                setTimeout(function() { try { URL.revokeObjectURL(url); a.remove(); } catch (_) {} }, 500);
-            } catch (err) {
-                alert('Não foi possível exportar o backup: ' + (err && err.message ? err.message : err));
-            }
-        }
-
-        function importarDadosPortal(event) {
-            const file = event && event.target && event.target.files && event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function() {
-                try {
-                    const raw = JSON.parse(String(reader.result || '{}'));
-                    const dadosIn = raw.dados || raw;
-                    const radio = Array.isArray(dadosIn.radio) ? dadosIn.radio : [];
-                    const youtube = Array.isArray(dadosIn.youtube) ? dadosIn.youtube : [];
-                    if (!radio.length && !youtube.length && !Array.isArray(raw.favoritos)) {
-                        alert('Arquivo de backup inválido ou vazio.');
-                        return;
-                    }
-                    if (!confirm('Importar backup? Isso substitui favoritos, rádios salvas e YouTube salvos atuais.')) {
-                        event.target.value = '';
-                        return;
-                    }
-                    setDadosSalvos({ version: 3, radio: radio, youtube: youtube });
-                    if (Array.isArray(raw.favoritos)) salvarFavoritos(raw.favoritos);
-                    if (raw.volume != null) {
-                        try { localStorage.setItem('radio-vol', String(raw.volume)); } catch (_) {}
-                        const slider = document.getElementById('volume-slider');
-                        if (slider) slider.value = String(raw.volume);
-                        radioVolume = Math.max(0, Math.min(1, parseInt(raw.volume, 10) / 100));
-                        if (radioAudio) radioAudio.volume = radioVolume;
-                    }
-                    renderCanaisSalvos(); renderFavoritos(); sincronizarEstrelas();
-                    alert('Backup importado com sucesso.');
-                } catch (err) {
-                    alert('Falha ao ler o backup: ' + (err && err.message ? err.message : err));
-                }
-                try { event.target.value = ''; } catch (_) {}
-            };
-            reader.onerror = function() {
-                alert('Não foi possível ler o arquivo.');
-                try { event.target.value = ''; } catch (_) {}
-            };
-            reader.readAsText(file);
-        }
-
         window.addEventListener('DOMContentLoaded', () => {
             const savedVol = localStorage.getItem('radio-vol') || '50';
             document.getElementById('volume-slider').value = savedVol;
             radioVolume = parseInt(savedVol, 10) / 100;
             renderCanaisSalvos(); renderFavoritos(); sincronizarEstrelas();
             setYTDiag('origin', window.location.origin);
-            setYTDiag('api', 'em espera');
-            setYTDiag('state', 'player não ativado');
-            showYouTubeUi(false);
-            // Presets e salvos ativam o player sob demanda via ensureYouTubeReady
+            setYTDiag('api', 'aguardando');
+            setTimeout(function() { loadYouTubeId(YT_ENTRY_ID, null, false); }, document.documentElement.classList.contains('lite-mode') ? 900 : 250);
         });
     </script>
 </body>
