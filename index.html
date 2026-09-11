@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, ">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="theme-color" content="#0a0e1a">
-    <title>Portal de Mídia — v2.13</title>
+    <title>Portal de Mídia — v2.16</title>
 
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%A7%3C/text%3E%3C/svg%3E">
 
@@ -46,6 +46,8 @@
         .search-input::placeholder { color: #64748b; }
         .search-clear { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: rgba(100, 116, 139, 0.3); border: none; color: #94a3b8; width: 32px; height: 32px; border-radius: 50%; font-size: 1em; cursor: pointer; display: none; align-items: center; justify-content: center; }
         .search-clear.visible { display: flex; }
+        .search-result-count { margin: 7px 4px 0; color: #64748b; font-size: 0.78em; min-height: 1.1em; }
+        .search-no-results { padding: 18px 12px; text-align: center; color: #94a3b8; font-size: 0.9em; border: 1px dashed rgba(148,163,184,.18); border-radius: 12px; margin-top: 10px; }
         .section { margin: 18px 14px; padding: 20px 16px; background: linear-gradient(145deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.7) 100%); border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 18px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05); transition: opacity 0.2s; }
         .section.hidden { display: none; }
         .section-title { font-size: 0.9em; font-weight: 700; margin: 0 0 16px; display: flex; align-items: center; justify-content: space-between; color: #f1f5f9; }
@@ -134,7 +136,7 @@
 
     <header>
         <h1>🎧 Portal de Mídia</h1>
-        <span class="version-tag">v2.13 (streams revisados + rádios resilientes)</span>
+        <span class="version-tag">v2.14 (rádios restauradas da versão funcional)</span>
         <div class="clock-display" id="clock">
             --:--
             <small id="clock-date">Carregando…</small>
@@ -142,8 +144,9 @@
     </header>
 
     <div class="search-wrap">
-        <input type="text" class="search-input" id="search-input" placeholder="🔍 Buscar rádio..." oninput="filtrarRadios(this.value)">
-        <button class="search-clear" id="search-clear" onclick="limparBusca()">✕</button>
+        <input type="search" class="search-input" id="search-input" placeholder="🔍 Buscar rádio..." autocomplete="off" spellcheck="false" aria-label="Buscar rádio">
+        <button class="search-clear" id="search-clear" type="button" onclick="limparBusca()" aria-label="Limpar busca">✕</button>
+        <div id="search-result-count" class="search-result-count" aria-live="polite"></div>
     </div>
 
     <!-- SEÇÃO FAVORITOS -->
@@ -164,12 +167,13 @@
         </h2>
 
         <div class="yt-presets" aria-label="Atalhos do YouTube">
+            <button class="timer-btn" type="button" onclick="loadYouTubeId('dQw4w9WgXcQ', this, false)">🎸 Rick Astley — Never Gonna Give You Up</button>
+            <button class="timer-btn" type="button" onclick="loadYouTubeId('HgzGwKwLmgM', this, false)">🎤 Queen — Don't Stop Me Now</button>
             <button class="timer-btn" type="button" onclick="loadYouTubeId('ysUwdy6hHUk', this, false)">🪩 Dance 80/90/2000</button>
             <button class="timer-btn" type="button" onclick="loadYouTubeId('djV11Xbc914', this, false)">🎵 a-ha — Take On Me</button>
             <button class="timer-btn" type="button" onclick="loadYouTubeId('Zi_XLOBDo_Y', this, false)">🎵 Michael Jackson — Billie Jean</button>
             <button class="timer-btn" type="button" onclick="loadYouTubeId('FN7hdDqJftQ', this, false)">🧘 Reiki / Relaxamento</button>
         </div>
-        <div style="margin:-6px 0 12px;color:#94a3b8;font-size:.76em;">Todos os conteúdos são reproduzidos no player interno. Vídeos que não permitem incorporação serão sinalizados aqui, sem abrir outra janela.</div>
 
         <div class="custom-url-wrap" style="flex-direction: column; gap: 8px; margin-bottom: 15px;">
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -186,6 +190,7 @@
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
                 <button class="custom-url-btn" type="button" onclick="adicionarYouTubeSalvo()" style="flex:1; min-width:180px;">💾 Salvar & Testar</button>
+                <button class="custom-url-btn secondary-action" type="button" onclick="openCurrentYouTube()" style="flex:1; min-width:180px;">↗ Abrir no YouTube</button>
             </div>
         </div>
 
@@ -198,7 +203,8 @@
                 <div class="yt-overlay-icon">▶</div>
                 <strong id="yt-overlay-title">Conteúdo indisponível no embed</strong>
                 <span id="yt-overlay-text">O YouTube não permite reproduzir este conteúdo dentro do Portal.</span>
-                <small id="yt-overlay-tip" style="max-width:520px;color:#64748b;line-height:1.4;">O item continua salvo. Escolha outro conteúdo para reproduzir dentro do Portal.</small>
+                <small id="yt-overlay-tip" style="max-width:520px;color:#64748b;line-height:1.4;">O item continua salvo e pode ser aberto diretamente no YouTube.</small>
+                <button class="custom-url-btn" type="button" onclick="openCurrentYouTube()">Abrir no YouTube</button>
             </div>
         </div>
         <div id="yt-status" class="yt-status ready" aria-live="polite">Preparando o player…</div>
@@ -260,11 +266,11 @@
                 <button class="fav-btn" onclick="toggleFav(this, 'antena1_poa')" aria-label="Favoritar">☆</button>
             </div>
             <div class="media-item" data-nome="continental fm 98.3 clássicos 70 80 90 porto alegre">
-                <button class="radio-btn" onclick="abrirContinental()">
+                <button class="radio-btn" onclick="playChannel('continental_poa', this)">
                     <span class="icon">🎷</span>
                     <span class="label">
                         <span class="name">Continental FM</span>
-                        <small>Clássicos 70/80/90 · abrir player oficial</small>
+                        <small>Clássicos 70/80/90</small>
                         <span class="status" id="status-continental_poa"></span>
                     </span>
                     <span class="freq">98.3</span>
@@ -532,27 +538,21 @@
     <script>
         const RADIO_CHANNELS = {
             atlantida_poa: { label: 'Atlântida FM 94.3', needsHls: true, urls: ['https://liverdatlpoa.rbsdirect.com.br/primary/atl_poa.sdp/playlist.m3u8'] },
-            antena1_poa: { label: 'Antena 1', needsHls: false, urls: ['https://antenaone.crossradio.com.br/stream/1', 'https://stream.antena1.com.br/stream14', 'https://server3.webradios.com.br:19472/9472'] },
+            antena1_poa: { label: 'Antena 1', needsHls: false, urls: ['https://antenaone.crossradio.com.br/stream/1', 'https://server3.webradios.com.br:19472/9472'] },
             continental_poa: { label: 'Continental FM 98.3', needsHls: false, urls: ['http://rrdns-continental.webnow.com.br/imprensafm64k.mp3'] },
             salamanca_quarai: { label: 'Salamanca FM 101.3', needsHls: false, urls: ['https://live.paineldj.com.br/proxy/salamancahd?mp=/stream'] },
-            cbn: { label: 'CBN Rio', needsHls: true, urls: ['https://26643.live.streamtheworld.com:443/CBN_RJ_ADP/HLS/playlist.m3u8', 'https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_RJ_ADP.m3u8'] },
-            bandnews: { label: 'BandNews FM SP', needsHls: false, urls: ['https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC_SC', 'https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.aac'] },
-            
-            progressive: { label: 'Progressive House', needsHls: false, urls: ['https://stream.laut.fm/progressive'] },
-            trance: { label: 'Trance Vocal', needsHls: false, urls: ['https://stream.laut.fm/trance'] },
-            techno: { label: 'Techno Underground', needsHls: false, urls: ['https://stream.laut.fm/techno'] },
-            reiki: { label: 'Reiki & Meditação', needsHls: false, urls: ['https://stream.laut.fm/meditation'] },
-            soundscapes: { label: 'Soundscapes Ambient', needsHls: false, urls: ['https://ice5.somafm.com/dronezone-128-mp3', 'https://ice6.somafm.com/dronezone-128-mp3'] },
-
+            cbn: { label: 'CBN Rio', needsHls: false, urls: ['https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_RJ.mp3'] },
+            bandnews: { label: 'BandNews FM SP', needsHls: false, urls: ['https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.aac'] },
             anos80: { label: 'Hits Anos 80', needsHls: false, urls: ['https://stream.laut.fm/80er', 'https://stream.laut.fm/hitradio'] },
             dance90: { label: "Dance 90's", needsHls: false, urls: ['https://stream.laut.fm/eurodance', 'https://stream.laut.fm/clubhits'] },
             dance2000: { label: 'Dance / Club Hits', needsHls: false, urls: ['https://stream.laut.fm/clubhits', 'https://stream.laut.fm/eurodance'] },
             rock: { label: 'Classic Rock', needsHls: false, urls: ['https://stream.laut.fm/classicrock'] },
             pop: { label: 'Pop Hits', needsHls: false, urls: ['https://stream.laut.fm/pop', 'https://stream.laut.fm/hitradio'] },
-            lofi: { label: 'Lofi Beats', needsHls: false, urls: ['https://stream.laut.fm/lofi'] },
-            classical: { label: 'Clássica / Foco', needsHls: false, urls: ['https://stream.laut.fm/klassik'] },
-            mpb: { label: 'Chill / Groove', needsHls: false, urls: ['https://ice5.somafm.com/groovesalad-128-mp3', 'https://ice6.somafm.com/groovesalad-128-mp3'] },
-            paradise: { label: 'Radio Paradise', needsHls: false, urls: ['https://stream.radioparadise.com/aac-128', 'https://stream-dc1.radioparadise.com/aac-128'] }
+            lofi: { label: 'Lofi Beats', needsHls: false, urls: ['https://stream.laut.fm/lofi', 'https://ice1.somafm.com/dronezone-128-mp3'] },
+            classical: { label: 'Clássica / Foco', needsHls: false, urls: ['https://stream.laut.fm/klassik', 'https://ice1.somafm.com/dronezone-128-mp3'] },
+            mpb: { label: 'Chill / Groove', needsHls: false, urls: ['https://ice1.somafm.com/groovesalad-128-mp3', 'https://ice1.somafm.com/beatblender-128-mp3'] },
+            soundscapes: { label: 'Soundscapes Ambient', needsHls: false, urls: ['https://ice1.somafm.com/dronezone-128-mp3'] },
+            paradise: { label: 'Radio Paradise', needsHls: false, urls: ['https://stream.radioparadise.com/aac-128'] }
         };
 
         // ---------- ESTADO GLOBAL ----------
@@ -624,6 +624,15 @@
             const textEl = document.getElementById('yt-overlay-text');
             if (titleEl && title) titleEl.textContent = title;
             if (textEl && text) textEl.textContent = text;
+        }
+
+        function openYouTubeUrl(url) {
+            try { window.open(url, '_blank', 'noopener,noreferrer'); } catch (_) { window.location.href = url; }
+        }
+
+        function openCurrentYouTube() {
+            if (!ytCurrentId) return;
+            openYouTubeUrl('https://www.youtube.com/watch?v=' + encodeURIComponent(ytCurrentId));
         }
 
         function extrairYouTubeId(valor) {
@@ -750,37 +759,27 @@
                         },
                         onError: e => {
                             if (token !== ytLoadToken) return;
-                            const msg = youtubeErrorMessage(e.data);
-                            setYTDiag('error', e.data + ' — ' + msg);
+                            setYTDiag('error', e.data + ' — ' + youtubeErrorMessage(e.data));
                             setYTDiag('state', 'erro');
-                            setYouTubeStatus('❌ ' + msg, 'error');
-
+                            setYouTubeStatus('❌ ' + youtubeErrorMessage(e.data), 'error');
                             if ([101, 150].includes(e.data)) {
                                 setYTOverlay(true, 'Conteúdo bloqueado no embed', 'O proprietário deste vídeo não permite reprodução incorporada.');
-                                const tip = document.getElementById('yt-overlay-tip');
-                                if (tip) tip.textContent = 'O item permanece salvo em “Meus YouTube salvos”. Escolha outro conteúdo para continuar dentro do Portal.';
                                 if (ytCurrentId === YT_ENTRY_ID) {
-                                    setYouTubeStatus('⚠️ O conteúdo inicial foi bloqueado. Carregando o teste técnico interno…', 'loading');
+                                    setYouTubeStatus('⚠️ O vídeo inicial foi bloqueado. Carregando o teste oficial do YouTube…', 'loading');
                                     setTimeout(() => { if (ytCurrentId === YT_ENTRY_ID) loadYouTubeId(YT_TEST_ID, null, false); }, 650);
                                 }
-                            } else if (e.data === 100) {
-                                setYTOverlay(true, 'Vídeo indisponível', 'O vídeo não está disponível para reprodução.');
-                                const tip = document.getElementById('yt-overlay-tip');
-                                if (tip) tip.textContent = 'O item continua salvo. Escolha outro conteúdo disponível para reproduzir dentro do Portal.';
-                                if (ytCurrentId === YT_ENTRY_ID) {
-                                    setYouTubeStatus('⚠️ Conteúdo inicial indisponível. Carregando o teste técnico interno…', 'loading');
-                                    setTimeout(() => { if (ytCurrentId === YT_ENTRY_ID) loadYouTubeId(YT_TEST_ID, null, false); }, 650);
-                                }
-                            } else if (e.data === 153) {
-                                setYTOverlay(true, 'Identificação do embed recusada', 'O YouTube não recebeu o Referer esperado. Verifique o domínio HTTPS e a política de referência do servidor.');
-                                const tip = document.getElementById('yt-overlay-tip');
-                                if (tip) tip.textContent = 'O conteúdo permanece salvo. O Portal não abrirá outra janela automaticamente.';
-                            } else {
-                                setYTOverlay(true, 'Não foi possível reproduzir', msg);
-                                const tip = document.getElementById('yt-overlay-tip');
-                                if (tip) tip.textContent = 'O conteúdo permanece salvo. Tente outro vídeo dentro do Portal.';
                             }
-                            console.error('[Portal YouTube] erro', e.data, msg, 'ID:', id);
+                            const tip = document.getElementById('yt-overlay-tip'); if (tip) tip.textContent = 'O item permanece salvo em “Meus YouTube salvos”. Você pode tentar outro conteúdo.';
+                            else if (e.data === 100) {
+                                setYTOverlay(true, 'Vídeo indisponível', 'O vídeo inicial não está disponível.');
+                                if (ytCurrentId === YT_ENTRY_ID) {
+                                    setYouTubeStatus('⚠️ Conteúdo inicial indisponível. Carregando o teste oficial do YouTube…', 'loading');
+                                    setTimeout(() => { if (ytCurrentId === YT_ENTRY_ID) loadYouTubeId(YT_TEST_ID, null, false); }, 650);
+                                }
+                            }
+                            const tipUnavailable = document.getElementById('yt-overlay-tip'); if (tipUnavailable) tipUnavailable.textContent = 'O item continua salvo; você pode editar/regravar o mesmo link ou substituí-lo por outro.';
+                            else if (e.data === 153) setYTOverlay(true, 'Identificação do embed recusada', 'O YouTube não recebeu o Referer esperado. Verifique o domínio HTTPS e a política de referência do servidor.');
+                            console.error('[Portal YouTube] erro', e.data, youtubeErrorMessage(e.data), 'ID:', id);
                         },
                         onAutoplayBlocked: () => {
                             if (token !== ytLoadToken) return;
@@ -961,22 +960,45 @@
         }
 
         // ---------- BUSCA / HLS / ÁUDIO ----------
+        function normalizarBusca(valor) {
+            return String(valor || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+        }
         function filtrarRadios(termo) {
-            const t = termo.trim().toLowerCase();
+            const t = normalizarBusca(termo);
             const clearBtn = document.getElementById('search-clear');
+            const countEl = document.getElementById('search-result-count');
             clearBtn.classList.toggle('visible', t.length > 0);
-            document.querySelectorAll('.media-item').forEach(item => {
-                const nome = item.dataset.nome || '';
-                item.style.display = (!t || nome.includes(t)) ? '' : 'none';
-            });
+            let total = 0;
             document.querySelectorAll('.section[data-section]').forEach(sec => {
                 const tipo = sec.dataset.section;
-                if (['youtube', 'timer', 'custom', 'favoritos'].includes(tipo)) return;
-                const visiveis = Array.from(sec.querySelectorAll('.media-item')).filter(i => i.style.display !== 'none').length;
-                if (t && visiveis === 0) sec.classList.add('hidden'); else sec.classList.remove('hidden');
+                if (['youtube', 'timer'].includes(tipo)) return;
+                const items = Array.from(sec.querySelectorAll('.media-item'));
+                let visibleInSection = 0;
+                items.forEach(item => {
+                    const nome = normalizarBusca(item.dataset.nome || '');
+                    const texto = normalizarBusca(item.textContent || '');
+                    const match = !t || nome.includes(t) || texto.includes(t);
+                    item.style.display = match ? '' : 'none';
+                    if (match) { visibleInSection++; total++; }
+                });
+                if (t) sec.classList.toggle('hidden', visibleInSection === 0);
+                else sec.classList.remove('hidden');
             });
+            if (countEl) {
+                if (!t) countEl.textContent = '';
+                else if (total === 0) countEl.textContent = 'Nenhuma rádio encontrada.';
+                else countEl.textContent = total + (total === 1 ? ' rádio encontrada.' : ' rádios encontradas.');
+            }
         }
-        function limparBusca() { document.getElementById('search-input').value = ''; filtrarRadios(''); }
+        function limparBusca() {
+            const input = document.getElementById('search-input');
+            if (input) { input.value = ''; input.focus(); }
+            filtrarRadios('');
+        }
+        window.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) searchInput.addEventListener('input', () => filtrarRadios(searchInput.value));
+        });
         function loadHlsJs() {
             if (typeof Hls !== 'undefined') return Promise.resolve(Hls);
             if (hlsJsLoadPromise) return hlsJsLoadPromise;
@@ -991,7 +1013,6 @@
             return hlsJsLoadPromise;
         }
         function urlNeedsHls(url) { return typeof url === 'string' && (/\.m3u8(?:$|[?#])/i.test(url) || /mpegurl/i.test(url)); }
-        function isBlockedMixedContent(url) { return location.protocol === 'https:' && /^http:\/\//i.test(url); }
         function canUseNativeHls(audio) { return !!audio && typeof audio.canPlayType === 'function' && !!audio.canPlayType('application/vnd.apple.mpegurl'); }
         function cleanupRadio() {
             if (hlsInstance) { try { hlsInstance.stopLoad(); } catch (_) {} try { hlsInstance.detachMedia(); } catch (_) {} try { hlsInstance.destroy(); } catch (_) {} hlsInstance = null; }
@@ -1037,7 +1058,6 @@
                 if (myReqId !== radioRequestId) return;
                 if (urlIndex >= channel.urls.length) { handleError('Indisponível'); return; }
                 const url = channel.urls[urlIndex];
-                if (isBlockedMixedContent(url) && channelId !== 'continental_poa') { setStatus(statusId, '⚠️ Stream HTTP bloqueado em HTTPS'); handleError('HTTPS necessário'); return; }
                 const needsHls = channel.needsHls || urlNeedsHls(url);
                 setStatus(statusId, 'Tentando ' + (urlIndex + 1) + '/' + channel.urls.length + '…');
 
