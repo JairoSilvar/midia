@@ -559,14 +559,14 @@
         <div class="timer-status" id="timer-status"></div>
     </div>
 
-    <!-- YOUTUBE — canais de Dance 80/90/2000 + Jazz -->
+    <!-- YOUTUBE — 4 botões com vídeos DIFERENTES -->
     <div class="section" data-section="youtube">
         <h2 class="section-title"><span class="icon">📺</span> YouTube</h2>
 
         <div class="video-container">
             <iframe
                 id="yt-player"
-                src="https://www.youtube-nocookie.com/embed/videoseries?list=PLw-VjHDlEOgvtnnnqWlTqByAtC7tXBg6D&controls=1&playsinline=1&rel=0"
+                src="https://www.youtube-nocookie.com/embed/3fq3w5S3qZg?controls=1&playsinline=1&rel=0"
                 title="YouTube"
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -576,9 +576,10 @@
         </div>
 
         <div class="yt-buttons">
-            <button class="yt-btn" onclick="trocarVideo('PLw-VjHDlEOgvtnnnqWlTqByAtC7tXBg6D', true)">🕺 Dance 80</button>
-            <button class="yt-btn" onclick="trocarVideo('PLw-VjHDlEOgvtnnnqWlTqByAtC7tXBg6D', true)">🪩 Dance 90</button>
-            <button class="yt-btn" onclick="trocarVideo('Dx5qFachd3A', false)">🎷 Jazz</button>
+            <button class="yt-btn" onclick="trocarVideo('3fq3w5S3qZg')">🕺 Dance 80</button>
+            <button class="yt-btn" onclick="trocarVideo('0V2QyG7v0nE')">🪩 Dance 90</button>
+            <button class="yt-btn" onclick="trocarVideo('k85mRPqvMbE')">🎧 Dance 2000</button>
+            <button class="yt-btn" onclick="trocarVideo('Dx5qFachd3A')">🎷 Jazz</button>
         </div>
     </div>
 
@@ -620,18 +621,11 @@
         };
 
         // ==================== YOUTUBE ====================
-        function trocarVideo(id, isPlaylist) {
+        function trocarVideo(videoId) {
             const iframe = document.getElementById('yt-player');
             if (!iframe) return;
-            let src;
-            if (isPlaylist) {
-                src = 'https://www.youtube-nocookie.com/embed/videoseries?list=' + id +
-                      '&controls=1&playsinline=1&rel=0&autoplay=1';
-            } else {
-                src = 'https://www.youtube-nocookie.com/embed/' + id +
-                      '?controls=1&playsinline=1&rel=0&autoplay=1';
-            }
-            iframe.src = src;
+            iframe.src = 'https://www.youtube-nocookie.com/embed/' + videoId +
+                         '?controls=1&playsinline=1&rel=0&autoplay=1';
         }
 
         // ==================== RELÓGIO ====================
