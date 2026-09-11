@@ -559,14 +559,14 @@
         <div class="timer-status" id="timer-status"></div>
     </div>
 
-    <!-- YOUTUBE — toca dentro do portal (com origin do Vercel) -->
+    <!-- YOUTUBE — canais de Dance 80/90/2000 + Jazz -->
     <div class="section" data-section="youtube">
         <h2 class="section-title"><span class="icon">📺</span> YouTube</h2>
 
         <div class="video-container">
             <iframe
                 id="yt-player"
-                src="https://www.youtube-nocookie.com/embed/jfKfPfyJRdk?playsinline=1&rel=0&origin=https://midia-lac.vercel.app"
+                src="https://www.youtube-nocookie.com/embed/videoseries?list=PLw-VjHDlEOgvtnnnqWlTqByAtC7tXBg6D&controls=1&playsinline=1&rel=0"
                 title="YouTube"
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -576,9 +576,9 @@
         </div>
 
         <div class="yt-buttons">
-            <button class="yt-btn" onclick="trocarVideo('jfKfPfyJRdk')">🎧 Lofi Girl</button>
-            <button class="yt-btn" onclick="trocarVideo('5qap5aO4i9A')">🌧️ Lofi Chill</button>
-            <button class="yt-btn" onclick="trocarVideo('Dx5qFachd3A')">🎷 Jazz</button>
+            <button class="yt-btn" onclick="trocarVideo('PLw-VjHDlEOgvtnnnqWlTqByAtC7tXBg6D', true)">🕺 Dance 80</button>
+            <button class="yt-btn" onclick="trocarVideo('PLw-VjHDlEOgvtnnnqWlTqByAtC7tXBg6D', true)">🪩 Dance 90</button>
+            <button class="yt-btn" onclick="trocarVideo('Dx5qFachd3A', false)">🎷 Jazz</button>
         </div>
     </div>
 
@@ -620,12 +620,18 @@
         };
 
         // ==================== YOUTUBE ====================
-        function trocarVideo(videoId) {
+        function trocarVideo(id, isPlaylist) {
             const iframe = document.getElementById('yt-player');
-            if (iframe) {
-                iframe.src = 'https://www.youtube-nocookie.com/embed/' + videoId +
-                             '?playsinline=1&rel=0&autoplay=1&origin=https://midia-lac.vercel.app';
+            if (!iframe) return;
+            let src;
+            if (isPlaylist) {
+                src = 'https://www.youtube-nocookie.com/embed/videoseries?list=' + id +
+                      '&controls=1&playsinline=1&rel=0&autoplay=1';
+            } else {
+                src = 'https://www.youtube-nocookie.com/embed/' + id +
+                      '?controls=1&playsinline=1&rel=0&autoplay=1';
             }
+            iframe.src = src;
         }
 
         // ==================== RELÓGIO ====================
