@@ -13,7 +13,7 @@
 <meta name="application-name" content="Portal de Mídia"/>
 <meta name="description" content="Rádios, YouTube e suas músicas em um player web leve e moderno."/>
 
-<title>Portal de Mídia — v5.1.2</title>
+<title>Portal de Mídia — v5.2</title>
 <link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%A7%3C/text%3E%3C/svg%3E" rel="icon" type="image/svg+xml"/>
 <style>
 
@@ -491,6 +491,90 @@
         html.light-mode .stat-pill b { color: #0f172a !important; }
         html.light-mode .stat-pill span { color: #475569 !important; }
 
+
+        /* ---- Temas de cor (aplicam em html.theme-*) ---- */
+        html.theme-oled {
+            --bg: #000000; --surface: #0a0a0a; --surface-2: #141414; --surface-3: #1f1f1f;
+            --text: #f5f5f5; --muted: #a3a3a3; --faint: #737373; --line: rgba(255,255,255,.10);
+            --accent: #f5f5f5; --accent-2: #a3a3a3; --accent-soft: rgba(255,255,255,.10); --good: #4ade80;
+        }
+        html.theme-oled body {
+            background-color: #000 !important;
+            background-image: none !important;
+        }
+        html.theme-oled header { background: rgba(0,0,0,.92) !important; }
+        html.theme-rose {
+            --bg: #14040c; --surface: #1c0a14; --surface-2: #2a1220; --surface-3: #3b1a2c;
+            --text: #ffe4ef; --muted: #f9a8d4; --faint: #9d174d; --line: rgba(251,113,133,.18);
+            --accent: #fb7185; --accent-2: #e879f9; --accent-soft: rgba(251,113,133,.20); --good: #4ade80;
+        }
+        html.theme-rose body {
+            background-color: #14040c !important;
+            background-image:
+                radial-gradient(ellipse at 20% 0%, rgba(251,113,133,.18), transparent 50%),
+                radial-gradient(ellipse at 90% 100%, rgba(232,121,249,.12), transparent 45%) !important;
+        }
+        html.theme-emerald {
+            --bg: #04140c; --surface: #0a1f14; --surface-2: #123024; --surface-3: #1a3f30;
+            --text: #ecfdf5; --muted: #6ee7b7; --faint: #047857; --line: rgba(52,211,153,.16);
+            --accent: #34d399; --accent-2: #2dd4bf; --accent-soft: rgba(52,211,153,.18); --good: #4ade80;
+        }
+        html.theme-emerald body {
+            background-color: #04140c !important;
+            background-image:
+                radial-gradient(ellipse at 15% 0%, rgba(52,211,153,.16), transparent 48%),
+                radial-gradient(ellipse at 85% 100%, rgba(45,212,191,.10), transparent 45%) !important;
+        }
+        html.theme-ocean {
+            --bg: #040b16; --surface: #0a1628; --surface-2: #12233d; --surface-3: #1a3354;
+            --text: #e0f2fe; --muted: #7dd3fc; --faint: #0369a1; --line: rgba(56,189,248,.16);
+            --accent: #38bdf8; --accent-2: #818cf8; --accent-soft: rgba(56,189,248,.18); --good: #4ade80;
+        }
+        html.theme-ocean body {
+            background-color: #040b16 !important;
+            background-image:
+                radial-gradient(ellipse at 15% 0%, rgba(56,189,248,.16), transparent 48%),
+                radial-gradient(ellipse at 90% 100%, rgba(129,140,248,.12), transparent 45%) !important;
+        }
+        html.theme-amber {
+            --bg: #140e04; --surface: #1f160a; --surface-2: #2e2210; --surface-3: #3d2e14;
+            --text: #fff7ed; --muted: #fdba74; --faint: #c2410c; --line: rgba(251,146,60,.16);
+            --accent: #fb923c; --accent-2: #fbbf24; --accent-soft: rgba(251,146,60,.18); --good: #4ade80;
+        }
+        html.theme-amber body {
+            background-color: #140e04 !important;
+            background-image:
+                radial-gradient(ellipse at 20% 0%, rgba(251,146,60,.16), transparent 48%),
+                radial-gradient(ellipse at 90% 100%, rgba(251,191,36,.10), transparent 45%) !important;
+        }
+        html.theme-slate {
+            --bg: #0c1017; --surface: #141a24; --surface-2: #1c2433; --surface-3: #273246;
+            --text: #e8eef7; --muted: #94a3b8; --faint: #64748b; --line: rgba(148,163,184,.16);
+            --accent: #94a3b8; --accent-2: #cbd5e1; --accent-soft: rgba(148,163,184,.14); --good: #4ade80;
+        }
+        html.theme-slate body {
+            background-color: #0c1017 !important;
+            background-image:
+                radial-gradient(ellipse at 20% 0%, rgba(148,163,184,.10), transparent 50%) !important;
+        }
+        /* Header/botões reagem ao acento do tema */
+        html.theme-rose header, html.theme-emerald header, html.theme-ocean header,
+        html.theme-amber header, html.theme-slate header, html.theme-oled header {
+            background: color-mix(in srgb, var(--bg) 88%, transparent);
+        }
+        html[class*="theme-"] .brand-mark {
+            background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 35%, transparent), color-mix(in srgb, var(--accent-2) 25%, transparent));
+            border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+        }
+        html[class*="theme-"] .radio-btn.playing {
+            border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+            box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 25%, transparent);
+        }
+        html[class*="theme-"] .cta-btn,
+        html[class*="theme-"] .install-banner button:not(.ghost) {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        }
+
         html.visual-premium:not(.lite-mode) body {
             background-image:
                 radial-gradient(ellipse at 20% 0%, rgba(139,92,246,.16) 0%, transparent 45%),
@@ -668,10 +752,10 @@
 <header>
 <div class="header-inner">
 <div class="brand-row">
-<div class="brand-mark" aria-hidden="true">🎧</div>
-<div class="brand-copy">
+<div class="brand-mark" role="button" tabindex="0" title="Voltar ao início" onclick="goHome()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goHome();}" style="cursor:pointer">🎧</div>
+<div class="brand-copy" role="button" tabindex="0" title="Voltar ao início" onclick="goHome()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goHome();}" style="cursor:pointer">
 <h1>Portal de Mídia</h1>
-<span class="version-tag">v5.1.2 • claro legível · rádio estável</span>
+<span class="version-tag">v5.2 • temas OK · logo home · cast YT</span>
 </div>
 <div class="header-actions">
 <button class="header-action" id="theme-menu-btn" type="button" onclick="toggleAppearancePanel()" aria-expanded="false" aria-controls="appearance-panel" title="Aparência">◐</button>
@@ -783,7 +867,7 @@
 
 </h2>
 <button aria-label="Enviar mídia para Chromecast" class="cast-action" id="cast-btn" onclick="castCurrentMedia()" type="button">📺 Enviar para Chromecast</button>
-<div class="cast-note" id="cast-note">O Chromecast pode reproduzir as rádios diretamente. Para YouTube, use o botão Cast disponível no próprio player quando o dispositivo for compatível.</div>
+<div class="cast-note" id="cast-note">Rádio: use este botão. YouTube: o ícone de Cast aparece nos controles do próprio player (Chrome + Chromecast na mesma rede). No iPhone o Cast do YouTube costuma ficar no app YouTube.</div>
 <div aria-label="Atalhos do YouTube" class="yt-presets"><button class="timer-btn" onclick="loadYouTubePlaylist('PLXL_qJWqUmyI','cbVjs8U2rdw', this, true)" title="Playlist Miri Soul" type="button">💜 Miri Soul</button><button class="timer-btn" onclick="loadYouTubeId('PqVzpAz4U1c', this, true)" title="Break Troy" type="button">🎧 Break Troy</button><button class="timer-btn" onclick="loadYouTubeId('odouCACH9-w', this, true)" title="Mais de 1 hora de Eurodance / nostalgia" type="button">🪩 Eurodance — 1 hora</button><button class="timer-btn" onclick="loadYouTubeId('S3QDHD635KE', this, true)" title="Retro / synthwave / nostalgia" type="button">🎵 Anos 80 — 1h+</button><button class="timer-btn" onclick="loadYouTubeId('XExeWpVldDo', this, true)" title="Dance e remixes nonstop" type="button">🔥 80/90/2000 — 1 hora</button><button class="timer-btn" onclick="loadYouTubeId('7KLbc7T4xwY', this, true)" title="Temas cinematográficos / instrumental" type="button">🎬 Temas de Filmes — 1 hora</button><button class="timer-btn" onclick="loadYouTubeId('FN7hdDqJftQ', this, true)" title="Meditação, yoga, Reiki e sono" type="button">🧘 Reiki &amp; Relaxamento — 2 horas</button><button class="timer-btn" onclick="loadYouTubeId('Gx-QTJ9cAko', this, true)" title="Synthwave / foco / relaxamento" type="button">🌌 Ambiente 80s — 1 hora</button></div>
 <details class="yt-add-panel">
 <summary>＋ Adicionar vídeo do YouTube</summary>
@@ -1183,6 +1267,7 @@
 <div class="stat-pill"><b id="stat-tracks">0</b><span>faixas salvas</span></div>
 </div>
 <ul class="changelog" style="margin-top:14px;padding-left:18px;">
+<li><strong>v5.2</strong> — CSS dos temas de cor, logo volta ao início, YouTube em youtube.com (Cast nativo no player).</li>
 <li><strong>v5.1</strong> — temas de cor (Violeta, OLED, Rosa, Verde, Azul, Âmbar, Cinza), visual Premium, presets Miri Soul e Break Troy.</li>
 <li><strong>v5.0</strong> — visualizer, stats, ajuda, mute, fade do timer, favoritos de faixas.</li>
 <li><strong>v4.x</strong> — timer com fade, favoritar faixas, mais estabilidade da fila.</li>
@@ -1192,7 +1277,7 @@
 <p class="lib-mode-note" style="margin-top:12px;">Criado por Break Troy · tudo funciona dentro desta página · sem redirecionar para fora.</p>
 </div>
 
-<footer>Portal de Mídia • v5.1.2 • Criado por Break Troy</footer>
+<footer>Portal de Mídia • v5.2 • Criado por Break Troy</footer>
 
 <div class="mini-player" id="mini-player">
 <div class="mini-info">
@@ -1339,9 +1424,26 @@
                 btn.classList.toggle('active', btn.getAttribute('data-color-theme') === name);
             });
         }
+        function goHome() {
+            try {
+                var hub = document.getElementById('section-hub') || document.getElementById('hub-continue') || document.querySelector('[data-section="hub"]');
+                if (hub && hub.scrollIntoView) hub.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                else window.scrollTo({ top: 0, behavior: 'smooth' });
+                if (history && history.replaceState) history.replaceState(null, '', window.location.pathname + window.location.search);
+                try { setActiveQuickNav(); } catch (_) {}
+            } catch (_) {
+                try { window.scrollTo(0, 0); } catch (__) {}
+            }
+        }
         function setColorTheme(name) {
-            setStoredValue('portal-color-theme', name || 'violet');
-            applyColorTheme(name || 'violet');
+            name = name || 'violet';
+            setStoredValue('portal-color-theme', name);
+            applyColorTheme(name);
+            // feedback visual imediato no painel
+            try {
+                var panel = document.getElementById('appearance-panel');
+                if (panel) panel.setAttribute('data-active-theme', name);
+            } catch (_) {}
         }
         function applyVisualLevel(level) {
             var root = document.documentElement;
@@ -1625,7 +1727,7 @@
                 if (token !== ytLoadToken) return;
                 ytPlayer = new YTLib.Player('yt-player', {
                     videoId: id,
-                    host: 'https://www.youtube-nocookie.com',
+                    host: 'https://www.youtube.com',
                     playerVars: {
                         autoplay: autoPlay ? 1 : 0,
                         controls: 1,
@@ -2661,6 +2763,17 @@
             });
         }
 
+        function goHome() {
+            try {
+                var hub = document.getElementById('section-hub') || document.getElementById('hub-continue') || document.querySelector('[data-section="hub"]');
+                if (hub && hub.scrollIntoView) hub.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                else window.scrollTo({ top: 0, behavior: 'smooth' });
+                if (history && history.replaceState) history.replaceState(null, '', window.location.pathname + window.location.search);
+                try { setActiveQuickNav(); } catch (_) {}
+            } catch (_) {
+                try { window.scrollTo(0, 0); } catch (__) {}
+            }
+        }
         function setColorTheme(name) {
             setStoredValue('portal-color-theme', name);
             applyColorTheme(name);
@@ -2715,7 +2828,7 @@
                 if (token !== ytLoadToken) return;
                 ytPlayer = new YTLib.Player('yt-player', {
                     videoId: id,
-                    host: 'https://www.youtube-nocookie.com',
+                    host: 'https://www.youtube.com',
                     playerVars: {
                         autoplay: autoPlay ? 1 : 0,
                         controls: 1,
