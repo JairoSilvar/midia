@@ -133,7 +133,6 @@
         .cast-action.connected { border-color:rgba(34,197,94,.45); background:rgba(20,83,45,.24); color:#bbf7d0; }
         .cast-note { margin:-4px 0 12px; color:#64748b; font-size:.72em; line-height:1.35; text-align:center; }
         .cast-action[disabled] { opacity:.55; cursor:default; }
-        .yt-presets .timer-btn { min-width:0; width:100%; }
         .custom-url-wrap, .custom-url-wrap > div { min-width:0; max-width:100%; }
         .custom-url-input, .custom-url-btn, select.custom-url-input { min-width:0 !important; max-width:100%; }
         @media (max-width: 768px) {
@@ -167,6 +166,93 @@
         }
 
 
+        /* ---------- v2.23 VISUAL RESPONSIVO ---------- */
+        :root {
+            --bg: #0a0e1a;
+            --surface: rgba(20, 28, 45, .72);
+            --surface-solid: #121a2a;
+            --surface-2: rgba(30, 41, 59, .72);
+            --text: #e8ecf4;
+            --muted: #94a3b8;
+            --faint: #64748b;
+            --line: rgba(255,255,255,.08);
+            --accent: #8b5cf6;
+            --accent-2: #ec4899;
+            --good: #4ade80;
+        }
+        body { background-color:var(--bg); color:var(--text); }
+        header { padding:12px 16px 14px; }
+        .header-inner { width:min(1180px,100%); margin:0 auto; position:relative; }
+        .brand-row { display:flex; align-items:center; gap:11px; max-width:1180px; margin:0 auto; }
+        .brand-mark { width:40px; height:40px; border-radius:13px; display:flex; align-items:center; justify-content:center; flex:0 0 auto; background:linear-gradient(135deg,rgba(139,92,246,.28),rgba(236,72,153,.22)); border:1px solid rgba(167,139,250,.28); font-size:1.15rem; }
+        .brand-copy { min-width:0; text-align:left; flex:1; }
+        .brand-copy h1 { font-size:1.2rem; }
+        .header-actions { display:flex; gap:7px; margin-left:auto; }
+        .header-action { width:40px; height:40px; border:1px solid var(--line); border-radius:12px; background:rgba(30,41,59,.72); color:#cbd5e1; cursor:pointer; font:700 1rem inherit; }
+        .header-action:active { transform:scale(.96); }
+        .appearance-panel { margin:10px auto 0; padding:10px; max-width:560px; border:1px solid var(--line); border-radius:14px; background:rgba(15,23,42,.96); text-align:left; }
+        .appearance-panel[hidden] { display:none; }
+        .appearance-title { color:#f1f5f9; font-size:.78rem; font-weight:800; margin:1px 2px 8px; text-transform:uppercase; letter-spacing:.07em; }
+        .appearance-row { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
+        .appearance-row button { flex:1 1 100px; min-height:38px; border:1px solid var(--line); border-radius:10px; background:rgba(30,41,59,.72); color:#cbd5e1; font:600 .78rem inherit; cursor:pointer; }
+        .appearance-row button.active { border-color:rgba(139,92,246,.6); background:rgba(139,92,246,.18); color:#fff; }
+        .top-now-playing { display:flex; align-items:center; gap:10px; max-width:760px; margin:10px auto 0; padding:9px 10px; border:1px solid rgba(74,222,128,.22); border-radius:14px; background:linear-gradient(90deg,rgba(20,83,45,.28),rgba(30,41,59,.55)); text-align:left; }
+        .top-now-playing[hidden] { display:none; }
+        .top-now-icon { width:30px; height:30px; flex:0 0 auto; display:flex; align-items:center; justify-content:center; border-radius:10px; background:rgba(74,222,128,.12); color:var(--good); font-size:.8rem; }
+        .top-now-copy { min-width:0; flex:1; display:flex; flex-direction:column; }
+        .top-now-copy strong { color:#f1f5f9; font-size:.82rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .top-now-copy span { color:#86efac; font-size:.68rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
+        .top-now-stop { width:34px; height:34px; flex:0 0 auto; border:1px solid rgba(239,68,68,.25); border-radius:10px; background:rgba(127,29,29,.35); color:#fecaca; cursor:pointer; }
+        .quick-nav { width:min(1180px,calc(100% - 28px)); margin:10px auto 0; display:flex; gap:7px; overflow-x:auto; padding:2px 1px 4px; scrollbar-width:none; }
+        .quick-nav::-webkit-scrollbar { display:none; }
+        .quick-nav a { flex:0 0 auto; text-decoration:none; color:#cbd5e1; border:1px solid var(--line); background:rgba(30,41,59,.58); border-radius:999px; padding:8px 11px; font-size:.75rem; font-weight:700; white-space:nowrap; }
+        .quick-nav a:active { transform:scale(.98); }
+        .section { width:min(1180px,calc(100% - 28px)); margin:14px auto; scroll-margin-top:140px; }
+        .radio-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:10px; }
+        .media-item { min-width:0; }
+        .radio-btn { min-width:0; }
+        .yt-presets { grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+        .yt-presets .timer-btn { min-height:76px; padding:12px 13px; display:flex; align-items:center; justify-content:flex-start; text-align:left; line-height:1.25; }
+        .mini-player { max-width:1180px; margin:0 auto; left:12px; right:12px; }
+        .compact-mode .section { padding-top:14px; padding-bottom:14px; }
+        .compact-mode .radio-btn { min-height:54px; padding-top:9px; padding-bottom:9px; }
+        .compact-mode .radio-btn .icon { width:40px; height:40px; }
+        .compact-mode .yt-presets .timer-btn { min-height:60px; }
+        .compact-mode .quick-nav { margin-top:6px; }
+        html.light-mode body { --bg:#f4f7fb; --text:#172033; --muted:#64748b; --faint:#64748b; background-color:#f4f7fb; background-image:radial-gradient(ellipse at top left,rgba(99,102,241,.10),transparent 52%),radial-gradient(ellipse at bottom right,rgba(236,72,153,.07),transparent 52%); }
+        html.light-mode header { background:rgba(244,247,251,.94); border-bottom-color:rgba(15,23,42,.08); }
+        html.light-mode .clock-display { color:#172033; }
+        html.light-mode .search-input, html.light-mode .radio-btn, html.light-mode .fav-btn, html.light-mode .delete-btn, html.light-mode .timer-btn, html.light-mode .custom-url-input, html.light-mode .header-action, html.light-mode .quick-nav a { color:#172033; background:rgba(255,255,255,.86); border-color:rgba(15,23,42,.10); }
+        html.light-mode .section { background:rgba(255,255,255,.78); border-color:rgba(15,23,42,.09); box-shadow:0 8px 24px rgba(15,23,42,.07); }
+        html.light-mode .radio-btn small, html.light-mode .cast-note, html.light-mode .search-result-count, html.light-mode .empty-state { color:#64748b; }
+        html.light-mode .appearance-panel { background:#fff; border-color:rgba(15,23,42,.1); box-shadow:0 12px 30px rgba(15,23,42,.12); }
+        html.light-mode .appearance-row button { background:#f8fafc; color:#334155; border-color:rgba(15,23,42,.1); }
+        html.light-mode .top-now-playing { background:linear-gradient(90deg,rgba(220,252,231,.85),rgba(255,255,255,.9)); }
+        html.light-mode .top-now-copy strong { color:#172033; }
+        html.light-mode .top-now-copy span { color:#15803d; }
+        html.light-mode .mini-player { background:rgba(255,255,255,.96); border-color:rgba(15,23,42,.1); box-shadow:0 16px 34px rgba(15,23,42,.14); }
+        @media (min-width:769px) {
+            body { padding-bottom:126px; }
+            .search-wrap { width:min(1180px,calc(100% - 28px)); margin-left:auto; margin-right:auto; }
+        }
+        @media (max-width:900px) and (min-width:769px) { .yt-presets { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+        @media (max-width:768px) {
+            .brand-copy h1 { font-size:1.05rem; }
+            .brand-mark { width:36px; height:36px; border-radius:11px; }
+            .header-action { width:36px; height:36px; }
+            .top-now-playing { margin-top:8px; }
+            .quick-nav { width:calc(100% - 16px); }
+            .section { width:calc(100% - 16px); }
+            .radio-grid { grid-template-columns:1fr; }
+            .yt-presets { grid-template-columns:repeat(2,minmax(0,1fr)); }
+        }
+        @media (max-width:430px) {
+            .yt-presets { grid-template-columns:1fr; }
+            .appearance-row button { flex-basis:30%; }
+            .top-now-playing { padding:8px; }
+        }
+
+
         html.lite-mode body { background-image: none; background-attachment: scroll; }
         html.lite-mode header, html.lite-mode .mini-player { backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: 0 4px 12px rgba(0,0,0,.35); }
         html.lite-mode .section { box-shadow: none; background: rgba(15,23,42,.88); }
@@ -182,11 +268,43 @@
 <meta content="dark" name="color-scheme"/></head>
 <body>
 <header>
-<h1>🎧 Portal de Mídia</h1>
-<span class="version-tag">v2.22 (estabilidade + Chromecast + compatibilidade móvel)</span>
+<div class="header-inner">
+<div class="brand-row">
+<div class="brand-mark" aria-hidden="true">🎧</div>
+<div class="brand-copy">
+<h1>Portal de Mídia</h1>
+<span class="version-tag">v2.23 • rádios • vídeos • ambientes</span>
+</div>
+<div class="header-actions">
+<button class="header-action" id="theme-menu-btn" type="button" onclick="toggleAppearancePanel()" aria-expanded="false" aria-controls="appearance-panel" title="Aparência">◐</button>
+<button class="header-action" id="compact-btn" type="button" onclick="toggleCompactMode()" aria-pressed="false" title="Modo compacto">▦</button>
+</div>
+</div>
 <div class="clock-display" id="clock">
-            <span id="clock-time">--:--</span>
-            <small id="clock-date">Carregando…</small>
+<span id="clock-time">--:--</span>
+<small id="clock-date">Carregando…</small>
+</div>
+<div class="top-now-playing" id="top-now-playing" hidden>
+<div class="top-now-icon" id="top-now-icon">●</div>
+<div class="top-now-copy">
+<strong id="top-now-title">Nada tocando</strong>
+<span id="top-now-subtitle">Selecione uma rádio para começar</span>
+</div>
+<button class="top-now-stop" type="button" onclick="stopRadio()" aria-label="Parar reprodução">■</button>
+</div>
+<div class="appearance-panel" id="appearance-panel" hidden>
+<div class="appearance-title">Aparência</div>
+<div class="appearance-row" role="group" aria-label="Tema">
+<button type="button" data-theme="auto" onclick="setThemeMode('auto')">Automático</button>
+<button type="button" data-theme="dark" onclick="setThemeMode('dark')">Escuro</button>
+<button type="button" data-theme="light" onclick="setThemeMode('light')">Claro</button>
+</div>
+<div class="appearance-row" role="group" aria-label="Desempenho">
+<button type="button" data-performance="auto" onclick="setPerformanceMode('auto')">⚙ Auto</button>
+<button type="button" data-performance="full" onclick="setPerformanceMode('full')">✨ Completo</button>
+<button type="button" data-performance="lite" onclick="setPerformanceMode('lite')">⚡ Econômico</button>
+</div>
+</div>
 </div>
 </header>
 <div class="search-wrap">
@@ -194,6 +312,14 @@
 <button aria-label="Limpar busca" class="search-clear" id="search-clear" onclick="limparBusca()" type="button">✕</button>
 <div aria-live="polite" class="search-result-count" id="search-result-count"></div>
 </div>
+<nav class="quick-nav" aria-label="Navegação rápida">
+<a href="#section-portoalegre">📻 Rádios</a>
+<a href="#section-eletronica">🚀 Eletrônica</a>
+<a href="#section-foco">🧘 Relaxar</a>
+<a href="#section-dance">🪩 Dance</a>
+<a href="#section-youtube">📺 Vídeos</a>
+<a href="#section-timer">⏰ Timer</a>
+</nav>
 <div class="section search-results-section" data-section="search-results" hidden="" id="search-results-section">
 <h2 class="section-title">
 <div class="left-group"><span class="icon">🔎</span> Resultados da busca</div>
@@ -211,7 +337,7 @@
 </div>
 </div>
 <!-- SEÇÃO: YOUTUBE -->
-<div class="section" data-section="youtube">
+<div class="section" data-section="youtube" id="section-youtube">
 <h2 class="section-title">
 <div class="left-group"><span class="icon">📺</span> YouTube Dinâmico</div>
 
@@ -262,7 +388,7 @@
 </details>
 </div>
 <!-- SEÇÃO: CANAIS PERSONALIZADOS (ÁUDIO) -->
-<div class="section" data-section="custom">
+<div class="section" data-section="custom" id="section-custom">
 <h2 class="section-title">
 <div class="left-group"><span class="icon">🌐</span> Adicionar Stream Manual (Rádio/Áudio)</div>
 </h2>
@@ -275,7 +401,7 @@
 </div>
 <div class="radio-grid" id="custom-salvos-grid" style="margin-top: 15px; display: none;"></div>
 </div>
-<div class="section" data-section="portoalegre">
+<div class="section" data-section="portoalegre" id="section-portoalegre">
 <h2 class="section-title">
 <div class="left-group"><span class="icon">📻</span> Rádios Locais &amp; Notícias</div>
 </h2>
@@ -353,7 +479,7 @@
 </div>
 </div>
 <!-- SEÇÃO: MÚSICA ELETRÔNICA -->
-<div class="section" data-section="eletronica">
+<div class="section" data-section="eletronica" id="section-eletronica">
 <h2 class="section-title">
 <div class="left-group"><span class="icon">🚀</span> Música Eletrônica</div>
 </h2>
@@ -394,7 +520,7 @@
 </div>
 </div>
 <!-- SEÇÃO: BEM ESTAR E FOCO -->
-<div class="section" data-section="foco">
+<div class="section" data-section="foco" id="section-foco">
 <h2 class="section-title">
 <div class="left-group"><span class="icon">🧘</span> Meditação, Reiki &amp; Foco</div>
 </h2>
@@ -446,7 +572,7 @@
 </div>
 </div>
 <!-- SEÇÃO: DANCE E INTERNACIONAIS -->
-<div class="section" data-section="dance">
+<div class="section" data-section="dance" id="section-dance">
 <h2 class="section-title">
 <div class="left-group"><span class="icon">🕺</span> Dance 80 / 90 / 2000</div>
 </h2>
@@ -486,7 +612,7 @@
 </div>
 </div>
 </div>
-<div class="section" data-section="intl">
+<div class="section" data-section="intl" id="section-intl">
 <h2 class="section-title">
 <div class="left-group"><span class="icon">🌍</span> Estilos &amp; Internacionais</div>
 </h2>
@@ -537,7 +663,7 @@
 </div>
 </div>
 </div>
-<div class="section" data-section="timer">
+<div class="section" data-section="timer" id="section-timer">
 <h2 class="section-title">
 <div class="left-group"><span class="icon">⏰</span> Sleep Timer</div>
 </h2>
@@ -551,7 +677,7 @@
 </div>
 <div class="timer-status" id="timer-status"></div>
 </div>
-<footer>Portal de Mídia • v2.22 • Criado por Break Troy</footer>
+<footer>Portal de Mídia • v2.23 • Criado por Break Troy</footer>
 <div class="mini-player" id="mini-player">
 <div class="mini-info">
 <div class="playing-dot" id="playing-dot"></div>
@@ -609,6 +735,80 @@
         let sleepTimerEnd = 0;
         let sleepTimerInterval = null;
 
+
+        // ---------- APARÊNCIA / DESEMPENHO ADAPTATIVOS ----------
+        function getStoredValue(key, fallback) {
+            try { return localStorage.getItem(key) || fallback; } catch (_) { return fallback; }
+        }
+        function setStoredValue(key, value) { try { localStorage.setItem(key, value); } catch (_) {} }
+        function detectLiteHardware() {
+            try {
+                const memory = Number(navigator.deviceMemory || 0);
+                const cores = Number(navigator.hardwareConcurrency || 0);
+                const ua = String(navigator.userAgent || '');
+                const android = ua.match(/Android\s([0-9.]+)/i);
+                const androidVersion = android ? parseFloat(android[1]) : 99;
+                const oldAndroid = Number.isFinite(androidVersion) && androidVersion <= 7;
+                return (!!memory && memory <= 2) || (!!cores && cores <= 2) || oldAndroid;
+            } catch (_) { return false; }
+        }
+        function applyThemeMode(mode) {
+            const root = document.documentElement;
+            root.classList.remove('light-mode');
+            if (mode === 'light') root.classList.add('light-mode');
+            if (mode === 'auto') {
+                try { if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) root.classList.add('light-mode'); } catch (_) {}
+            }
+            document.querySelectorAll('[data-theme]').forEach(function(btn) { btn.classList.toggle('active', btn.dataset.theme === mode); });
+        }
+        function setThemeMode(mode) {
+            if (!['auto','dark','light'].includes(mode)) mode = 'auto';
+            setStoredValue('portal-theme', mode); applyThemeMode(mode);
+        }
+        function setPerformanceMode(mode) {
+            if (!['auto','full','lite'].includes(mode)) mode = 'auto';
+            setStoredValue('portal-performance', mode);
+            const lite = mode === 'lite' || (mode === 'auto' && detectLiteHardware());
+            document.documentElement.classList.toggle('lite-mode', lite);
+            document.querySelectorAll('[data-performance]').forEach(function(btn) { btn.classList.toggle('active', btn.dataset.performance === mode); });
+        }
+        function toggleCompactMode() {
+            const active = document.documentElement.classList.toggle('compact-mode');
+            setStoredValue('portal-compact', active ? '1' : '0');
+            const btn = document.getElementById('compact-btn');
+            if (btn) btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+        }
+        function toggleAppearancePanel() {
+            const panel = document.getElementById('appearance-panel');
+            const btn = document.getElementById('theme-menu-btn');
+            if (!panel) return;
+            panel.hidden = !panel.hidden;
+            if (btn) btn.setAttribute('aria-expanded', panel.hidden ? 'false' : 'true');
+        }
+        function refreshAppearanceControls() {
+            const theme = getStoredValue('portal-theme', 'auto');
+            const perf = getStoredValue('portal-performance', 'auto');
+            document.querySelectorAll('[data-theme]').forEach(function(btn) { btn.classList.toggle('active', btn.dataset.theme === theme); });
+            document.querySelectorAll('[data-performance]').forEach(function(btn) { btn.classList.toggle('active', btn.dataset.performance === perf); });
+            const compactBtn = document.getElementById('compact-btn');
+            if (compactBtn) compactBtn.setAttribute('aria-pressed', document.documentElement.classList.contains('compact-mode') ? 'true' : 'false');
+        }
+        (function initAdaptiveAppearance() {
+            const theme = getStoredValue('portal-theme', 'auto');
+            const perf = getStoredValue('portal-performance', 'auto');
+            applyThemeMode(theme);
+            setPerformanceMode(perf);
+            if (getStoredValue('portal-compact', '0') === '1') {
+                document.documentElement.classList.add('compact-mode');
+                const btn = document.getElementById('compact-btn');
+                if (btn) btn.setAttribute('aria-pressed', 'true');
+            }
+            try {
+                if (window.matchMedia) window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function() {
+                    if (getStoredValue('portal-theme', 'auto') === 'auto') applyThemeMode('auto');
+                });
+            } catch (_) {}
+        }());
 
         // ---------- COMPATIBILIDADE / DESEMPENHO ----------
         function clearElement(el) {
@@ -774,6 +974,7 @@
             setYTOverlay(false);
             const overlayTip = document.getElementById('yt-overlay-tip'); if (overlayTip) overlayTip.textContent = 'O item permanece salvo mesmo se o YouTube bloquear o embed.';
             setYouTubeStatus('Carregando player do YouTube…', 'loading');
+            updateNowPlaying('YouTube', 'Carregando vídeo…', false);
             destroyYouTubePlayer();
             clearElement(container);
 
@@ -803,10 +1004,10 @@
                             if (token !== ytLoadToken) return;
                             const states = { '-1': 'não iniciado', '0': 'encerrado', '1': 'reproduzindo', '2': 'pausado', '3': 'bufferizando', '5': 'em fila' };
                             setYTDiag('state', states[e.data] || String(e.data));
-                            if (e.data === YTLib.PlayerState.PLAYING) { stopRadio(); setYouTubeStatus('✅ Reproduzindo', 'ok'); }
+                            if (e.data === YTLib.PlayerState.PLAYING) { stopRadio(); let ytTitle = 'Vídeo no YouTube'; try { const data = e.target.getVideoData && e.target.getVideoData(); if (data && data.title) ytTitle = data.title; } catch (_) {} updateNowPlaying(ytTitle, 'YouTube • reproduzindo', false); setYouTubeStatus('✅ Reproduzindo', 'ok'); }
                             else if (e.data === YTLib.PlayerState.BUFFERING) setYouTubeStatus('⏳ Bufferizando…', 'loading');
-                            else if (e.data === YTLib.PlayerState.PAUSED) setYouTubeStatus('⏸ Pausado', 'ready');
-                            else if (e.data === YTLib.PlayerState.ENDED) setYouTubeStatus('⏹ Vídeo encerrado', 'ready');
+                            else if (e.data === YTLib.PlayerState.PAUSED) { updateNowPlaying('YouTube', 'Pausado', false); setYouTubeStatus('⏸ Pausado', 'ready'); }
+                            else if (e.data === YTLib.PlayerState.ENDED) { updateNowPlaying('', '', true); setYouTubeStatus('⏹ Vídeo encerrado', 'ready'); }
                             else if (e.data === YTLib.PlayerState.CUED) setYouTubeStatus('Pronto para reproduzir', 'ready');
                         },
                         onError: e => {
@@ -814,6 +1015,7 @@
                             const message = youtubeErrorMessage(e.data);
                             setYTDiag('error', e.data + ' — ' + message);
                             setYTDiag('state', 'erro');
+                            updateNowPlaying('YouTube', 'Erro na reprodução', false);
                             setYouTubeStatus('❌ ' + message, 'error');
                             if (e.data === 100) {
                                 setYTOverlay(true, 'Vídeo indisponível', 'O vídeo foi removido, ficou privado ou não está disponível neste momento.');
@@ -831,6 +1033,7 @@
                         onAutoplayBlocked: () => {
                             if (token !== ytLoadToken) return;
                             setYTDiag('state', 'autoplay bloqueado');
+                            updateNowPlaying('YouTube', 'Aguardando toque no Play', false);
                             setYouTubeStatus('▶ Autoplay bloqueado pelo navegador — clique em Play no YouTube.', 'ready');
                         }
                     }
@@ -1161,6 +1364,17 @@
             });
         }
 
+        function updateNowPlaying(title, subtitle, hidden) {
+            const bar = document.getElementById('top-now-playing');
+            const titleEl = document.getElementById('top-now-title');
+            const subEl = document.getElementById('top-now-subtitle');
+            if (!bar) return;
+            if (hidden || !title) { bar.hidden = true; return; }
+            bar.hidden = false;
+            if (titleEl) titleEl.textContent = title;
+            if (subEl) subEl.textContent = subtitle || 'Tocando agora';
+        }
+
         function updateMiniPlayer(title, isPaused) {
             const mini = document.getElementById('mini-player');
             const dot = document.getElementById('playing-dot');
@@ -1169,12 +1383,14 @@
             if (!mini) return;
             if (!currentChannelId) {
                 mini.classList.remove('visible');
+                updateNowPlaying('', '', true);
                 return;
             }
             mini.classList.add('visible');
             if (titleEl) titleEl.textContent = title || currentChannelId;
             if (dot) dot.classList.toggle('paused', !!isPaused);
             if (btn) btn.textContent = isPaused ? '▶' : '❚❚';
+            updateNowPlaying(currentChannelLabel || title || currentChannelId, isPaused ? 'Pausado' : 'Tocando agora', false);
         }
 
         function setStatus(id, text) {
@@ -1434,6 +1650,7 @@
             currentChannelId = '';
             currentChannelLabel = '';
             currentRadioUrl = '';
+            updateNowPlaying('', '', true);
             radioController.channelId = '';
             clearRadioUi();
             const mini = document.getElementById('mini-player');
@@ -1609,6 +1826,7 @@
 
         // ---------- INICIALIZAÇÃO ----------
         window.addEventListener('DOMContentLoaded', () => {
+            refreshAppearanceControls();
             const savedVol = localStorage.getItem('radio-vol') || '50';
             document.getElementById('volume-slider').value = savedVol;
             radioVolume = parseInt(savedVol, 10) / 100;
