@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="theme-color" content="#0a0e1a">
-    <title>Portal de Mídia — v2.1</title>
+    <title>Portal de Mídia — v2.5</title>
 
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%A7%3C/text%3E%3C/svg%3E">
 
@@ -15,7 +15,7 @@
         body {
             font-family: -apple-system, "Roboto", Arial, sans-serif;
             background: #0a0e1a;
-            background-image: 
+            background-image:
                 radial-gradient(ellipse at top left, rgba(99, 102, 241, 0.12) 0%, transparent 50%),
                 radial-gradient(ellipse at bottom right, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
             background-attachment: fixed;
@@ -54,12 +54,9 @@
         .media-item { display: flex; align-items: stretch; gap: 8px; }
         .radio-btn { flex: 1; display: flex; align-items: center; gap: 14px; padding: 16px; background: linear-gradient(145deg, rgba(51, 65, 85, 0.5), rgba(30, 41, 59, 0.7)); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 15px; color: #f1f5f9; font-size: 1em; font-weight: 600; text-align: left; cursor: pointer; transition: all 0.2s; font-family: inherit; min-height: 70px; position: relative; overflow: hidden; }
         .radio-btn:active { transform: scale(0.98); }
-        
-        /* Adicionado Hover Effect para Desktop */
         @media (hover: hover) {
             .radio-btn:hover { background: linear-gradient(145deg, rgba(71, 85, 105, 0.6), rgba(30, 41, 59, 0.8)); }
         }
-
         .radio-btn.playing { background: linear-gradient(145deg, rgba(139, 92, 246, 0.25), rgba(236, 72, 153, 0.15)); border-color: rgba(139, 92, 246, 0.5); box-shadow: 0 8px 24px -8px rgba(139, 92, 246, 0.4); }
         .radio-btn.error { border-color: rgba(239, 68, 68, 0.5); background: rgba(127, 29, 29, 0.2); }
         .radio-btn .icon { display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 13px; font-size: 1.3em; flex-shrink: 0; background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.2)); border: 1px solid rgba(139, 92, 246, 0.3); }
@@ -102,20 +99,17 @@
         input[type="range"].volume-slider { flex: 1; -webkit-appearance: none; height: 4px; background: rgba(100, 116, 139, 0.4); border-radius: 2px; outline: none; }
         input[type="range"].volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: linear-gradient(135deg, #8b5cf6, #ec4899); border-radius: 50%; border: 2px solid #fff; }
         .empty-state { text-align: center; color: #64748b; font-size: 0.85em; padding: 16px 0; font-style: italic; }
-        
-        /* Oculta slider de volume em Mobile (Celulares geralmente controlam som pelo botão físico) */
         @media (max-width: 768px) {
             .volume-wrap { display: none; }
         }
-
-        footer { text-align: center; padding: 20px; margin-bottom: 20px; font-size: 0.8em; color: #475569; letter-spacing: 0.05em; text-transform: uppercase;}
+        footer { text-align: center; padding: 20px; margin-bottom: 20px; font-size: 0.8em; color: #475569; letter-spacing: 0.05em; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>🎧 Portal de Mídia</h1>
-        <span class="version-tag">v2.1</span>
+        <span class="version-tag">v2.5</span>
         <div class="clock-display" id="clock">
             --:--
             <small id="clock-date">Carregando…</small>
@@ -210,7 +204,6 @@
         </div>
     </div>
 
-    <!-- NOVA SEÇÃO: MÚSICA ELETRÔNICA -->
     <div class="section" data-section="eletronica">
         <h2 class="section-title"><span class="icon">🚀</span> Música Eletrônica</h2>
         <div class="radio-grid">
@@ -250,7 +243,6 @@
         </div>
     </div>
 
-    <!-- SEÇÃO ATUALIZADA: BEM ESTAR E FOCO -->
     <div class="section" data-section="foco">
         <h2 class="section-title"><span class="icon">🧘</span> Meditação, Reiki & Foco</h2>
         <div class="radio-grid">
@@ -407,7 +399,7 @@
         <div class="video-container">
             <iframe
                 id="yt-player"
-                src="https://www.youtube-nocookie.com/embed/jfKfPfyJRdk?controls=1&playsinline=1&rel=0"
+                src="https://www.youtube-nocookie.com/embed/jfKfPfyJRdk?controls=1&playsinline=1&rel=0&origin=https://midia-lac.vercel.app"
                 title="YouTube Player"
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -415,6 +407,9 @@
                 allowfullscreen>
             </iframe>
         </div>
+        <p style="font-size:0.7em; color:#64748b; margin-top:8px; text-align:center;">
+            ℹ️ Se não carregar, abra no app do YouTube. Vídeos ao vivo podem ficar indisponíveis.
+        </p>
     </div>
 
     <div class="section" data-section="timer">
@@ -450,6 +445,8 @@
     </div>
 
     <script>
+        const YT_ORIGIN = 'https://midia-lac.vercel.app';
+
         const RADIO_CHANNELS = {
             atlantida_poa: { label: 'Atlântida FM 94.3', needsHls: true, urls: ['https://liverdatlpoa.rbsdirect.com.br/primary/atl_poa.sdp/playlist.m3u8'] },
             antena1_poa: { label: 'Antena 1', needsHls: false, urls: ['https://antenaone.crossradio.com.br/stream/1', 'https://server3.webradios.com.br:19472/9472'] },
@@ -457,14 +454,11 @@
             salamanca_quarai: { label: 'Salamanca FM 101.3', needsHls: false, urls: ['https://live.paineldj.com.br/proxy/salamancahd?mp=/stream'] },
             cbn: { label: 'CBN Rio', needsHls: false, urls: ['https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_RJ.mp3'] },
             bandnews: { label: 'BandNews FM SP', needsHls: false, urls: ['https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.aac'] },
-            
-            // Novas adições: Eletrônica e Foco
             progressive: { label: 'Progressive House', needsHls: false, urls: ['https://stream.laut.fm/progressive'] },
             trance: { label: 'Trance Vocal', needsHls: false, urls: ['https://stream.laut.fm/trance'] },
             techno: { label: 'Techno Underground', needsHls: false, urls: ['https://stream.laut.fm/techno'] },
             reiki: { label: 'Reiki & Meditação', needsHls: false, urls: ['https://stream.laut.fm/meditation'] },
             soundscapes: { label: 'Soundscapes Ambient', needsHls: false, urls: ['https://ice1.somafm.com/dronezone-128-mp3'] },
-
             anos80: { label: 'Hits Anos 80', needsHls: false, urls: ['https://stream.laut.fm/80er', 'https://stream.laut.fm/hitradio'] },
             dance90: { label: "Dance 90's", needsHls: false, urls: ['https://stream.laut.fm/eurodance', 'https://stream.laut.fm/clubhits'] },
             dance2000: { label: 'Dance / Club Hits', needsHls: false, urls: ['https://stream.laut.fm/clubhits', 'https://stream.laut.fm/eurodance'] },
@@ -527,9 +521,9 @@
             clearBtn.classList.toggle('visible', t.length > 0);
             document.querySelectorAll('.media-item').forEach(item => { const nome = item.dataset.nome || ''; item.style.display = (!t || nome.includes(t)) ? '' : 'none'; });
             document.querySelectorAll('.section[data-section]').forEach(sec => {
-                if (sec.id === 'section-favoritos' || sec.id === 'section-youtube' || sec.id === 'section-timer' || sec.id === 'section-custom') return;
                 const visiveis = Array.from(sec.querySelectorAll('.media-item')).filter(i => i.style.display !== 'none').length;
-                if (t && visiveis === 0) sec.classList.add('hidden'); else sec.classList.remove('hidden');
+                if (t && visiveis === 0 && sec.querySelectorAll('.media-item').length > 0) sec.classList.add('hidden');
+                else sec.classList.remove('hidden');
             });
         }
         function limparBusca() { document.getElementById('search-input').value = ''; filtrarRadios(''); }
@@ -549,6 +543,7 @@
             if (hlsInstance) { try { hlsInstance.stopLoad(); } catch(e) {} try { hlsInstance.detachMedia(); } catch(e) {} try { hlsInstance.destroy(); } catch(e) {} hlsInstance = null; }
             if (radioAudio) { try { radioAudio.onerror = null; radioAudio.onplaying = null; radioAudio.pause(); radioAudio.removeAttribute('src'); radioAudio.load(); } catch(e) {} radioAudio = null; }
             radioPlaying = false;
+            if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'none';
         }
         function updateMiniPlayer(title, isPaused) {
             const mini = document.getElementById('mini-player'); const dot = document.getElementById('playing-dot'); const btn = document.getElementById('btn-play-pause'); const titleEl = document.getElementById('mini-title');
@@ -558,14 +553,13 @@
             if (isPaused) { dot.classList.add('paused'); btn.textContent = '▶'; } else { dot.classList.remove('paused'); btn.textContent = '❚❚'; }
         }
         function setStatus(id, text) { const el = document.getElementById('status-' + id); if (el) el.textContent = text; }
-        
+
         function playChannel(channelId, btnEl, statusIdOverride) {
             const channel = RADIO_CHANNELS[channelId]; if (!channel) return;
             if (currentChannelId === channelId && radioPlaying) { togglePlayPause(); return; }
             cleanupRadio(); currentChannelId = channelId; currentChannelLabel = channel.label;
             const myReqId = ++radioRequestId; let urlIndex = 0; const statusId = statusIdOverride || channelId;
-            
-            // Controle Media Session API (Para controle pela tela de bloqueio)
+
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
                     title: channel.label,
@@ -583,14 +577,20 @@
             document.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('playing', 'error'));
             if (btnEl) btnEl.classList.add('playing');
             setStatus(statusId, 'Conectando...'); updateMiniPlayer('Conectando… ' + channel.label, false);
-            
+
             const handleError = () => {
                 if (myReqId !== radioRequestId) return;
                 if (urlIndex + 1 < channel.urls.length) { urlIndex++; setTimeout(tryNextUrl, 400); }
                 else { setStatus(statusId, 'Indisponível'); if (btnEl) { btnEl.classList.remove('playing'); btnEl.classList.add('error'); } updateMiniPlayer('Indisponível: ' + channel.label, true); radioPlaying = false; }
             };
-            const onPlaySuccess = () => { if (myReqId !== radioRequestId) return; radioPlaying = true; setStatus(statusId, '✅ Tocando'); updateMiniPlayer(channel.label, false); };
-            
+            const onPlaySuccess = () => {
+                if (myReqId !== radioRequestId) return;
+                radioPlaying = true;
+                setStatus(statusId, '✅ Tocando');
+                updateMiniPlayer(channel.label, false);
+                if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
+            };
+
             function tryNextUrl() {
                 if (myReqId !== radioRequestId) return;
                 if (urlIndex >= channel.urls.length) { handleError(); return; }
@@ -616,17 +616,19 @@
             }
             tryNextUrl();
         }
-        function togglePlayPause() { 
-            if (!radioAudio) return; 
-            if (radioAudio.paused) { 
-                radioAudio.play(); radioPlaying = true; updateMiniPlayer(currentChannelLabel, false); 
-            } else { 
-                radioAudio.pause(); radioPlaying = false; updateMiniPlayer(currentChannelLabel, true); 
-            } 
+        function togglePlayPause() {
+            if (!radioAudio) return;
+            if (radioAudio.paused) {
+                radioAudio.play(); radioPlaying = true; updateMiniPlayer(currentChannelLabel, false);
+                if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
+            } else {
+                radioAudio.pause(); radioPlaying = false; updateMiniPlayer(currentChannelLabel, true);
+                if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
+            }
         }
         function stopRadio() { radioRequestId++; cleanupRadio(); currentChannelId = ''; currentChannelLabel = ''; document.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('playing', 'error')); document.querySelectorAll('[id^="status-"]').forEach(el => el.textContent = ''); document.getElementById('mini-player').classList.remove('visible'); }
         function setVolume(v) { radioVolume = parseInt(v, 10) / 100; if (radioAudio) radioAudio.volume = radioVolume; try { localStorage.setItem('radio-vol', v); } catch(e) {} }
-        
+
         function playCustomUrl() {
             const input = document.getElementById('custom-url'); const url = (input.value || '').trim();
             if (!url || !/^https?:\/\//i.test(url)) { alert('Digite uma URL válida começando com http:// ou https://'); return; }
@@ -634,14 +636,14 @@
             playChannel('custom_user', null, 'custom_user');
         }
 
-        // Função para atualizar o iFrame do YouTube dinamicamente
         function atualizarYouTube() {
             const inputVal = document.getElementById('yt-input').value;
-            // Expressão regular para extrair o ID do vídeo de vários formatos de link do YouTube
             const match = inputVal.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/|.*embed\/))([^&?\s]+)/);
             if (match && match[1]) {
                 const videoId = match[1];
-                document.getElementById('yt-player').src = "https://www.youtube-nocookie.com/embed/" + videoId + "?controls=1&playsinline=1&rel=0";
+                document.getElementById('yt-player').src =
+                    "https://www.youtube-nocookie.com/embed/" + videoId +
+                    "?controls=1&playsinline=1&rel=0&origin=" + encodeURIComponent(YT_ORIGIN);
             } else {
                 alert('Por favor, cole um link válido do YouTube.');
             }
