@@ -3,10 +3,10 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0, " name="viewport"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <meta content="strict-origin-when-cross-origin" name="referrer"/>
 <meta content="#0a0e1a" name="theme-color"/>
-<title>Portal de Mídia — v2.18</title>
+<title>Portal de Mídia — v2.19</title>
 <link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%A7%3C/text%3E%3C/svg%3E" rel="icon" type="image/svg+xml"/>
 <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -126,8 +126,43 @@
         input[type="range"].volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: linear-gradient(135deg, #8b5cf6, #ec4899); border-radius: 50%; border: 2px solid #fff; }
         .empty-state { text-align: center; color: #64748b; font-size: 0.85em; padding: 16px 0; font-style: italic; }
         
+        .cast-action { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; margin:0 0 12px; padding:11px 14px; border:1px solid rgba(255,255,255,.09); border-radius:12px; background:rgba(30,41,59,.72); color:#e2e8f0; font:700 .88em inherit; cursor:pointer; }
+        .cast-action:active { transform:scale(.98); }
+        .cast-action.connected { border-color:rgba(34,197,94,.45); background:rgba(20,83,45,.24); color:#bbf7d0; }
+        .cast-note { margin:-4px 0 12px; color:#64748b; font-size:.72em; line-height:1.35; text-align:center; }
+        .cast-action[disabled] { opacity:.55; cursor:default; }
+        .yt-presets { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+        .yt-presets .timer-btn { min-width:0; width:100%; }
+        .custom-url-wrap, .custom-url-wrap > div { min-width:0; max-width:100%; }
+        .custom-url-input, .custom-url-btn, select.custom-url-input { min-width:0 !important; max-width:100%; }
         @media (max-width: 768px) {
             .volume-wrap { display: none; }
+            body { padding-bottom:120px; }
+            header { padding:14px 12px 12px; }
+            .clock-display { font-size:1.65em; }
+            .section { margin:12px 8px; padding:14px 11px; border-radius:14px; }
+            .search-wrap { margin:10px 8px 0; }
+            .radio-btn { gap:9px; padding:10px 10px; min-height:58px; }
+            .radio-btn .icon { width:38px; height:38px; font-size:1.05em; border-radius:10px; }
+            .radio-btn .freq { padding:4px 7px; font-size:.72em; }
+            .radio-btn .name { font-size:.88em; }
+            .radio-btn small { font-size:.66em; }
+            .fav-btn, .delete-btn { width:44px; min-height:58px; }
+            .yt-presets { grid-template-columns:1fr; }
+            .yt-presets .timer-btn { min-width:0; }
+            .custom-url-wrap > div { flex-direction:column !important; }
+            .custom-url-wrap > div > * { width:100% !important; flex:1 1 auto !important; }
+            .video-container { border-radius:10px; }
+            .diag-grid { grid-template-columns:90px minmax(0,1fr); }
+            .mini-player { left:8px; right:8px; bottom:8px; }
+        }
+        @media (max-width: 360px) {
+            .section { margin-left:5px; margin-right:5px; padding-left:9px; padding-right:9px; }
+            .radio-btn { gap:7px; padding-left:8px; padding-right:8px; }
+            .radio-btn .icon { width:34px; height:34px; }
+            .fav-btn, .delete-btn { width:40px; }
+            .radio-btn .freq { display:none; }
+            .section-title .left-group { gap:8px; }
         }
 
 
@@ -144,7 +179,7 @@
 <body>
 <header>
 <h1>🎧 Portal de Mídia</h1>
-<span class="version-tag">v2.18 (auditoria completa + desempenho + players exclusivos)</span>
+<span class="version-tag">v2.19 (Chromecast + compatibilidade móvel + layout responsivo)</span>
 <div class="clock-display" id="clock">
             --:--
             <small id="clock-date">Carregando…</small>
@@ -177,6 +212,8 @@
 <div class="left-group"><span class="icon">📺</span> YouTube Dinâmico</div>
 
 </h2>
+<button aria-label="Enviar mídia para Chromecast" class="cast-action" id="cast-btn" onclick="castCurrentMedia()" type="button">📺 Enviar para Chromecast</button>
+<div class="cast-note" id="cast-note">O Chromecast pode reproduzir as rádios diretamente. Para YouTube, use o botão Cast disponível no próprio player quando o dispositivo for compatível.</div>
 <div aria-label="Atalhos do YouTube" class="yt-presets"><button class="timer-btn" onclick="loadYouTubeId('odouCACH9-w', this, true)" title="Mais de 1 hora de Eurodance / nostalgia" type="button">🪩 Eurodance — 1 hora</button><button class="timer-btn" onclick="loadYouTubeId('S3QDHD635KE', this, true)" title="Retro / synthwave / nostalgia" type="button">🎵 Anos 80 — 1h+</button><button class="timer-btn" onclick="loadYouTubeId('XExeWpVldDo', this, true)" title="Dance e remixes nonstop" type="button">🔥 80/90/2000 — 1 hora</button><button class="timer-btn" onclick="loadYouTubeId('7KLbc7T4xwY', this, true)" title="Temas cinematográficos / instrumental" type="button">🎬 Temas de Filmes — 1 hora</button><button class="timer-btn" onclick="loadYouTubeId('FN7hdDqJftQ', this, true)" title="Meditação, yoga, Reiki e sono" type="button">🧘 Reiki &amp; Relaxamento — 2 horas</button><button class="timer-btn" onclick="loadYouTubeId('Gx-QTJ9cAko', this, true)" title="Synthwave / foco / relaxamento" type="button">🌌 Ambiente 80s — 1 hora</button></div>
 <div class="custom-url-wrap" style="flex-direction: column; gap: 8px; margin-bottom: 15px;">
 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -510,7 +547,7 @@
 </div>
 <div class="timer-status" id="timer-status"></div>
 </div>
-<footer>Portal de Mídia • v2.11 • Criado por Break Troy</footer>
+<footer>Portal de Mídia • v2.19 • Criado por Break Troy</footer>
 <div class="mini-player" id="mini-player">
 <div class="mini-info">
 <div class="playing-dot" id="playing-dot"></div>
@@ -528,24 +565,24 @@
 <script>
         const RADIO_CHANNELS = {
             atlantida_poa: { label: 'Atlântida FM 94.3', needsHls: true, urls: ['https://liverdatlpoa.rbsdirect.com.br/primary/atl_poa.sdp/playlist.m3u8'] },
-            antena1_poa: { label: 'Antena 1', needsHls: false, urls: ['https://antenaone.crossradio.com.br/stream/1', 'https://server3.webradios.com.br:19472/9472'] },
+            antena1_poa: { label: 'Antena 1', needsHls: false, urls: ['https://stream.antena1.com.br/stream14', 'https://antenaone.crossradio.com.br/stream/1', 'https://server3.webradios.com.br:19472/9472'] },
             continental_poa: { label: 'Continental FM 98.3', needsHls: false, urls: ['http://rrdns-continental.webnow.com.br/imprensafm64k.mp3'] },
             salamanca_quarai: { label: 'Salamanca FM 101.3', needsHls: false, urls: ['https://live.paineldj.com.br/proxy/salamancahd?mp=/stream'] },
-            cbn: { label: 'CBN Rio', needsHls: false, urls: ['https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_RJ.mp3'] },
-            bandnews: { label: 'BandNews FM SP', needsHls: false, urls: ['https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.aac'] },
+            cbn: { label: 'CBN Rio', needsHls: false, urls: ['https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_RJ_ADP.mp3', 'https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_RJ.mp3', 'https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_RJ_ADP.m3u8'] },
+            bandnews: { label: 'BandNews FM SP', needsHls: false, urls: ['https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.mp3', 'https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.aac', 'https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.m3u8'] },
             progressive: { label: 'Progressive House', needsHls: false, urls: ['https://stream.laut.fm/house', 'https://stream.laut.fm/deepdesire'] },
             trance: { label: 'Trance', needsHls: false, urls: ['https://stream.laut.fm/main', 'https://stream.laut.fm/trigger'] },
             techno: { label: 'Techno', needsHls: false, urls: ['https://stream.laut.fm/techno', 'https://stream.laut.fm/electri-c-ity-studios'] },
-            reiki: { label: 'Reiki & Meditação', needsHls: false, urls: ['https://streaming.positivity.radio/pr/reiki/icecast.audio', 'https://ice1.somafm.com/dronezone-128-mp3'] },
+            reiki: { label: 'Reiki & Meditação', needsHls: false, urls: ['https://streaming.positivity.radio/pr/reiki/icecast.audio', 'https://ice5.somafm.com/dronezone-128-mp3'] },
             anos80: { label: 'Hits Anos 80', needsHls: false, urls: ['https://stream.laut.fm/80er', 'https://stream.laut.fm/hitradio'] },
             dance90: { label: "Dance 90's", needsHls: false, urls: ['https://stream.laut.fm/eurodance', 'https://stream.laut.fm/clubhits'] },
             dance2000: { label: 'Dance / Club Hits', needsHls: false, urls: ['https://stream.laut.fm/clubhits', 'https://stream.laut.fm/eurodance'] },
             rock: { label: 'Classic Rock', needsHls: false, urls: ['https://stream.laut.fm/classicrock'] },
             pop: { label: 'Pop Hits', needsHls: false, urls: ['https://stream.laut.fm/pop', 'https://stream.laut.fm/hitradio'] },
-            lofi: { label: 'Lofi Beats', needsHls: false, urls: ['https://stream.laut.fm/lofi', 'https://ice1.somafm.com/dronezone-128-mp3'] },
-            classical: { label: 'Clássica / Foco', needsHls: false, urls: ['https://stream.laut.fm/klassik', 'https://ice1.somafm.com/dronezone-128-mp3'] },
-            mpb: { label: 'Chill / Groove', needsHls: false, urls: ['https://ice1.somafm.com/groovesalad-128-mp3', 'https://ice1.somafm.com/beatblender-128-mp3'] },
-            soundscapes: { label: 'Soundscapes Ambient', needsHls: false, urls: ['https://ice1.somafm.com/dronezone-128-mp3'] },
+            lofi: { label: 'Lofi Beats', needsHls: false, urls: ['https://stream.laut.fm/lofi', 'https://ice5.somafm.com/dronezone-128-mp3'] },
+            classical: { label: 'Clássica / Foco', needsHls: false, urls: ['https://stream.laut.fm/klassik', 'https://ice5.somafm.com/dronezone-128-mp3'] },
+            mpb: { label: 'Chill / Groove', needsHls: false, urls: ['https://ice5.somafm.com/groovesalad-128-mp3', 'https://ice5.somafm.com/beatblender-128-mp3'] },
+            soundscapes: { label: 'Soundscapes Ambient', needsHls: false, urls: ['https://ice5.somafm.com/dronezone-128-mp3'] },
             paradise: { label: 'Radio Paradise', needsHls: false, urls: ['https://stream.radioparadise.com/aac-128'] }
         };
 
@@ -558,6 +595,10 @@
         let currentChannelLabel = '';
         let radioRequestId = 0;
         let hlsJsLoadPromise = null;
+        let currentRadioUrl = '';
+        let castSdkPromise = null;
+        let castReady = false;
+        let castConnected = false;
         let sleepTimerId = null;
         let sleepTimerEnd = 0;
         let sleepTimerInterval = null;
@@ -1097,6 +1138,12 @@
                 if (myReqId !== radioRequestId) return;
                 if (urlIndex >= channel.urls.length) { handleError('Indisponível'); return; }
                 const url = channel.urls[urlIndex];
+                currentRadioUrl = url;
+                if (/^http:/i.test(url) && window.location.protocol === 'https:') {
+                    setStatus(statusId, 'Stream HTTP bloqueado pelo HTTPS…');
+                    handleError('Stream HTTP bloqueado');
+                    return;
+                }
                 const needsHls = channel.needsHls || urlNeedsHls(url);
                 setStatus(statusId, 'Tentando ' + (urlIndex + 1) + '/' + channel.urls.length + '…');
 
@@ -1111,7 +1158,7 @@
                     }
                     loadHlsJs().then(HlsLib => {
                         if (myReqId !== radioRequestId) return;
-                        if (!HlsLib.isSupported()) { handleError('HLS não suportado'); return; }
+                        if (!HlsLib.isSupported()) { handleError('HLS não suportado neste navegador'); return; }
                         hlsInstance = new HlsLib({ enableWorker: !document.documentElement.classList.contains('lite-mode'), maxBufferLength: document.documentElement.classList.contains('lite-mode') ? 12 : 25, maxMaxBufferLength: document.documentElement.classList.contains('lite-mode') ? 24 : 50, lowLatencyMode: false });
                         hlsInstance.loadSource(url); hlsInstance.attachMedia(radioAudio);
                         const timeout = setTimeout(() => { if (myReqId === radioRequestId && !radioPlaying) { cleanupRadio(); handleError('Tempo esgotado'); } }, 12000);
@@ -1135,7 +1182,7 @@
             else { radioAudio.pause(); radioPlaying = false; updateMiniPlayer(currentChannelLabel, true); }
         }
         function stopRadio() {
-            radioRequestId++; cleanupRadio(); currentChannelId = ''; currentChannelLabel = '';
+            radioRequestId++; cleanupRadio(); currentChannelId = ''; currentChannelLabel = ''; currentRadioUrl = '';
             document.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('playing', 'error'));
             document.querySelectorAll('[id^="status-"]').forEach(el => el.textContent = '');
             const mini = document.getElementById('mini-player'); if (mini) mini.classList.remove('visible');
@@ -1146,9 +1193,137 @@
             try { localStorage.setItem('radio-vol', String(v)); } catch (_) {}
         }
 
+        // ---------- GOOGLE CAST / CHROMECAST ----------
+        function setCastUi(connected, text) {
+            const btn = document.getElementById('cast-btn');
+            const note = document.getElementById('cast-note');
+            if (btn) {
+                btn.classList.toggle('connected', !!connected);
+                btn.textContent = connected ? '📺 Chromecast conectado' : '📺 Enviar para Chromecast';
+            }
+            if (note && text) note.textContent = text;
+        }
+
+        function initCastApi() {
+            if (castReady && window.cast && cast.framework) return Promise.resolve();
+            if (castSdkPromise) return castSdkPromise;
+            castSdkPromise = new Promise((resolve, reject) => {
+                const initialize = function(isAvailable) {
+                    if (!isAvailable || !window.cast || !cast.framework || !window.chrome || !chrome.cast) {
+                        castSdkPromise = null;
+                        reject(new Error('Google Cast não está disponível neste navegador.'));
+                        return;
+                    }
+                    try {
+                        const context = cast.framework.CastContext.getInstance();
+                        context.setOptions({
+                            receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
+                            autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
+                        });
+                        context.addEventListener(cast.framework.CastContextEventType.SESSION_STATE_CHANGED, function(event) {
+                            castConnected = event.sessionState === cast.framework.SessionState.SESSION_STARTED || event.sessionState === cast.framework.SessionState.SESSION_RESUMED;
+                            setCastUi(castConnected, castConnected ? 'Chromecast conectado. Use os controles do dispositivo para volume e reprodução.' : 'O Chromecast pode reproduzir as rádios diretamente.');
+                        });
+                        castReady = true;
+                        resolve();
+                    } catch (err) {
+                        castSdkPromise = null;
+                        reject(err);
+                    }
+                };
+                window.__onGCastApiAvailable = initialize;
+                if (window.cast && cast.framework && window.chrome && chrome.cast) {
+                    initialize(true);
+                    return;
+                }
+                const script = document.createElement('script');
+                script.src = 'https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1';
+                script.async = true;
+                script.onerror = function() { castSdkPromise = null; reject(new Error('Falha ao carregar o Google Cast.')); };
+                document.head.appendChild(script);
+            });
+            return castSdkPromise;
+        }
+
+        function requestCastSession() {
+            return initCastApi().then(function() {
+                return cast.framework.CastContext.getInstance().requestSession();
+            });
+        }
+
+        function guessCastContentType(url) {
+            const value = String(url || '').toLowerCase();
+            if (/\.m3u8(?:$|[?#])|mpegurl/.test(value)) return 'application/x-mpegURL';
+            if (/\.aac(?:$|[?#])/.test(value)) return 'audio/aac';
+            if (/\.ogg(?:$|[?#])|\.oga(?:$|[?#])/.test(value)) return 'audio/ogg';
+            if (/\.mp4(?:$|[?#])/.test(value)) return 'video/mp4';
+            return 'audio/mpeg';
+        }
+
+        function castCurrentMedia() {
+            if (currentChannelId && currentRadioUrl) {
+                castCurrentRadio();
+                return;
+            }
+            if (ytCurrentId) {
+                setYouTubeStatus('ℹ️ O Cast do YouTube deve ser iniciado pelo ícone Cast dentro do próprio player, quando disponível.', 'ready');
+                try {
+                    const frame = ytPlayer && typeof ytPlayer.getIframe === 'function' ? ytPlayer.getIframe() : null;
+                    if (frame) frame.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } catch (_) {}
+                return;
+            }
+            setCastUi(false, 'Selecione uma rádio ou carregue um vídeo antes de enviar para o Chromecast.');
+        }
+
+        function castCurrentRadio() {
+            const channel = RADIO_CHANNELS[currentChannelId];
+            const url = currentRadioUrl || (channel && channel.urls ? channel.urls[0] : '');
+            if (!channel || !url) {
+                setCastUi(false, 'Selecione uma rádio antes de enviar para o Chromecast.');
+                return;
+            }
+            if (/^http:/i.test(url)) {
+                setStatus(currentChannelId, 'Cast exige stream HTTPS');
+                setCastUi(false, 'Esta rádio usa HTTP e não pode ser enviada com segurança para o Chromecast a partir da página HTTPS.');
+                return;
+            }
+            setStatus(currentChannelId, 'Conectando Chromecast…');
+            requestCastSession().then(function() {
+                const session = cast.framework.CastContext.getInstance().getCurrentSession();
+                if (!session) throw new Error('Nenhuma sessão Cast foi iniciada.');
+                const mediaInfo = new chrome.cast.media.MediaInfo(url, guessCastContentType(url));
+                mediaInfo.streamType = chrome.cast.media.StreamType.LIVE;
+                mediaInfo.metadata = new chrome.cast.media.MusicTrackMediaMetadata();
+                mediaInfo.metadata.title = channel.label;
+                mediaInfo.metadata.artist = 'Portal de Mídia';
+                const request = new chrome.cast.media.LoadRequest(mediaInfo);
+                return session.loadMedia(request);
+            }).then(function() {
+                stopRadio();
+                setCastUi(true, 'Rádio enviada ao Chromecast. O áudio continua no dispositivo Cast.');
+            }).catch(function(err) {
+                console.warn('[Portal Cast]', err);
+                setStatus(currentChannelId, 'Cast indisponível');
+                setCastUi(false, 'Não foi possível iniciar o Chromecast. Verifique se o dispositivo está na mesma rede Wi‑Fi.');
+            });
+        }
+
+        function stopCasting() {
+            try {
+                if (castReady) {
+                    const session = cast.framework.CastContext.getInstance().getCurrentSession();
+                    if (session) session.endSession(true);
+                }
+            } catch (_) {}
+            castConnected = false;
+            setCastUi(false, 'O Chromecast pode reproduzir as rádios diretamente.');
+        }
+
         // ---------- SLEEP TIMER ----------
         function stopCurrentMedia() {
             stopRadio();
+            stopCasting();
             if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') { try { ytPlayer.pauseVideo(); } catch (_) {} }
         }
         function setSleepTimer(minutos, btnEl) {
