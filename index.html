@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, ">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="theme-color" content="#0a0e1a">
-    <title>Portal de Mídia — v2.9</title>
+    <title>Portal de Mídia — v2.10</title>
 
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%A7%3C/text%3E%3C/svg%3E">
 
@@ -134,7 +134,7 @@
 
     <header>
         <h1>🎧 Portal de Mídia</h1>
-        <span class="version-tag">v2.9 (player multimídia resiliente)</span>
+        <span class="version-tag">v2.10 (biblioteca multimídia + favoritos persistentes)</span>
         <div class="clock-display" id="clock">
             --:--
             <small id="clock-date">Carregando…</small>
@@ -165,22 +165,35 @@
 
         <div class="yt-presets" aria-label="Atalhos do YouTube">
             <button class="timer-btn" type="button" onclick="loadYouTubeId('M7lc1UVf-VE', this, false)">🧪 Teste oficial</button>
-            <button class="timer-btn" type="button" onclick="loadYouTubeId('jfKfPfyJRdk', this, true)">📚 Lofi Girl</button>
+            <button class="timer-btn" type="button" onclick="loadYouTubeId('jfKfPfyJRdk', this, true)">📚 Lofi Girl (embed pode bloquear)</button>
             <button class="timer-btn" type="button" onclick="openYouTubeUrl('https://www.youtube.com/@LofiGirl/live')">↗ Lofi Girl no YouTube</button>
             <button class="timer-btn" type="button" onclick="openYouTubeUrl('https://www.youtube.com/@ChillhopMusic/live')">↗ Chillhop no YouTube</button>
+            <button class="timer-btn" type="button" onclick="loadYouTubeId('ysUwdy6hHUk', this, false)">🪩 Dance 80/90/2000</button>
+            <button class="timer-btn" type="button" onclick="loadYouTubeId('MjkeuYEFWR0', this, false)">🎧 Dance Mix 2026</button>
+            <button class="timer-btn" type="button" onclick="loadYouTubeId('tVYOOc5T3do', this, false)">💿 Nostalgia 3h</button>
+            <button class="timer-btn" type="button" onclick="loadYouTubeId('FN7hdDqJftQ', this, false)">🧘 Reiki / Relaxamento</button>
         </div>
 
         <div class="custom-url-wrap" style="flex-direction: column; gap: 8px; margin-bottom: 15px;">
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <input type="text" class="custom-url-input" id="yt-nome" placeholder="Nome do vídeo" style="flex: 0.6; min-width: 150px;" aria-label="Nome do vídeo YouTube">
+                <input type="text" class="custom-url-input" id="yt-nome" placeholder="Nome do conteúdo" style="flex: 0.6; min-width: 150px;" aria-label="Nome do conteúdo YouTube">
+                <select class="custom-url-input" id="yt-categoria" aria-label="Categoria do conteúdo YouTube" style="flex: 0.45; min-width: 150px;">
+                    <option value="dance80-2000">🪩 Dance 80/90/2000</option>
+                    <option value="ambiente">🌌 Ambiente</option>
+                    <option value="meditacao">🧘 Meditação</option>
+                    <option value="reiki">✨ Reiki / Relaxamento</option>
+                    <option value="lofi">☕ Lofi / Foco</option>
+                    <option value="outros">⭐ Outros</option>
+                </select>
                 <input type="text" class="custom-url-input" id="yt-input" placeholder="Cole o link do YouTube ou ID de 11 caracteres..." aria-label="Link ou ID do YouTube" autocomplete="off">
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <button class="custom-url-btn" type="button" onclick="adicionarYouTubeSalvo()" style="flex:1; min-width:180px;">💾 Salvar & Tocar</button>
+                <button class="custom-url-btn" type="button" onclick="adicionarYouTubeSalvo()" style="flex:1; min-width:180px;">💾 Salvar & Testar</button>
                 <button class="custom-url-btn secondary-action" type="button" onclick="openCurrentYouTube()" style="flex:1; min-width:180px;">↗ Abrir no YouTube</button>
             </div>
         </div>
 
+        <div id="yt-salvos-title" style="display:none; margin:4px 0 8px; color:#cbd5e1; font-size:.82em; font-weight:700;">⭐ Meus YouTube salvos</div>
         <div id="yt-salvos-grid" class="radio-grid" style="margin-bottom: 15px; display: none;"></div>
 
         <div class="video-container" id="yt-video-container">
@@ -189,6 +202,7 @@
                 <div class="yt-overlay-icon">▶</div>
                 <strong id="yt-overlay-title">Conteúdo indisponível no embed</strong>
                 <span id="yt-overlay-text">O YouTube não permite reproduzir este conteúdo dentro do Portal.</span>
+                <small id="yt-overlay-tip" style="max-width:520px;color:#64748b;line-height:1.4;">O item continua salvo e pode ser aberto diretamente no YouTube.</small>
                 <button class="custom-url-btn" type="button" onclick="openCurrentYouTube()">Abrir no YouTube</button>
             </div>
         </div>
@@ -503,7 +517,7 @@
         <div class="timer-status" id="timer-status"></div>
     </div>
 
-    <footer>Portal de Mídia • v2.9 • Criado por Break Troy</footer>
+    <footer>Portal de Mídia • v2.10 • Criado por Break Troy</footer>
 
     <div class="mini-player" id="mini-player">
         <div class="mini-info">
@@ -654,25 +668,25 @@
         }
 
         function getDadosSalvos() {
-            const empty = { version: 2, radio: [], youtube: [] };
+            const empty = { version: 3, radio: [], youtube: [] };
             try {
                 const raw = JSON.parse(localStorage.getItem('portal-dados-salvos') || '{}');
                 const data = { version: Number(raw.version) || 1, radio: Array.isArray(raw.radio) ? raw.radio : [], youtube: Array.isArray(raw.youtube) ? raw.youtube : [] };
-                let changed = data.version !== 2;
+                let changed = data.version !== 3;
                 data.radio = data.radio.filter(item => item && typeof item === 'object' && String(item.nome || '').trim() && String(item.url || '').trim()).map(item => {
                     const next = { ...item, id: item.id || getStableId('radio') };
                     if (!item.id) changed = true;
                     return next;
                 });
-                data.youtube = data.youtube.filter(v => v && /^[A-Za-z0-9_-]{11}$/.test(v.id)).map(v => ({ id: v.id, titulo: String(v.titulo || ('Vídeo ' + v.id.slice(0, 6))) }));
-                if (data.version !== 2) { data.version = 2; changed = true; }
+                data.youtube = data.youtube.filter(v => v && /^[A-Za-z0-9_-]{11}$/.test(v.id)).map(v => ({ id: v.id, titulo: String(v.titulo || ('Vídeo ' + v.id.slice(0, 6))), categoria: String(v.categoria || 'outros') }));
+                if (data.version !== 3) { data.version = 3; changed = true; }
                 if (changed) setDadosSalvos(data);
                 return data;
             } catch (_) { return empty; }
         }
 
         function setDadosSalvos(data) {
-            try { localStorage.setItem('portal-dados-salvos', JSON.stringify({ version: 2, radio: data.radio || [], youtube: data.youtube || [] })); } catch (_) {}
+            try { localStorage.setItem('portal-dados-salvos', JSON.stringify({ version: 3, radio: data.radio || [], youtube: data.youtube || [] })); } catch (_) {}
         }
 
         function loadYouTubeApi() {
@@ -710,6 +724,7 @@
             setYTDiag('error', '—');
             setYTDiag('state', 'carregando');
             setYTOverlay(false);
+            const overlayTip = document.getElementById('yt-overlay-tip'); if (overlayTip) overlayTip.textContent = 'O item permanece salvo mesmo se o YouTube bloquear o embed.';
             setYouTubeStatus('Carregando player do YouTube…', 'loading');
             destroyYouTubePlayer();
             container.replaceChildren();
@@ -752,7 +767,9 @@
                             setYTDiag('state', 'erro');
                             setYouTubeStatus('❌ ' + youtubeErrorMessage(e.data), 'error');
                             if ([101, 150].includes(e.data)) setYTOverlay(true, 'Conteúdo bloqueado no embed', 'O proprietário deste vídeo não permite reprodução incorporada. Abra o conteúdo diretamente no YouTube.');
+                            const tip = document.getElementById('yt-overlay-tip'); if (tip) tip.textContent = 'O item permanece salvo em “Meus YouTube salvos”. Você pode tentar outro conteúdo.';
                             else if (e.data === 100) setYTOverlay(true, 'Vídeo indisponível', 'O vídeo foi removido, está privado ou não foi encontrado.');
+                            const tipUnavailable = document.getElementById('yt-overlay-tip'); if (tipUnavailable) tipUnavailable.textContent = 'O item continua salvo; você pode editar/regravar o mesmo link ou substituí-lo por outro.';
                             else if (e.data === 153) setYTOverlay(true, 'Identificação do embed recusada', 'O YouTube não recebeu o Referer esperado. Verifique o domínio HTTPS e a política de referência do servidor.');
                             console.error('[Portal YouTube] erro', e.data, youtubeErrorMessage(e.data), 'ID:', id);
                         },
@@ -786,6 +803,18 @@
             setYouTubeStatus('Vídeos salvos removidos. Player reiniciado com o teste oficial.', 'ready');
         }
 
+        function categoriaYouTubeLabel(categoria) {
+            const labels = {
+                'dance80-2000': '🪩 Dance 80/90/2000',
+                ambiente: '🌌 Ambiente',
+                meditacao: '🧘 Meditação',
+                reiki: '✨ Reiki / Relaxamento',
+                lofi: '☕ Lofi / Foco',
+                outros: '⭐ Outros'
+            };
+            return labels[categoria] || labels.outros;
+        }
+
         function renderCanaisSalvos() {
             const dados = getDadosSalvos();
             Object.keys(RADIO_CHANNELS).filter(id => id.startsWith('custom_saved_')).forEach(id => delete RADIO_CHANNELS[id]);
@@ -809,32 +838,38 @@
                 });
             } else radioGrid.style.display = 'none';
 
-            const ytGrid = document.getElementById('yt-salvos-grid'); ytGrid.replaceChildren();
+            const ytGrid = document.getElementById('yt-salvos-grid'); const ytTitle = document.getElementById('yt-salvos-title'); ytGrid.replaceChildren();
             if (dados.youtube.length) {
-                ytGrid.style.display = 'flex';
+                ytGrid.style.display = 'flex'; if (ytTitle) ytTitle.style.display = 'block';
                 dados.youtube.forEach((video, index) => {
                     const div = document.createElement('div'); div.className = 'media-item';
-                    const btn = document.createElement('button'); btn.className = 'radio-btn'; btn.type = 'button'; btn.onclick = () => loadYouTubeId(video.id, btn, true);
+                    const btn = document.createElement('button'); btn.className = 'radio-btn'; btn.type = 'button'; btn.onclick = () => loadYouTubeId(video.id, btn, false);
                     const img = document.createElement('img'); img.src = 'https://img.youtube.com/vi/' + encodeURIComponent(video.id) + '/hqdefault.jpg'; img.className = 'thumb'; img.alt = 'Miniatura do vídeo'; img.loading = 'lazy'; img.referrerPolicy = 'no-referrer';
                     const label = document.createElement('span'); label.className = 'label';
                     const name = document.createElement('span'); name.className = 'name'; name.textContent = video.titulo;
-                    const small = document.createElement('small'); small.textContent = 'YouTube salvo'; label.append(name, small); btn.append(img, label);
+                    const small = document.createElement('small'); small.textContent = categoriaYouTubeLabel(video.categoria); label.append(name, small); btn.append(img, label);
                     const del = document.createElement('button'); del.className = 'delete-btn'; del.type = 'button'; del.textContent = '🗑'; del.setAttribute('aria-label', 'Excluir ' + video.titulo); del.onclick = () => removerCanalSalvo('youtube', index);
                     div.append(btn, del); ytGrid.appendChild(div);
                 });
-            } else ytGrid.style.display = 'none';
+            } else { ytGrid.style.display = 'none'; if (ytTitle) ytTitle.style.display = 'none'; }
         }
 
         function adicionarYouTubeSalvo() {
             const nomeInput = document.getElementById('yt-nome').value.trim();
             const inputVal = document.getElementById('yt-input').value.trim();
+            const categoria = document.getElementById('yt-categoria').value || 'outros';
             const videoId = extrairYouTubeId(inputVal);
             if (!videoId) { alert('Cole um link de vídeo/Short/live específico do YouTube ou um ID válido de 11 caracteres.'); return; }
             const dados = getDadosSalvos();
-            if (!dados.youtube.some(v => v.id === videoId)) dados.youtube.push({ id: videoId, titulo: nomeInput || ('Vídeo ' + videoId.slice(0, 6)) });
+            const titulo = nomeInput || ('Vídeo ' + videoId.slice(0, 6));
+            const existing = dados.youtube.findIndex(v => v.id === videoId);
+            const item = { id: videoId, titulo, categoria };
+            if (existing >= 0) dados.youtube[existing] = item; else dados.youtube.push(item);
             setDadosSalvos(dados);
             document.getElementById('yt-nome').value = ''; document.getElementById('yt-input').value = '';
-            renderCanaisSalvos(); loadYouTubeId(videoId, null, true);
+            renderCanaisSalvos();
+            setYouTubeStatus('🔎 Salvo. Testando se este conteúdo aceita reprodução incorporada…', 'loading');
+            loadYouTubeId(videoId, null, false);
         }
 
         // ---------- RÁDIOS PERSONALIZADAS / FAVORITOS ----------
