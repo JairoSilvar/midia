@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="theme-color" content="#0a0e1a">
-    <title>Portal de Mídia — v2.5</title>
+    <title>Portal de Mídia — v2.6</title>
 
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%A7%3C/text%3E%3C/svg%3E">
 
@@ -15,7 +14,7 @@
         body {
             font-family: -apple-system, "Roboto", Arial, sans-serif;
             background: #0a0e1a;
-            background-image: 
+            background-image:
                 radial-gradient(ellipse at top left, rgba(99, 102, 241, 0.12) 0%, transparent 50%),
                 radial-gradient(ellipse at bottom right, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
             background-attachment: fixed;
@@ -54,31 +53,25 @@
         .media-item { display: flex; align-items: stretch; gap: 8px; }
         .radio-btn { flex: 1; display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: linear-gradient(145deg, rgba(51, 65, 85, 0.5), rgba(30, 41, 59, 0.7)); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 15px; color: #f1f5f9; font-size: 1em; font-weight: 600; text-align: left; cursor: pointer; transition: all 0.2s; font-family: inherit; min-height: 65px; position: relative; overflow: hidden; }
         .radio-btn:active { transform: scale(0.98); }
-        
         @media (hover: hover) {
             .radio-btn:hover { background: linear-gradient(145deg, rgba(71, 85, 105, 0.6), rgba(30, 41, 59, 0.8)); }
         }
-
         .radio-btn.playing, .radio-btn.active-yt { background: linear-gradient(145deg, rgba(139, 92, 246, 0.25), rgba(236, 72, 153, 0.15)); border-color: rgba(139, 92, 246, 0.5); box-shadow: 0 8px 24px -8px rgba(139, 92, 246, 0.4); }
         .radio-btn.error { border-color: rgba(239, 68, 68, 0.5); background: rgba(127, 29, 29, 0.2); }
         .radio-btn .icon { display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 13px; font-size: 1.3em; flex-shrink: 0; background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.2)); border: 1px solid rgba(139, 92, 246, 0.3); }
         .radio-btn.playing .icon { background: linear-gradient(135deg, #8b5cf6, #ec4899); animation: iconPulse 2s infinite; }
         @keyframes iconPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.5); } 50% { box-shadow: 0 0 0 8px rgba(139, 92, 246, 0); } }
-        
         .radio-btn .thumb { width: 60px; height: 40px; border-radius: 8px; object-fit: cover; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.1); }
         .radio-btn .label { flex: 1; display: flex; flex-direction: column; min-width: 0; }
         .radio-btn .name { font-size: 0.95em; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .radio-btn small { font-size: 0.7em; color: #94a3b8; font-weight: 500; margin-top: 2px; }
         .radio-btn .status { font-size: 0.65em; color: #64748b; margin-top: 2px; font-style: italic; }
         .radio-btn .freq { font-size: 0.85em; font-weight: 700; color: #c4b5fd; background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.25); padding: 5px 10px; border-radius: 10px; flex-shrink: 0; }
-        
         .fav-btn { width: 52px; min-height: 65px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 15px; color: #64748b; font-size: 1.4em; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
         .fav-btn:active { transform: scale(0.92); }
         .fav-btn.active { color: #fbbf24; background: rgba(251, 191, 36, 0.15); border-color: rgba(251, 191, 36, 0.4); }
-
         .delete-btn { width: 52px; min-height: 65px; background: rgba(127, 29, 29, 0.4); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 15px; color: #fca5a5; font-size: 1.2em; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
         .delete-btn:active { transform: scale(0.92); }
-
         .custom-url-wrap { display: flex; gap: 8px; margin-top: 4px; margin-bottom: 12px; }
         .custom-url-input { flex: 1; padding: 12px 14px; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; color: #f1f5f9; font-size: 0.9em; outline: none; font-family: inherit; }
         .custom-url-input::placeholder { color: #64748b; }
@@ -86,13 +79,11 @@
         .custom-url-btn:active { transform: scale(0.96); }
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 14px; background: #000; margin-bottom: 12px; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-        
         .yt-presets { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
         .timer-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
         .timer-btn { flex: 1 1 30%; min-width: 100px; padding: 12px 8px; background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; color: #e2e8f0; font-size: 0.85em; font-weight: 600; cursor: pointer; text-align: center; font-family: inherit; transition: all 0.15s; }
         .timer-btn:active { transform: scale(0.96); }
         .timer-btn.active { background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.2)); border-color: rgba(139, 92, 246, 0.5); color: #fff; }
-        
         .timer-status { margin-top: 10px; font-size: 0.8em; color: #94a3b8; text-align: center; min-height: 1em; }
         .timer-status.active { color: #fbbf24; font-weight: 600; }
         .mini-player { position: fixed; bottom: 12px; left: 12px; right: 12px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 14px 16px; z-index: 20; box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6); display: none; }
@@ -110,11 +101,7 @@
         input[type="range"].volume-slider { flex: 1; -webkit-appearance: none; height: 4px; background: rgba(100, 116, 139, 0.4); border-radius: 2px; outline: none; }
         input[type="range"].volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: linear-gradient(135deg, #8b5cf6, #ec4899); border-radius: 50%; border: 2px solid #fff; }
         .empty-state { text-align: center; color: #64748b; font-size: 0.85em; padding: 16px 0; font-style: italic; }
-        
-        @media (max-width: 768px) {
-            .volume-wrap { display: none; }
-        }
-
+        @media (max-width: 768px) { .volume-wrap { display: none; } }
         footer { text-align: center; padding: 20px; margin-bottom: 20px; font-size: 0.8em; color: #475569; letter-spacing: 0.05em; text-transform: uppercase;}
     </style>
 </head>
@@ -122,7 +109,7 @@
 
     <header>
         <h1>🎧 Portal de Mídia</h1>
-        <span class="version-tag">v2.5 (Optimized & Secure)</span>
+        <span class="version-tag">v2.6 (YT Fix)</span>
         <div class="clock-display" id="clock">
             --:--
             <small id="clock-date">Carregando…</small>
@@ -134,7 +121,6 @@
         <button class="search-clear" id="search-clear" onclick="limparBusca()">✕</button>
     </div>
 
-    <!-- SEÇÃO FAVORITOS -->
     <div class="section" id="section-favoritos" style="display:none;" data-section="favoritos">
         <h2 class="section-title"><span class="icon">⭐</span> Favoritos</h2>
         <div class="radio-grid" id="favoritos-grid">
@@ -142,16 +128,13 @@
         </div>
     </div>
 
-    <!-- SEÇÃO: YOUTUBE -->
     <div class="section" data-section="youtube">
         <h2 class="section-title"><span class="icon">📺</span> YouTube Dinâmico</h2>
-        
         <div class="yt-presets">
             <button class="timer-btn" onclick="loadYouTubeId('jfKfPfyJRdk', this)">📚 Lofi Girl</button>
             <button class="timer-btn" onclick="loadYouTubeId('7NOS8R0FPLY', this)">🦝 Chillhop</button>
             <button class="timer-btn" onclick="loadYouTubeId('5qap5aO4i9A', this)">☕ Lofi Beats</button>
         </div>
-
         <div class="custom-url-wrap" style="flex-direction: column; gap: 8px; margin-bottom: 15px;">
             <div style="display: flex; gap: 8px;">
                 <input type="text" class="custom-url-input" id="yt-nome" placeholder="Nome do Vídeo ou Canal" style="flex: 0.6;">
@@ -159,9 +142,7 @@
             </div>
             <button class="custom-url-btn" onclick="adicionarYouTubeSalvo()" style="width: 100%;">💾 Salvar & Tocar</button>
         </div>
-
         <div id="yt-salvos-grid" class="radio-grid" style="margin-bottom: 15px; display: none;"></div>
-
         <div class="video-container">
             <iframe
                 id="yt-player"
@@ -175,7 +156,6 @@
         </div>
     </div>
 
-    <!-- SEÇÃO: CANAIS PERSONALIZADOS (ÁUDIO) -->
     <div class="section" data-section="custom">
         <h2 class="section-title"><span class="icon">🌐</span> Adicionar Stream Manual (Rádio/Áudio)</h2>
         <div class="custom-url-wrap" style="flex-direction: column; gap: 8px;">
@@ -264,7 +244,6 @@
         </div>
     </div>
 
-    <!-- SEÇÃO: MÚSICA ELETRÔNICA -->
     <div class="section" data-section="eletronica">
         <h2 class="section-title"><span class="icon">🚀</span> Música Eletrônica</h2>
         <div class="radio-grid">
@@ -304,7 +283,6 @@
         </div>
     </div>
 
-    <!-- SEÇÃO: BEM ESTAR E FOCO -->
     <div class="section" data-section="foco">
         <h2 class="section-title"><span class="icon">🧘</span> Meditação, Reiki & Foco</h2>
         <div class="radio-grid">
@@ -355,7 +333,6 @@
         </div>
     </div>
 
-    <!-- SEÇÃO: DANCE E INTERNACIONAIS -->
     <div class="section" data-section="dance">
         <h2 class="section-title"><span class="icon">🕺</span> Dance 80 / 90 / 2000</h2>
         <div class="radio-grid">
@@ -485,13 +462,11 @@
             salamanca_quarai: { label: 'Salamanca FM 101.3', needsHls: false, urls: ['https://live.paineldj.com.br/proxy/salamancahd?mp=/stream'] },
             cbn: { label: 'CBN Rio', needsHls: false, urls: ['https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_RJ.mp3'] },
             bandnews: { label: 'BandNews FM SP', needsHls: false, urls: ['https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.aac'] },
-            
             progressive: { label: 'Progressive House', needsHls: false, urls: ['https://stream.laut.fm/progressive'] },
             trance: { label: 'Trance Vocal', needsHls: false, urls: ['https://stream.laut.fm/trance'] },
             techno: { label: 'Techno Underground', needsHls: false, urls: ['https://stream.laut.fm/techno'] },
             reiki: { label: 'Reiki & Meditação', needsHls: false, urls: ['https://stream.laut.fm/meditation'] },
             soundscapes: { label: 'Soundscapes Ambient', needsHls: false, urls: ['https://ice1.somafm.com/dronezone-128-mp3'] },
-
             anos80: { label: 'Hits Anos 80', needsHls: false, urls: ['https://stream.laut.fm/80er', 'https://stream.laut.fm/hitradio'] },
             dance90: { label: "Dance 90's", needsHls: false, urls: ['https://stream.laut.fm/eurodance', 'https://stream.laut.fm/clubhits'] },
             dance2000: { label: 'Dance / Club Hits', needsHls: false, urls: ['https://stream.laut.fm/clubhits', 'https://stream.laut.fm/eurodance'] },
@@ -516,7 +491,6 @@
 
         let radioAudio = null; let hlsInstance = null; let radioPlaying = false; let radioVolume = 0.5; let currentChannelId = ''; let currentChannelLabel = ''; let radioRequestId = 0; let hlsJsLoadPromise = null; let sleepTimerId = null; let sleepTimerEnd = 0; let sleepTimerInterval = null;
 
-        // ---------- SISTEMA DE PERSISTÊNCIA ----------
         function getDadosSalvos() {
             try { return JSON.parse(localStorage.getItem('portal-dados-salvos')) || { radio: [], youtube: [] }; }
             catch(e) { return { radio: [], youtube: [] }; }
@@ -525,8 +499,6 @@
 
         function renderCanaisSalvos() {
             const dados = getDadosSalvos();
-            
-            // Rádios Customizadas
             const radioGrid = document.getElementById('custom-salvos-grid');
             radioGrid.innerHTML = '';
             if (dados.radio.length > 0) {
@@ -534,7 +506,6 @@
                 dados.radio.forEach((item, index) => {
                     const chId = 'custom_saved_' + index;
                     RADIO_CHANNELS[chId] = { label: item.nome, needsHls: urlNeedsHls(item.url), urls: [item.url] };
-                    
                     const div = document.createElement('div');
                     div.className = 'media-item';
                     div.innerHTML = `
@@ -552,7 +523,6 @@
                 });
             } else { radioGrid.style.display = 'none'; }
 
-            // YouTube Customizados
             const ytGrid = document.getElementById('yt-salvos-grid');
             ytGrid.innerHTML = '';
             if (dados.youtube.length > 0) {
@@ -591,15 +561,12 @@
             const nomeInput = document.getElementById('yt-nome').value.trim();
             const inputVal = document.getElementById('yt-input').value.trim();
             const match = inputVal.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/|.*embed\/))([^&?\s]+)/);
-            
             if (match && match[1]) {
                 const videoId = match[1];
                 const tituloVid = nomeInput || ("Vídeo " + videoId.substring(0, 6));
                 let dados = getDadosSalvos();
-                
                 dados.youtube.push({ id: videoId, titulo: tituloVid });
                 setDadosSalvos(dados);
-                
                 document.getElementById('yt-nome').value = '';
                 document.getElementById('yt-input').value = '';
                 renderCanaisSalvos();
@@ -617,14 +584,13 @@
         }
 
         function loadYouTubeId(id, btnEl = null) {
-            document.getElementById('yt-player').src = 
-                "https://www.youtube-nocookie.com/embed/" + id + 
+            document.getElementById('yt-player').src =
+                "https://www.youtube-nocookie.com/embed/" + id +
                 "?controls=1&playsinline=1&rel=0&autoplay=1&origin=" + encodeURIComponent(YT_ORIGIN);
             document.querySelectorAll('.yt-presets button, #yt-salvos-grid button').forEach(b => b.classList.remove('active', 'playing', 'active-yt'));
             if (btnEl) btnEl.classList.add('active', 'active-yt');
         }
 
-        // ---------- FAVORITOS ----------
         function carregarFavoritos() { try { return JSON.parse(localStorage.getItem('portal-favoritos') || '[]'); } catch(e) { return []; } }
         function salvarFavoritos(favs) { try { localStorage.setItem('portal-favoritos', JSON.stringify(favs)); } catch(e) {} }
         function toggleFav(btn, channelId) {
@@ -656,22 +622,19 @@
             });
         }
 
-        // ---------- AUDIO E BUSCA ----------
         function filtrarRadios(termo) {
-            const t = termo.trim().toLowerCase(); 
+            const t = termo.trim().toLowerCase();
             const clearBtn = document.getElementById('search-clear');
             clearBtn.classList.toggle('visible', t.length > 0);
-            
-            document.querySelectorAll('.media-item').forEach(item => { 
-                const nome = item.dataset.nome || ''; 
-                item.style.display = (!t || nome.includes(t)) ? '' : 'none'; 
+            document.querySelectorAll('.media-item').forEach(item => {
+                const nome = item.dataset.nome || '';
+                item.style.display = (!t || nome.includes(t)) ? '' : 'none';
             });
-
             document.querySelectorAll('.section[data-section]').forEach(sec => {
                 const tipo = sec.dataset.section;
                 if (['youtube', 'timer', 'custom', 'favoritos'].includes(tipo)) return;
                 const visiveis = Array.from(sec.querySelectorAll('.media-item')).filter(i => i.style.display !== 'none').length;
-                if (t && visiveis === 0) sec.classList.add('hidden'); 
+                if (t && visiveis === 0) sec.classList.add('hidden');
                 else sec.classList.remove('hidden');
             });
         }
@@ -701,13 +664,13 @@
             if (isPaused) { dot.classList.add('paused'); btn.textContent = '▶'; } else { dot.classList.remove('paused'); btn.textContent = '❚❚'; }
         }
         function setStatus(id, text) { const el = document.getElementById('status-' + id); if (el) el.textContent = text; }
-        
+
         function playChannel(channelId, btnEl, statusIdOverride) {
             const channel = RADIO_CHANNELS[channelId]; if (!channel) return;
             if (currentChannelId === channelId && radioPlaying) { togglePlayPause(); return; }
             cleanupRadio(); currentChannelId = channelId; currentChannelLabel = channel.label;
             const myReqId = ++radioRequestId; let urlIndex = 0; const statusId = statusIdOverride || channelId;
-            
+
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({ title: channel.label, artist: 'Portal de Mídia', artwork: [{ src: 'https://via.placeholder.com/512/0a0e1a/8b5cf6?text=%F0%9F%8E%A7', sizes: '512x512', type: 'image/png' }] });
                 navigator.mediaSession.setActionHandler('play', () => { if(radioAudio) togglePlayPause(); });
@@ -718,14 +681,14 @@
             document.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('playing', 'error'));
             if (btnEl) btnEl.classList.add('playing');
             setStatus(statusId, 'Conectando...'); updateMiniPlayer('Conectando… ' + channel.label, false);
-            
+
             const handleError = () => {
                 if (myReqId !== radioRequestId) return;
                 if (urlIndex + 1 < channel.urls.length) { urlIndex++; setTimeout(tryNextUrl, 400); }
                 else { setStatus(statusId, 'Indisponível'); if (btnEl) { btnEl.classList.remove('playing'); btnEl.classList.add('error'); } updateMiniPlayer('Indisponível: ' + channel.label, true); radioPlaying = false; }
             };
             const onPlaySuccess = () => { if (myReqId !== radioRequestId) return; radioPlaying = true; setStatus(statusId, '✅ Tocando'); updateMiniPlayer(channel.label, false); };
-            
+
             function tryNextUrl() {
                 if (myReqId !== radioRequestId) return;
                 if (urlIndex >= channel.urls.length) { handleError(); return; }
@@ -751,15 +714,14 @@
             }
             tryNextUrl();
         }
-        function togglePlayPause() { 
-            if (!radioAudio) return; 
-            if (radioAudio.paused) { radioAudio.play(); radioPlaying = true; updateMiniPlayer(currentChannelLabel, false); } 
-            else { radioAudio.pause(); radioPlaying = false; updateMiniPlayer(currentChannelLabel, true); } 
+        function togglePlayPause() {
+            if (!radioAudio) return;
+            if (radioAudio.paused) { radioAudio.play(); radioPlaying = true; updateMiniPlayer(currentChannelLabel, false); }
+            else { radioAudio.pause(); radioPlaying = false; updateMiniPlayer(currentChannelLabel, true); }
         }
         function stopRadio() { radioRequestId++; cleanupRadio(); currentChannelId = ''; currentChannelLabel = ''; document.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('playing', 'error')); document.querySelectorAll('[id^="status-"]').forEach(el => el.textContent = ''); document.getElementById('mini-player').classList.remove('visible'); }
         function setVolume(v) { radioVolume = parseInt(v, 10) / 100; if (radioAudio) radioAudio.volume = radioVolume; try { localStorage.setItem('radio-vol', v); } catch(e) {} }
 
-        // ---------- TIMER ----------
         function setSleepTimer(minutos, btnEl) {
             cancelSleepTimer(); sleepTimerEnd = Date.now() + minutos * 60 * 1000;
             document.querySelectorAll('.timer-btn').forEach(b => b.classList.remove('active'));
