@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, ">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="theme-color" content="#0a0e1a">
-    <title>Portal de Mídia — v2.11</title>
+    <title>Portal de Mídia — v2.12</title>
 
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%A7%3C/text%3E%3C/svg%3E">
 
@@ -134,7 +134,7 @@
 
     <header>
         <h1>🎧 Portal de Mídia</h1>
-        <span class="version-tag">v2.11 (YouTube inicial + Continental revisada)</span>
+        <span class="version-tag">v2.12 (YouTube interno + Continental restaurada)</span>
         <div class="clock-display" id="clock">
             --:--
             <small id="clock-date">Carregando…</small>
@@ -164,15 +164,12 @@
         </h2>
 
         <div class="yt-presets" aria-label="Atalhos do YouTube">
-            <button class="timer-btn" type="button" onclick="loadYouTubeId('M7lc1UVf-VE', this, false)">🧪 Teste oficial</button>
-            <button class="timer-btn" type="button" onclick="loadYouTubeId('jfKfPfyJRdk', this, true)">📚 Lofi Girl (embed pode bloquear)</button>
-            <button class="timer-btn" type="button" onclick="openYouTubeUrl('https://www.youtube.com/@LofiGirl/live')">↗ Lofi Girl no YouTube</button>
-            <button class="timer-btn" type="button" onclick="openYouTubeUrl('https://www.youtube.com/@ChillhopMusic/live')">↗ Chillhop no YouTube</button>
             <button class="timer-btn" type="button" onclick="loadYouTubeId('ysUwdy6hHUk', this, false)">🪩 Dance 80/90/2000</button>
             <button class="timer-btn" type="button" onclick="loadYouTubeId('djV11Xbc914', this, false)">🎵 a-ha — Take On Me</button>
             <button class="timer-btn" type="button" onclick="loadYouTubeId('Zi_XLOBDo_Y', this, false)">🎵 Michael Jackson — Billie Jean</button>
             <button class="timer-btn" type="button" onclick="loadYouTubeId('FN7hdDqJftQ', this, false)">🧘 Reiki / Relaxamento</button>
         </div>
+        <div style="margin:-6px 0 12px;color:#94a3b8;font-size:.76em;">Todos os conteúdos são reproduzidos no player interno. Vídeos que não permitem incorporação serão sinalizados aqui, sem abrir outra janela.</div>
 
         <div class="custom-url-wrap" style="flex-direction: column; gap: 8px; margin-bottom: 15px;">
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -189,7 +186,6 @@
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
                 <button class="custom-url-btn" type="button" onclick="adicionarYouTubeSalvo()" style="flex:1; min-width:180px;">💾 Salvar & Testar</button>
-                <button class="custom-url-btn secondary-action" type="button" onclick="openCurrentYouTube()" style="flex:1; min-width:180px;">↗ Abrir no YouTube</button>
             </div>
         </div>
 
@@ -202,8 +198,7 @@
                 <div class="yt-overlay-icon">▶</div>
                 <strong id="yt-overlay-title">Conteúdo indisponível no embed</strong>
                 <span id="yt-overlay-text">O YouTube não permite reproduzir este conteúdo dentro do Portal.</span>
-                <small id="yt-overlay-tip" style="max-width:520px;color:#64748b;line-height:1.4;">O item continua salvo e pode ser aberto diretamente no YouTube.</small>
-                <button class="custom-url-btn" type="button" onclick="openCurrentYouTube()">Abrir no YouTube</button>
+                <small id="yt-overlay-tip" style="max-width:520px;color:#64748b;line-height:1.4;">O item continua salvo. Escolha outro conteúdo para reproduzir dentro do Portal.</small>
             </div>
         </div>
         <div id="yt-status" class="yt-status ready" aria-live="polite">Preparando o player…</div>
@@ -538,7 +533,7 @@
         const RADIO_CHANNELS = {
             atlantida_poa: { label: 'Atlântida FM 94.3', needsHls: true, urls: ['https://liverdatlpoa.rbsdirect.com.br/primary/atl_poa.sdp/playlist.m3u8'] },
             antena1_poa: { label: 'Antena 1', needsHls: false, urls: ['https://antenaone.crossradio.com.br/stream/1', 'https://server3.webradios.com.br:19472/9472'] },
-            continental_poa: { label: 'Continental FM 98.3', needsHls: false, urls: ['https://radiocontinental.com.br/'] },
+            continental_poa: { label: 'Continental FM 98.3', needsHls: false, urls: ['http://rrdns-continental.webnow.com.br/imprensafm64k.mp3'] },
             salamanca_quarai: { label: 'Salamanca FM 101.3', needsHls: false, urls: ['https://live.paineldj.com.br/proxy/salamancahd?mp=/stream'] },
             cbn: { label: 'CBN Rio', needsHls: false, urls: ['https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_RJ.mp3'] },
             bandnews: { label: 'BandNews FM SP', needsHls: false, urls: ['https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.aac'] },
@@ -629,15 +624,6 @@
             const textEl = document.getElementById('yt-overlay-text');
             if (titleEl && title) titleEl.textContent = title;
             if (textEl && text) textEl.textContent = text;
-        }
-
-        function openYouTubeUrl(url) {
-            try { window.open(url, '_blank', 'noopener,noreferrer'); } catch (_) { window.location.href = url; }
-        }
-
-        function openCurrentYouTube() {
-            if (!ytCurrentId) return;
-            openYouTubeUrl('https://www.youtube.com/watch?v=' + encodeURIComponent(ytCurrentId));
         }
 
         function extrairYouTubeId(valor) {
@@ -764,27 +750,37 @@
                         },
                         onError: e => {
                             if (token !== ytLoadToken) return;
-                            setYTDiag('error', e.data + ' — ' + youtubeErrorMessage(e.data));
+                            const msg = youtubeErrorMessage(e.data);
+                            setYTDiag('error', e.data + ' — ' + msg);
                             setYTDiag('state', 'erro');
-                            setYouTubeStatus('❌ ' + youtubeErrorMessage(e.data), 'error');
+                            setYouTubeStatus('❌ ' + msg, 'error');
+
                             if ([101, 150].includes(e.data)) {
                                 setYTOverlay(true, 'Conteúdo bloqueado no embed', 'O proprietário deste vídeo não permite reprodução incorporada.');
+                                const tip = document.getElementById('yt-overlay-tip');
+                                if (tip) tip.textContent = 'O item permanece salvo em “Meus YouTube salvos”. Escolha outro conteúdo para continuar dentro do Portal.';
                                 if (ytCurrentId === YT_ENTRY_ID) {
-                                    setYouTubeStatus('⚠️ O vídeo inicial foi bloqueado. Carregando o teste oficial do YouTube…', 'loading');
+                                    setYouTubeStatus('⚠️ O conteúdo inicial foi bloqueado. Carregando o teste técnico interno…', 'loading');
                                     setTimeout(() => { if (ytCurrentId === YT_ENTRY_ID) loadYouTubeId(YT_TEST_ID, null, false); }, 650);
                                 }
-                            }
-                            const tip = document.getElementById('yt-overlay-tip'); if (tip) tip.textContent = 'O item permanece salvo em “Meus YouTube salvos”. Você pode tentar outro conteúdo.';
-                            else if (e.data === 100) {
-                                setYTOverlay(true, 'Vídeo indisponível', 'O vídeo inicial não está disponível.');
+                            } else if (e.data === 100) {
+                                setYTOverlay(true, 'Vídeo indisponível', 'O vídeo não está disponível para reprodução.');
+                                const tip = document.getElementById('yt-overlay-tip');
+                                if (tip) tip.textContent = 'O item continua salvo. Escolha outro conteúdo disponível para reproduzir dentro do Portal.';
                                 if (ytCurrentId === YT_ENTRY_ID) {
-                                    setYouTubeStatus('⚠️ Conteúdo inicial indisponível. Carregando o teste oficial do YouTube…', 'loading');
+                                    setYouTubeStatus('⚠️ Conteúdo inicial indisponível. Carregando o teste técnico interno…', 'loading');
                                     setTimeout(() => { if (ytCurrentId === YT_ENTRY_ID) loadYouTubeId(YT_TEST_ID, null, false); }, 650);
                                 }
+                            } else if (e.data === 153) {
+                                setYTOverlay(true, 'Identificação do embed recusada', 'O YouTube não recebeu o Referer esperado. Verifique o domínio HTTPS e a política de referência do servidor.');
+                                const tip = document.getElementById('yt-overlay-tip');
+                                if (tip) tip.textContent = 'O conteúdo permanece salvo. O Portal não abrirá outra janela automaticamente.';
+                            } else {
+                                setYTOverlay(true, 'Não foi possível reproduzir', msg);
+                                const tip = document.getElementById('yt-overlay-tip');
+                                if (tip) tip.textContent = 'O conteúdo permanece salvo. Tente outro vídeo dentro do Portal.';
                             }
-                            const tipUnavailable = document.getElementById('yt-overlay-tip'); if (tipUnavailable) tipUnavailable.textContent = 'O item continua salvo; você pode editar/regravar o mesmo link ou substituí-lo por outro.';
-                            else if (e.data === 153) setYTOverlay(true, 'Identificação do embed recusada', 'O YouTube não recebeu o Referer esperado. Verifique o domínio HTTPS e a política de referência do servidor.');
-                            console.error('[Portal YouTube] erro', e.data, youtubeErrorMessage(e.data), 'ID:', id);
+                            console.error('[Portal YouTube] erro', e.data, msg, 'ID:', id);
                         },
                         onAutoplayBlocked: () => {
                             if (token !== ytLoadToken) return;
@@ -1011,14 +1007,7 @@
         }
         function setStatus(id, text) { const el = document.getElementById('status-' + id); if (el) el.textContent = text; }
 
-        function abrirContinental() {
-            const url = 'https://radiocontinental.com.br/';
-            setStatus('continental_poa', '↗ Abrindo player oficial…');
-            openYouTubeUrl(url);
-        }
-
         function playChannel(channelId, btnEl, statusIdOverride) {
-            if (channelId === 'continental_poa') { abrirContinental(); return; }
             const channel = RADIO_CHANNELS[channelId]; if (!channel) return;
             if (currentChannelId === channelId && radioAudio) { togglePlayPause(); return; }
             cleanupRadio(); currentChannelId = channelId; currentChannelLabel = channel.label;
@@ -1048,7 +1037,7 @@
                 if (myReqId !== radioRequestId) return;
                 if (urlIndex >= channel.urls.length) { handleError('Indisponível'); return; }
                 const url = channel.urls[urlIndex];
-                if (isBlockedMixedContent(url)) { setStatus(statusId, '⚠️ Stream HTTP bloqueado em HTTPS'); handleError('HTTPS necessário'); return; }
+                if (isBlockedMixedContent(url) && channelId !== 'continental_poa') { setStatus(statusId, '⚠️ Stream HTTP bloqueado em HTTPS'); handleError('HTTPS necessário'); return; }
                 const needsHls = channel.needsHls || urlNeedsHls(url);
                 setStatus(statusId, 'Tentando ' + (urlIndex + 1) + '/' + channel.urls.length + '…');
 
