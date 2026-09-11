@@ -13,7 +13,7 @@
 <meta name="application-name" content="Portal de Mídia"/>
 <meta name="description" content="Rádios, YouTube e suas músicas em um player web leve e moderno."/>
 
-<title>Portal de Mídia — v5.1</title>
+<title>Portal de Mídia — v5.1.1</title>
 <link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%A7%3C/text%3E%3C/svg%3E" rel="icon" type="image/svg+xml"/>
 <style>
 
@@ -614,7 +614,7 @@
 <div class="brand-mark" aria-hidden="true">🎧</div>
 <div class="brand-copy">
 <h1>Portal de Mídia</h1>
-<span class="version-tag">v5.1 • temas · premium · presets</span>
+<span class="version-tag">v5.1.1 • correção JS</span>
 </div>
 <div class="header-actions">
 <button class="header-action" id="theme-menu-btn" type="button" onclick="toggleAppearancePanel()" aria-expanded="false" aria-controls="appearance-panel" title="Aparência">◐</button>
@@ -1135,7 +1135,7 @@
 <p class="lib-mode-note" style="margin-top:12px;">Criado por Break Troy · tudo funciona dentro desta página · sem redirecionar para fora.</p>
 </div>
 
-<footer>Portal de Mídia • v5.1 • Criado por Break Troy</footer>
+<footer>Portal de Mídia • v5.1.1 • Criado por Break Troy</footer>
 
 <div class="mini-player" id="mini-player">
 <div class="mini-info">
@@ -1253,6 +1253,71 @@
             try { return localStorage.getItem(key) || fallback; } catch (_) { return fallback; }
         }
         function setStoredValue(key, value) { try { localStorage.setItem(key, value); } catch (_) {} }
+
+        // ---------- EARLY STATE (evita TDZ / ordem de script) ----------
+        var COLOR_THEMES = ['violet', 'oled', 'rose', 'emerald', 'ocean', 'amber', 'slate'];
+        var libraryMode = false;
+        var libraryQueue = [];
+        var libraryIndex = 0;
+        var libraryPlayMode = 'linear';
+        var libraryAudio = null;
+
+        function clearColorThemeClasses() {
+            var root = document.documentElement;
+            for (var i = 0; i < COLOR_THEMES.length; i++) {
+                var t = COLOR_THEMES[i];
+                if (t !== 'violet') root.classList.remove('theme-' + t);
+            }
+        }
+        function applyColorTheme(name) {
+            name = name || getStoredValue('portal-color-theme', 'violet') || 'violet';
+            if (COLOR_THEMES.indexOf(name) < 0) name = 'violet';
+            clearColorThemeClasses();
+            if (name !== 'violet') document.documentElement.classList.add('theme-' + name);
+            document.querySelectorAll('[data-color-theme]').forEach(function(btn) {
+                btn.classList.toggle('active', btn.getAttribute('data-color-theme') === name);
+            });
+        }
+        function setColorTheme(name) {
+            setStoredValue('portal-color-theme', name || 'violet');
+            applyColorTheme(name || 'violet');
+        }
+        function applyVisualLevel(level) {
+            var root = document.documentElement;
+            root.classList.remove('visual-simple', 'visual-full', 'visual-premium');
+            if (level === 'simple') root.classList.add('visual-simple');
+            else if (level === 'premium') root.classList.add('visual-premium');
+            else root.classList.add('visual-full');
+            document.querySelectorAll('[data-visual]').forEach(function(btn) {
+                btn.classList.toggle('active', btn.getAttribute('data-visual') === level);
+            });
+        }
+        function setVisualLevel(level) {
+            if (['simple', 'full', 'premium'].indexOf(level) < 0) level = 'full';
+            setStoredValue('portal-visual-level', level);
+            applyVisualLevel(level);
+        }
+        function stopLibrary(keepUi) {
+            if (libraryAudio) {
+                try {
+                    libraryAudio.onended = null;
+                    libraryAudio.onerror = null;
+                    libraryAudio.pause();
+                    libraryAudio.removeAttribute('src');
+                    libraryAudio.load();
+                } catch (_) {}
+                libraryAudio = null;
+            }
+            libraryMode = false;
+            if (!keepUi) {
+                libraryQueue = [];
+                libraryIndex = 0;
+            }
+            try { updateLibraryNavButtons(); } catch (_) {}
+            try { renderLibrary(); } catch (_) {}
+        }
+
+
         function detectLiteHardware() {
             try {
                 const memory = Number(navigator.deviceMemory || 0);
@@ -2516,7 +2581,9 @@
         }
 
         function applyColorTheme(name) {
-            if (COLOR_THEMES.indexOf(name) < 0) name = 'violet';
+            name = name || 'violet';
+            var themes = (typeof COLOR_THEMES !== 'undefined' && COLOR_THEMES) ? COLOR_THEMES : ['violet', 'oled', 'rose', 'emerald', 'ocean', 'amber', 'slate'];
+            if (themes.indexOf(name) < 0) name = 'violet';
             clearColorThemeClasses();
             if (name !== 'violet') document.documentElement.classList.add('theme-' + name);
             document.querySelectorAll('[data-color-theme]').forEach(function(btn) {
@@ -2825,11 +2892,7 @@
             } catch (_) {}
         }
 
-        let libraryMode = false;
-        let libraryQueue = [];
-        let libraryIndex = 0;
-        let libraryPlayMode = 'linear'; // linear | repeat-all | shuffle
-        let libraryAudio = null;
+        // library state declared early (var) — ver EARLY STATE
 
         function getLibraryTracks() {
             try {
