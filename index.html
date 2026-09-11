@@ -152,9 +152,9 @@
         </h2>
         
         <div class="yt-presets">
-            <button class="timer-btn" onclick="loadYouTubeId('jfKfPfyJRdk', this)">📚 Lofi Girl</button>
-            <button class="timer-btn" onclick="loadYouTubeId('7NOS8R0FPLY', this)">🦝 Chillhop</button>
-            <button class="timer-btn" onclick="loadYouTubeId('5qap5aO4i9A', this)">☕ Lofi Beats</button>
+            <button class="timer-btn" onclick="loadYouTubeId('jfKfPfyJRdk', this, true)">📚 Lofi Girl</button>
+            <button class="timer-btn" onclick="loadYouTubeId('7NOS8R0FPLY', this, true)">🦝 Chillhop</button>
+            <button class="timer-btn" onclick="loadYouTubeId('5qap5aO4i9A', this, true)">☕ Lofi Beats</button>
         </div>
 
         <div class="custom-url-wrap" style="flex-direction: column; gap: 8px; margin-bottom: 15px;">
@@ -170,11 +170,11 @@
         <div class="video-container">
             <iframe
                 id="yt-player"
-                src="https://www.youtube-nocookie.com/embed/jfKfPfyJRdk?controls=1&playsinline=1&rel=0&autoplay=1&origin=https%3A%2F%2Fmidia-lac.vercel.app"
+                src="https://www.youtube.com/embed/jfKfPfyJRdk?enablejsapi=1&controls=1&playsinline=1&rel=0&autoplay=0&origin=https%3A%2F%2Fmidia-lac.vercel.app"
                 title="YouTube Player"
                 frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                referrerpolicy="strict-origin-when-cross-origin"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                referrerpolicy="origin"
                 allowfullscreen>
             </iframe>
         </div>
@@ -537,12 +537,20 @@
 
         // ---------- SISTEMA DE PERSISTÊNCIA & LIMPEZA DE CACHE ----------
         function getDadosSalvos() {
-            try { 
-                let data = JSON.parse(localStorage.getItem('portal-dados-salvos')) || { radio: [], youtube: [] };
-                // Purga qualquer registro antigo contendo live_stream ou IDs inválidos
-                data.youtube = data.youtube.filter(v => v.id && !v.id.includes('live_stream') && v.id.length === 11);
+            try {
+                const data = JSON.parse(localStorage.getItem('portal-dados-salvos')) || { radio: [], youtube: [] };
+                if (!Array.isArray(data.youtube)) data.youtube = [];
+
+                // Mantém somente IDs reais do YouTube (11 caracteres).
+                data.youtube = data.youtube.filter(v => {
+                    const id = String(v?.id || '').trim();
+                    return /^[A-Za-z0-9_-]{11}$/.test(id);
+                });
+
                 return data;
-            } catch(e) { return { radio: [], youtube: [] }; }
+            } catch(e) {
+                return { radio: [], youtube: [] };
+            }
         }
         function setDadosSalvos(data) { localStorage.setItem('portal-dados-salvos', JSON.stringify(data)); }
 
@@ -552,7 +560,7 @@
                 dados.youtube = [];
                 setDadosSalvos(dados);
                 renderCanaisSalvos();
-                loadYouTubeId('jfKfPfyJRdk', null);
+                loadYouTubeId('jfKfPfyJRdk', null, false);
                 alert("Cache do YouTube limpo com sucesso!");
             }
         }
@@ -621,28 +629,62 @@
             renderCanaisSalvos(); playChannel('custom_saved_' + (dados.radio.length - 1), null);
         }
 
+        function extrairYouTubeId(valor) {
+            const input = String(valor || '').trim();
+            if (!input) return null;
+
+            // Aceita URL completa ou somente o ID do vídeo.
+            if (/^[A-Za-z0-9_-]{11}$/.test(input)) return input;
+
+            try {
+                const url = new URL(input);
+                const host = url.hostname.replace(/^www\./, '').toLowerCase();
+
+                if (host === 'youtu.be') {
+                    const id = url.pathname.split('/').filter(Boolean)[0];
+                    return /^[A-Za-z0-9_-]{11}$/.test(id || '') ? id : null;
+                }
+
+                if (host === 'youtube.com' || host === 'm.youtube.com' || host === 'music.youtube.com') {
+                    const queryId = url.searchParams.get('v');
+                    if (/^[A-Za-z0-9_-]{11}$/.test(queryId || '')) return queryId;
+
+                    const parts = url.pathname.split('/').filter(Boolean);
+                    const markerIndex = parts.findIndex(part => ['embed', 'live', 'shorts', 'v'].includes(part));
+                    if (markerIndex >= 0 && parts[markerIndex + 1]) {
+                        const id = parts[markerIndex + 1];
+                        return /^[A-Za-z0-9_-]{11}$/.test(id) ? id : null;
+                    }
+                }
+            } catch (e) {
+                return null;
+            }
+
+            return null;
+        }
+
         function adicionarYouTubeSalvo() {
             const nomeInput = document.getElementById('yt-nome').value.trim();
             const inputVal = document.getElementById('yt-input').value.trim();
-            const match = inputVal.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/|.*embed\/))([^&?\s]+)/);
-            
-            if (match && match[1]) {
-                const videoId = match[1];
-                if (videoId.includes('live_stream')) {
-                    alert('Por favor, utilize o link de um vídeo específico ou de uma transmissão direta válida, e não o link genérico do canal.');
-                    return;
-                }
-                const tituloVid = nomeInput || ("Vídeo " + videoId.substring(0, 6));
-                let dados = getDadosSalvos();
-                
-                dados.youtube.push({ id: videoId, titulo: tituloVid });
-                setDadosSalvos(dados);
-                
-                document.getElementById('yt-nome').value = '';
-                document.getElementById('yt-input').value = '';
-                renderCanaisSalvos();
-                loadYouTubeId(videoId, null);
-            } else { alert('Por favor, cole um link válido do YouTube.'); }
+            const videoId = extrairYouTubeId(inputVal);
+
+            if (!videoId) {
+                alert('Cole uma URL válida do YouTube (vídeo, Shorts, /live/ ou youtu.be) ou um ID de 11 caracteres.');
+                return;
+            }
+
+            const tituloVid = nomeInput || ("Vídeo " + videoId.substring(0, 6));
+            const dados = getDadosSalvos();
+
+            // Evita duplicar o mesmo vídeo.
+            dados.youtube = dados.youtube.filter(v => v.id !== videoId);
+            dados.youtube.push({ id: videoId, titulo: tituloVid });
+            setDadosSalvos(dados);
+
+            document.getElementById('yt-nome').value = '';
+            document.getElementById('yt-input').value = '';
+            renderCanaisSalvos();
+            loadYouTubeId(videoId, null, true);
         }
 
         function removerCanalSalvo(tipo, index) {
@@ -654,11 +696,30 @@
             renderCanaisSalvos();
         }
 
-        function loadYouTubeId(id, btnEl = null) {
-            document.getElementById('yt-player').src = 
-                "https://www.youtube-nocookie.com/embed/" + id + 
-                "?controls=1&playsinline=1&rel=0&autoplay=1&origin=" + encodeURIComponent(YT_ORIGIN);
-            document.querySelectorAll('.yt-presets button, #yt-salvos-grid button').forEach(b => b.classList.remove('active', 'playing', 'active-yt'));
+        function loadYouTubeId(id, btnEl = null, autoPlay = false) {
+            const videoId = extrairYouTubeId(id);
+            const player = document.getElementById('yt-player');
+
+            if (!videoId) {
+                alert('ID do YouTube inválido. Use um vídeo ou transmissão específica do YouTube.');
+                return;
+            }
+
+            const params = new URLSearchParams({
+                enablejsapi: '1',
+                controls: '1',
+                playsinline: '1',
+                rel: '0',
+                autoplay: autoPlay ? '1' : '0',
+                origin: YT_ORIGIN
+            });
+
+            player.src = 'https://www.youtube.com/embed/' + videoId + '?' + params.toString();
+            player.setAttribute('referrerpolicy', 'origin');
+
+            document.querySelectorAll('.yt-presets button, #yt-salvos-grid button').forEach(b =>
+                b.classList.remove('active', 'playing', 'active-yt')
+            );
             if (btnEl) btnEl.classList.add('active', 'active-yt');
         }
 
