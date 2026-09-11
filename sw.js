@@ -1,5 +1,5 @@
 /* Portal de Mídia — service worker leve (só UI) */
-const CACHE = 'portal-midia-v52-ui';
+const CACHE = 'portal-midia-v511-ui';
 const ASSETS = ['./', './index.html', './manifest.webmanifest'];
 
 self.addEventListener('install', function(event) {
