@@ -1,5 +1,5 @@
 /* Portal de Mídia — service worker leve (só UI) */
-const CACHE = 'portal-midia-v511-ui';
+const CACHE = 'portal-midia-v53-ui';
 const ASSETS = ['./', './index.html', './manifest.webmanifest'];
 
 self.addEventListener('install', function(event) {
@@ -28,16 +28,42 @@ self.addEventListener('fetch', function(event) {
   if (/m3u8|mp3|aac|audio|stream|youtube|googlevideo|cast/i.test(url.href)) return;
   if (url.origin !== self.location.origin) return;
 
-  event.respondWith(
-    caches.match(req).then(function(cached) {
-      const network = fetch(req).then(function(res) {
-        if (res && res.ok && (req.mode === 'navigate' || url.pathname.endsWith('.html') || url.pathname.endsWith('.webmanifest') || url.pathname.endsWith('/'))) {
+  const isAppShell = req.mode === 'navigate' ||
+    url.pathname.endsWith('.html') ||
+    url.pathname.endsWith('.webmanifest') ||
+    url.pathname.endsWith('/');
+
+  if (isAppShell) {
+    // NETWORK-FIRST para o "app shell": sempre tenta buscar a versão mais
+    // nova primeiro. Só cai para o cache se a rede falhar (offline).
+    // Isso evita ficar preso numa versão antiga/quebrada depois de um deploy.
+    event.respondWith(
+      fetch(req).then(function(res) {
+        if (res && res.ok) {
           const copy = res.clone();
           caches.open(CACHE).then(function(c) { c.put(req, copy); });
         }
         return res;
       }).catch(function() {
-        return cached || caches.match('./');
+        return caches.match(req).then(function(cached) {
+          return cached || caches.match('./');
+        });
+      })
+    );
+    return;
+  }
+
+  // Demais recursos estáticos: cache-first com atualização em segundo plano.
+  event.respondWith(
+    caches.match(req).then(function(cached) {
+      const network = fetch(req).then(function(res) {
+        if (res && res.ok) {
+          const copy = res.clone();
+          caches.open(CACHE).then(function(c) { c.put(req, copy); });
+        }
+        return res;
+      }).catch(function() {
+        return cached;
       });
       return cached || network;
     })

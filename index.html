@@ -2741,65 +2741,6 @@
 
 
 
-        // ---------- TEMAS DE COR + NÍVEL VISUAL ----------
-        var COLOR_THEMES = ['violet', 'oled', 'rose', 'emerald', 'ocean', 'amber', 'slate'];
-
-        function clearColorThemeClasses() {
-            var root = document.documentElement;
-            COLOR_THEMES.forEach(function(t) {
-                if (t !== 'violet') root.classList.remove('theme-' + t);
-            });
-        }
-
-        function applyColorTheme(name) {
-            name = name || 'violet';
-            var themes = (typeof COLOR_THEMES !== 'undefined' && COLOR_THEMES) ? COLOR_THEMES : ['violet', 'oled', 'rose', 'emerald', 'ocean', 'amber', 'slate'];
-            if (themes.indexOf(name) < 0) name = 'violet';
-            clearColorThemeClasses();
-            var isLight = document.documentElement.classList.contains('light-mode');
-            if (!isLight && name !== 'violet') document.documentElement.classList.add('theme-' + name);
-            document.querySelectorAll('[data-color-theme]').forEach(function(btn) {
-                btn.classList.toggle('active', btn.getAttribute('data-color-theme') === name);
-            });
-        }
-
-        function goHome() {
-            try {
-                var hub = document.getElementById('section-hub') || document.getElementById('hub-continue') || document.querySelector('[data-section="hub"]');
-                if (hub && hub.scrollIntoView) hub.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                else window.scrollTo({ top: 0, behavior: 'smooth' });
-                if (history && history.replaceState) history.replaceState(null, '', window.location.pathname + window.location.search);
-                try { setActiveQuickNav(); } catch (_) {}
-            } catch (_) {
-                try { window.scrollTo(0, 0); } catch (__) {}
-            }
-        }
-        function setColorTheme(name) {
-            setStoredValue('portal-color-theme', name);
-            applyColorTheme(name);
-        }
-
-        function applyVisualLevel(level) {
-            var root = document.documentElement;
-            root.classList.remove('visual-simple', 'visual-full', 'visual-premium');
-            if (level === 'simple') root.classList.add('visual-simple');
-            else if (level === 'premium') root.classList.add('visual-premium');
-            else root.classList.add('visual-full');
-            document.querySelectorAll('[data-visual]').forEach(function(btn) {
-                btn.classList.toggle('active', btn.getAttribute('data-visual') === level);
-            });
-            // Premium nunca força efeitos se lite-mode ativo
-            if (root.classList.contains('lite-mode') && level === 'premium') {
-                // mantém classe premium mas CSS já bloqueia com :not(.lite-mode)
-            }
-        }
-
-        function setVisualLevel(level) {
-            if (['simple', 'full', 'premium'].indexOf(level) < 0) level = 'full';
-            setStoredValue('portal-visual-level', level);
-            applyVisualLevel(level);
-        }
-
         function loadYouTubePlaylist(listId, videoId, btnEl, autoPlay) {
             if (typeof autoPlay === 'undefined') autoPlay = true;
             if (!ytPlayerActivated) {
@@ -3199,26 +3140,6 @@
                 stopLibrary(true);
             }
             renderLibrary();
-        }
-
-        function stopLibrary(keepUi) {
-            if (libraryAudio) {
-                try {
-                    libraryAudio.onended = null;
-                    libraryAudio.onerror = null;
-                    libraryAudio.pause();
-                    libraryAudio.removeAttribute('src');
-                    libraryAudio.load();
-                } catch (_) {}
-                libraryAudio = null;
-            }
-            libraryMode = false;
-            if (!keepUi) {
-                libraryQueue = [];
-                libraryIndex = 0;
-            }
-            updateLibraryNavButtons();
-            try { renderLibrary(); } catch (_) {}
         }
 
         function updateLibraryNavButtons() {
