@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="theme-color" content="#0a0e1a">
-    <title>Portal de Mídia</title>
+    <title>Portal de Mídia — v2.0</title>
 
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%A7%3C/text%3E%3C/svg%3E">
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%A7%3C/text%3E%3C/svg%3E">
@@ -38,6 +38,14 @@
             margin: 0; font-size: 1.25em; font-weight: 700;
             background: linear-gradient(135deg, #a5b4fc 0%, #f0abfc 50%, #67e8f9 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        header .version-tag {
+            font-size: 0.55em;
+            color: #64748b;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            margin-top: 2px;
+            display: block;
         }
         .clock-display {
             margin-top: 6px; font-size: 2em; font-weight: 700;
@@ -279,6 +287,7 @@
 
     <header>
         <h1>🎧 Portal de Mídia</h1>
+        <span class="version-tag">v2.0</span>
         <div class="clock-display" id="clock">
             --:--
             <small id="clock-date">Carregando…</small>
@@ -559,14 +568,14 @@
         <div class="timer-status" id="timer-status"></div>
     </div>
 
-    <!-- YOUTUBE — 4 botões com vídeos DIFERENTES -->
+    <!-- YOUTUBE — usa busca do YouTube (nunca dá "video unavailable") -->
     <div class="section" data-section="youtube">
         <h2 class="section-title"><span class="icon">📺</span> YouTube</h2>
 
         <div class="video-container">
             <iframe
                 id="yt-player"
-                src="https://www.youtube-nocookie.com/embed/3fq3w5S3qZg?controls=1&playsinline=1&rel=0"
+                src="https://www.youtube.com/embed?listType=search&list=dance+80s+hits&controls=1&playsinline=1&rel=0"
                 title="YouTube"
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -576,10 +585,10 @@
         </div>
 
         <div class="yt-buttons">
-            <button class="yt-btn" onclick="trocarVideo('3fq3w5S3qZg')">🕺 Dance 80</button>
-            <button class="yt-btn" onclick="trocarVideo('0V2QyG7v0nE')">🪩 Dance 90</button>
-            <button class="yt-btn" onclick="trocarVideo('k85mRPqvMbE')">🎧 Dance 2000</button>
-            <button class="yt-btn" onclick="trocarVideo('Dx5qFachd3A')">🎷 Jazz</button>
+            <button class="yt-btn" onclick="buscarYoutube('dance 80s hits')">🕺 Dance 80</button>
+            <button class="yt-btn" onclick="buscarYoutube('dance 90s eurodance')">🪩 Dance 90</button>
+            <button class="yt-btn" onclick="buscarYoutube('dance 2000s club hits')">🎧 Dance 2000</button>
+            <button class="yt-btn" onclick="buscarYoutube('jazz music')">🎷 Jazz</button>
         </div>
     </div>
 
@@ -620,12 +629,13 @@
             somafm_groove: { label: 'SomaFM Groove Salad', needsHls: false, urls: ['https://ice1.somafm.com/groovesalad-128-mp3'] }
         };
 
-        // ==================== YOUTUBE ====================
-        function trocarVideo(videoId) {
+        // ==================== YOUTUBE — busca em vez de vídeo fixo ====================
+        function buscarYoutube(termo) {
             const iframe = document.getElementById('yt-player');
             if (!iframe) return;
-            iframe.src = 'https://www.youtube-nocookie.com/embed/' + videoId +
-                         '?controls=1&playsinline=1&rel=0&autoplay=1';
+            const query = encodeURIComponent(termo);
+            iframe.src = 'https://www.youtube.com/embed?listType=search&list=' + query +
+                         '&controls=1&playsinline=1&rel=0&autoplay=1';
         }
 
         // ==================== RELÓGIO ====================
