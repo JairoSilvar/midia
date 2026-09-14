@@ -395,19 +395,19 @@
         html.light-mode .brand-copy h1,
         html.light-mode .version-tag { color: #0f172a !important; -webkit-text-fill-color: #0f172a !important; }
 
-        /* Correções específicas para painéis e mini-player no tema claro */
+        /* Correções rigorosas de fonte e contraste para o Tema Claro */
         html.light-mode .appearance-panel {
             background: rgba(255, 255, 255, 0.98) !important;
             border-color: rgba(15, 23, 42, 0.15) !important;
             box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.15);
         }
         html.light-mode .appearance-title {
-            color: #475569 !important;
+            color: #334155 !important;
         }
         html.light-mode .appearance-row button {
             background: #f8fafc !important;
             color: #0f172a !important;
-            border-color: rgba(15, 23, 42, 0.12) !important;
+            border-color: rgba(15, 23, 42, 0.15) !important;
         }
         html.light-mode .appearance-row button.active {
             background: rgba(109, 40, 217, 0.12) !important;
@@ -424,12 +424,43 @@
         }
         html.light-mode .mini-controls button {
             background: #f1f5f9 !important;
-            border-color: rgba(15, 23, 42, 0.1) !important;
+            border-color: rgba(15, 23, 42, 0.15) !important;
             color: #0f172a !important;
         }
         html.light-mode .mini-controls button.stop-btn {
             background: rgba(239, 68, 68, 0.15) !important;
             color: #dc2626 !important;
+        }
+        html.light-mode .install-banner {
+            background: rgba(109, 40, 217, 0.08) !important;
+            border-color: rgba(109, 40, 217, 0.25) !important;
+        }
+        html.light-mode .install-banner p {
+            color: #1e293b !important;
+        }
+        html.light-mode .install-banner .ghost {
+            color: #334155 !important;
+            border-color: rgba(15, 23, 42, 0.2) !important;
+        }
+        html.light-mode .timer-btn {
+            background: #f8fafc !important;
+            color: #0f172a !important;
+            border-color: rgba(15, 23, 42, 0.12) !important;
+        }
+        html.light-mode .timer-btn.active {
+            background: linear-gradient(135deg, rgba(109,40,217,.15), rgba(219,39,119,.12)) !important;
+            color: #6d28d9 !important;
+            border-color: rgba(109, 40, 217, 0.4) !important;
+        }
+        html.light-mode .custom-url-input,
+        html.light-mode .search-input {
+            background: #ffffff !important;
+            color: #0f172a !important;
+            border-color: rgba(15, 23, 42, 0.15) !important;
+        }
+        html.light-mode .custom-url-input::placeholder,
+        html.light-mode .search-input::placeholder {
+            color: #64748b !important;
         }
 
         html.theme-oled { --bg: #000000; --surface: #0a0a0a; --surface-2: #141414; --surface-3: #1f1f1f; --text: #f5f5f5; --muted: #a3a3a3; --faint: #737373; --line: rgba(255,255,255,.10); --accent: #f5f5f5; --accent-2: #a3a3a3; --accent-soft: rgba(255,255,255,.10); --good: #4ade80; }
@@ -538,7 +569,7 @@
                 <div class="brand-mark" role="button" tabindex="0" title="Voltar ao início" onclick="goHome()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goHome();}" style="cursor:pointer">🎧</div>
                 <div class="brand-copy" role="button" tabindex="0" title="Voltar ao início" onclick="goHome()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goHome();}" style="cursor:pointer">
                     <h1>Portal de Mídia</h1>
-                    <span class="version-tag">v5.5 • Rádios, YouTube e Músicas</span>
+                    <span class="version-tag">v5.6 • Rádios, YouTube e Músicas</span>
                 </div>
                 <div class="header-actions">
                     <button class="header-action" id="theme-menu-btn" type="button" onclick="toggleAppearancePanel()" aria-expanded="false" aria-controls="appearance-panel" title="Aparência">◐</button>
@@ -907,9 +938,8 @@
             <div class="stat-pill"><b id="stat-tracks">0</b><span>faixas salvas</span></div>
         </div>
         <ul class="changelog" style="margin-top:14px;padding-left:18px;">
-            <li><strong>v5.5</strong> — Streams corrigidos para Total Hits e 102.3 FM Porto Alegre, tema claro corrigido para painéis e mini-player, e remoção do Total Hits 80s/90s.</li>
-            <li><strong>v5.4</strong> — Adicionadas rádios Total Hits e 102.3 FM Porto Alegre, botão renomeado e subtítulo limpo.</li>
-            <li><strong>v5.3</strong> — Substituído o tema de filmes pelo vídeo WF1ypdkbmv8 nos atalhos do YouTube.</li>
+            <li><strong>v5.6</strong> — Contraste do tema claro aprimorado em painéis e banners, links de rádios atualizados (Total Hits e 102.3 FM) e remoção do Total Hits 80s/90s.</li>
+            <li><strong>v5.5</strong> — Streams corrigidos e melhorias gerais de usabilidade.</li>
             <li><strong>v5.2</strong> — CSS dos temas de cor, logo volta ao início, YouTube em youtube.com (Cast nativo no player).</li>
         </ul>
         <p class="lib-mode-note" style="margin-top:12px;">Criado por Break Troy · tudo funciona dentro desta página · sem redirecionar para fora.</p>
