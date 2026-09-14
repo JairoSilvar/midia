@@ -395,6 +395,43 @@
         html.light-mode .brand-copy h1,
         html.light-mode .version-tag { color: #0f172a !important; -webkit-text-fill-color: #0f172a !important; }
 
+        /* Correções específicas para painéis e mini-player no tema claro */
+        html.light-mode .appearance-panel {
+            background: rgba(255, 255, 255, 0.98) !important;
+            border-color: rgba(15, 23, 42, 0.15) !important;
+            box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.15);
+        }
+        html.light-mode .appearance-title {
+            color: #475569 !important;
+        }
+        html.light-mode .appearance-row button {
+            background: #f8fafc !important;
+            color: #0f172a !important;
+            border-color: rgba(15, 23, 42, 0.12) !important;
+        }
+        html.light-mode .appearance-row button.active {
+            background: rgba(109, 40, 217, 0.12) !important;
+            border-color: rgba(109, 40, 217, 0.5) !important;
+            color: #6d28d9 !important;
+        }
+        html.light-mode .mini-player {
+            background: rgba(255, 255, 255, 0.96) !important;
+            border-color: rgba(15, 23, 42, 0.12) !important;
+            box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.15) !important;
+        }
+        html.light-mode .mini-title {
+            color: #0f172a !important;
+        }
+        html.light-mode .mini-controls button {
+            background: #f1f5f9 !important;
+            border-color: rgba(15, 23, 42, 0.1) !important;
+            color: #0f172a !important;
+        }
+        html.light-mode .mini-controls button.stop-btn {
+            background: rgba(239, 68, 68, 0.15) !important;
+            color: #dc2626 !important;
+        }
+
         html.theme-oled { --bg: #000000; --surface: #0a0a0a; --surface-2: #141414; --surface-3: #1f1f1f; --text: #f5f5f5; --muted: #a3a3a3; --faint: #737373; --line: rgba(255,255,255,.10); --accent: #f5f5f5; --accent-2: #a3a3a3; --accent-soft: rgba(255,255,255,.10); --good: #4ade80; }
         html.theme-rose { --bg: #14040c; --surface: #1c0a14; --surface-2: #2a1220; --surface-3: #3b1a2c; --text: #ffe4ef; --muted: #f9a8d4; --faint: #9d174d; --line: rgba(251,113,133,.18); --accent: #fb7185; --accent-2: #e879f9; --accent-soft: rgba(251,113,133,.20); --good: #4ade80; }
         html.theme-emerald { --bg: #04140c; --surface: #0a1f14; --surface-2: #123024; --surface-3: #1a3f30; --text: #ecfdf5; --muted: #6ee7b7; --faint: #047857; --line: rgba(52,211,153,.16); --accent: #34d399; --accent-2: #2dd4bf; --accent-soft: rgba(52,211,153,.18); --good: #4ade80; }
@@ -724,10 +761,6 @@
                 <button class="radio-btn" onclick="playChannel('total_hits', this)"><span class="icon">🔥</span><span class="label"><span class="name">Total Hits</span><small>Club &amp; Dance Mix</small><span class="status" id="status-total_hits"></span></span></button>
                 <button aria-label="Favoritar" class="fav-btn" onclick="toggleFav(this, 'total_hits')">☆</button>
             </div>
-            <div class="media-item" data-nome="total hits 80s 90s retro dance">
-                <button class="radio-btn" onclick="playChannel('total_hits_8090', this)"><span class="icon">🪩</span><span class="label"><span class="name">Total Hits 80s / 90s</span><small>Retro Club &amp; Dance</small><span class="status" id="status-total_hits_8090"></span></span></button>
-                <button aria-label="Favoritar" class="fav-btn" onclick="toggleFav(this, 'total_hits_8090')">☆</button>
-            </div>
             <div class="media-item" data-nome="progressive house beats">
                 <button class="radio-btn" onclick="playChannel('progressive', this)"><span class="icon">🔊</span><span class="label"><span class="name">Progressive House</span><small>Beats &amp; Melodias</small><span class="status" id="status-progressive"></span></span></button>
                 <button aria-label="Favoritar" class="fav-btn" onclick="toggleFav(this, 'progressive')">☆</button>
@@ -874,7 +907,7 @@
             <div class="stat-pill"><b id="stat-tracks">0</b><span>faixas salvas</span></div>
         </div>
         <ul class="changelog" style="margin-top:14px;padding-left:18px;">
-            <li><strong>v5.5</strong> — Streams corrigidos para Total Hits e 102.3 FM Porto Alegre, botão do YouTube atualizado para Best 80s Love Songs e número da versão restaurado no subtítulo.</li>
+            <li><strong>v5.5</strong> — Streams corrigidos para Total Hits e 102.3 FM Porto Alegre, tema claro corrigido para painéis e mini-player, e remoção do Total Hits 80s/90s.</li>
             <li><strong>v5.4</strong> — Adicionadas rádios Total Hits e 102.3 FM Porto Alegre, botão renomeado e subtítulo limpo.</li>
             <li><strong>v5.3</strong> — Substituído o tema de filmes pelo vídeo WF1ypdkbmv8 nos atalhos do YouTube.</li>
             <li><strong>v5.2</strong> — CSS dos temas de cor, logo volta ao início, YouTube em youtube.com (Cast nativo no player).</li>
@@ -953,14 +986,13 @@
 
         const RADIO_CHANNELS = {
             atlantida_poa: { label: 'Atlântida FM 94.3', needsHls: true, urls: ['https://liverdatlpoa.rbsdirect.com.br/primary/atl_poa.sdp/playlist.m3u8'] },
-            '1023_poa': { label: 'Rádio 102.3 FM', needsHls: false, urls: ['https://playerservices.streamtheworld.com/api/livestream-redirect/RADIO_1023AAC.aac', 'https://playerservices.streamtheworld.com/api/livestream-redirect/RADIO_1023.mp3'] },
+            '1023_poa': { label: 'Rádio 102.3 FM', needsHls: true, urls: ['https://liverd102fm.rbsdirect.com.br/primary/ita_poa.sdp/playlist.m3u8'] },
             antena1_poa: { label: 'Antena 1', needsHls: false, urls: ['https://antenaone.crossradio.com.br/stream/1'] },
             continental_poa: { label: 'Continental FM 98.3', needsHls: false, urls: ['https://rrdns-continental.webnow.com.br/imprensafm64k.mp3'] },
             salamanca_quarai: { label: 'Salamanca FM 101.3', needsHls: false, urls: ['https://live.paineldj.com.br/proxy/salamancahd?mp=/stream'] },
             cbn: { label: 'CBN Rio', needsHls: false, urls: ['https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_RJ_ADP.mp3', 'https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_RJ.mp3', 'https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_RJ_ADP.m3u8'] },
             bandnews: { label: 'BandNews FM SP', needsHls: false, urls: ['https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.mp3', 'https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.aac', 'https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.m3u8'] },
-            total_hits: { label: 'Total Hits', needsHls: false, urls: ['https://stream.laut.fm/total-hits'] },
-            total_hits_8090: { label: 'Total Hits 80s / 90s', needsHls: false, urls: ['https://stream.laut.fm/80s90shits'] },
+            total_hits: { label: 'Total Hits', needsHls: false, urls: ['https://eu8.fastcast4u.com/proxy/breaktroy?mp=/stream'] },
             progressive: { label: 'Progressive House', needsHls: false, urls: ['https://stream.laut.fm/house'] },
             trance: { label: 'Trance', needsHls: false, urls: ['https://stream.laut.fm/main'] },
             techno: { label: 'Techno', needsHls: false, urls: ['https://stream.laut.fm/techno'] },
