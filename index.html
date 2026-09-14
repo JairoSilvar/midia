@@ -3,140 +3,247 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de Mídia & Rádios - V5.5</title>
+    <title>Portal de Mídia & Rádios - V5.5 Pro</title>
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
+            --bg-color: #0b0f19;
+            --card-bg: #111827;
             --accent-color: #38bdf8;
-            --text-color: #f8fafc;
-            --text-muted: #94a3b8;
+            --accent-hover: #0ea5e9;
+            --text-color: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: #1f2937;
         }
-        body {
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
         }
         header {
             background-color: var(--card-bg);
-            padding: 1rem 2rem;
+            padding: 1.25rem 2rem;
             text-align: center;
-            border-bottom: 1px solid #334155;
+            border-bottom: 1px solid var(--border-color);
         }
         header h1 {
-            margin: 0;
             font-size: 1.5rem;
             color: var(--accent-color);
+            font-weight: 600;
         }
         main {
             flex: 1;
-            padding: 2rem;
-            max-width: 900px;
+            padding: 2rem 1rem;
+            max-width: 960px;
             margin: 0 auto;
             width: 100%;
-            box-sizing: border-box;
         }
-        .player-container {
+        .player-card {
             background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+        .station-info {
+            text-align: center;
             margin-bottom: 1.5rem;
         }
-        .station-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
+        .station-info h2 {
+            font-size: 1.25rem;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
         }
-        button {
-            background-color: #334155;
+        .station-info p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+        audio {
+            width: 100%;
+            margin-bottom: 1.5rem;
+            outline: none;
+        }
+        .grid-stations {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .btn-station {
+            background-color: #1f2937;
             color: var(--text-color);
-            border: 1px solid #475569;
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
+            border: 1px solid #374151;
+            padding: 0.85rem 1rem;
+            border-radius: 10px;
             cursor: pointer;
             font-weight: 600;
-            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            transition: all 0.25s ease;
+            text-align: center;
         }
-        button:hover {
+        .btn-station:hover {
             background-color: var(--accent-color);
-            color: #0f172a;
+            color: #0b0f19;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+        .btn-station.active {
+            background-color: var(--accent-color);
+            color: #0b0f19;
             border-color: var(--accent-color);
         }
-        .active-station {
-            background-color: var(--accent-color);
-            color: #0f172a;
-        }
-        .extras-section {
+        .toolbar-extras {
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
-            margin-top: 1.5rem;
+            justify-content: center;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+        }
+        .btn-extra {
+            background-color: #1e1b4b;
+            color: #818cf8;
+            border: 1px solid #312e81;
+            padding: 0.75rem 1.25rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.25s ease;
+        }
+        .btn-extra:hover {
+            background-color: #312e81;
+            color: #c7d2fe;
+        }
+        .history-section {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+        .history-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+        #history-list {
+            list-style: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        #history-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         footer {
             text-align: center;
-            padding: 1rem;
+            padding: 1.25rem;
             background-color: var(--card-bg);
             color: var(--text-muted);
-            font-size: 0.875rem;
-            border-top: 1px solid #334155;
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border-color);
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Portal de Mídia & Rádios (v5.5)</h1>
+        <h1>Portal de Mídia & Rádios — V5.5 Pro</h1>
     </header>
 
     <main>
-        <div class="player-container">
-            <h2>Player de Transmissão Ativo</h2>
-            <p id="current-playing">Selecione uma estação abaixo para iniciar.</p>
-            <audio id="audio-player" controls style="width: 100%; margin-top: 1rem;"></audio>
-            
-            <div class="station-list">
-                <button onclick="playStation('Total Hits', 'https://proxy.url/total-hits')">Total Hits (Break Troy)</button>
-                <button onclick="playStation('102.3 FM POA', 'https://proxy.url/1023poa')">102.3 FM Porto Alegre</button>
-                <button onclick="playStation('Atlântida FM', 'https://proxy.url/atlantida')">Atlântida FM</button>
+        <div class="player-card">
+            <div class="station-info">
+                <h2 id="status-title">Nenhuma estação selecionada</h2>
+                <p id="status-desc">Escolha uma opção na grade abaixo para iniciar a transmissão ao vivo.</p>
             </div>
 
-            <div class="extras-section">
-                <button onclick="triggerBestLoveSongs()">❤️ Best 80s Love Songs</button>
-                <button onclick="initChromecast()">Cast (Chromecast)</button>
+            <!-- Player de Áudio Nativo Otimizado -->
+            <audio id="main-audio" controls preload="none"></audio>
+
+            <!-- Grade de Estações com Total Hits e 102.3 FM -->
+            <div class="grid-stations">
+                <button class="btn-station" onclick="changeStation('Total Hits (Break Troy)', 'https://proxy.url/total-hits', this)">Total Hits</button>
+                <button class="btn-station" onclick="changeStation('102.3 FM Porto Alegre', 'https://proxy.url/1023poa', this)">102.3 FM POA</button>
+                <button class="btn-station" onclick="changeStation('Atlântida FM', 'https://proxy.url/atlantida', this)">Atlântida FM</button>
+                <button class="btn-station" onclick="changeStation('Antena 1', 'https://proxy.url/antena1', this)">Antena 1</button>
             </div>
+
+            <!-- Barra de Recursos Adicionais -->
+            <div class="toolbar-extras">
+                <button class="btn-extra" onclick="openBestLoveSongs()">❤️ Best 80s Love Songs</button>
+                <button class="btn-extra" onclick="initRemotePlayback()">📺 Chromecast / Cast</button>
+            </div>
+        </div>
+
+        <div class="history-section">
+            <h3>Histórico de Reprodução</h3>
+            <ul id="history-list">
+                <li>O histórico de estações acessadas aparecerá aqui...</li>
+            </ul>
         </div>
     </main>
 
     <footer>
-        Sistema Otimizado para Alta Compatibilidade &copy; 2026
+        Portal Otimizado para Dispositivos Móveis e Conexões Seguras HTTPS &copy; 2026
     </footer>
 
     <script>
-        const audioPlayer = document.getElementById('audio-player');
-        const currentPlayingText = document.getElementById('current-playing');
+        const audio = document.getElementById('main-audio');
+        const statusTitle = document.getElementById('status-title');
+        const statusDesc = document.getElementById('status-desc');
+        const historyList = document.getElementById('history-list');
 
-        function playStation(name, streamUrl) {
-            currentPlayingText.textContent = `Reproduzindo agora: ${name}`;
-            audioPlayer.src = streamUrl;
-            audioPlayer.play().catch(e => console.log("Aguardando interação para reprodução automática:", e));
+        let historyData = [];
+
+        function changeStation(name, url, btnElement) {
+            // Atualiza classes visuais dos botões
+            document.querySelectorAll('.btn-station').forEach(b => b.classList.remove('active'));
+            if(btnElement) btnElement.classList.add('active');
+
+            // Atualiza textos e fonte do player
+            statusTitle.textContent = `Reproduzindo: ${name}`;
+            statusDesc.textContent = "Conectando ao servidor de streaming seguro...";
+            
+            audio.src = url;
+            audio.play().then(() => {
+                statusDesc.textContent = "Transmissão ao vivo ativa.";
+            }).catch(err => {
+                statusDesc.textContent = "Clique no play do player para iniciar o áudio.";
+                console.log("Erro de autoplay:", err);
+            });
+
+            // Adiciona ao histórico
+            addToHistory(name);
         }
 
-        function triggerBestLoveSongs() {
-            alert("Carregando playlist especial: Best 80s Love Songs via YouTube Player.");
+        function addToHistory(stationName) {
+            const timeStr = new Date().toLocaleTimeString();
+            historyData.unshift(`${stationName} — ${timeStr}`);
+            if(historyData.length > 5) historyData.pop(); // Mantém os últimos 5
+            
+            historyList.innerHTML = historyData.map(item => `<li>• ${item}</li>`).join('');
         }
 
-        function initChromecast() {
-            if ('远程播放' in window || window.RemotePlayback) {
-                alert("Procurando dispositivos de reprodução remota e Chromecast compatíveis...");
+        function openBestLoveSongs() {
+            alert("Redirecionando para o player do YouTube: Best 80s Love Songs.");
+            // Exemplo de integração futura com o player do YouTube
+            window.open('https://www.youtube.com/results?search_query=Best+80s+Love+Songs', '_blank');
+        }
+
+        function initRemotePlayback() {
+            if ('RemotePlayback' in window || window.RemotePlayback) {
+                alert("Procurando dispositivos de transmissão remota disponíveis na rede...");
             } else {
-                alert("O recurso de Remote Playback / Chromecast está pronto para conexões seguras HTTPS.");
+                alert("O recurso de Remote Playback está pronto para conexões HTTPS na Vercel.");
             }
         }
     </script>
