@@ -594,7 +594,7 @@ html.lite-mode .media-item { background: var(--surface-2); }
 </div>
 <div class="brand-copy" role="button" tabindex="0" title="Voltar ao início" onclick="goHome()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goHome();}">
 <h1>Painel Mídia — Total Hits</h1>
-<span class="version-tag">v6.7.5 • Rádios, YouTube e Músicas</span>
+<span class="version-tag">v6.8.1 • Legacy Engine + Treino</span>
 </div>
 <div class="header-actions">
 <button class="header-action" id="theme-menu-btn" type="button" onclick="toggleAppearancePanel()" aria-expanded="false" aria-controls="appearance-panel" title="Aparência">
@@ -715,6 +715,37 @@ html.lite-mode .media-item { background: var(--surface-2); }
 <button class="radio-btn" onclick="loadYouTubePlaylist('PLXL_qJWqUmyI','cbVjs8U2rdw', this, true)">
 <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><polygon points="10 9 15 12 10 15 10 9" fill="currentColor"/></svg></span>
 <span class="label"><span class="name">💜 Miri Soul</span><small>Playlist</small><span class="status"></span></span>
+</button>
+</div>
+<!-- Treino — 2 Horas (v6.8.1) -->
+<div class="media-item card-wide" data-nome="treino 2 horas energy motivation academia">
+<button class="radio-btn" onclick="loadYouTubeId('xBer-B3Y3DA', this, true)">
+<span class="icon">🏋️</span>
+<span class="label"><span class="name">🏋️ Treino — Energy &amp; Motivation</span><small>~2h • Academia / cardio</small><span class="status"></span></span>
+</button>
+</div>
+<div class="media-item card-wide" data-nome="treino edm workout warrior 2 horas">
+<button class="radio-btn" onclick="loadYouTubeId('a1PAQFEQcl4', this, true)">
+<span class="icon">⚡</span>
+<span class="label"><span class="name">⚡ Treino — Workout Warrior EDM</span><small>2h+ • EDM / energia</small><span class="status"></span></span>
+</button>
+</div>
+<div class="media-item card-wide" data-nome="treino tunnel bass boosted edm 2 horas">
+<button class="radio-btn" onclick="loadYouTubeId('2Jhvun1qRPg', this, true)">
+<span class="icon">🔊</span>
+<span class="label"><span class="name">🔊 Treino — Tunnel Bass EDM</span><small>~2h • Bass / academia</small><span class="status"></span></span>
+</button>
+</div>
+<div class="media-item card-wide" data-nome="treino bass boosted edm 2 horas">
+<button class="radio-btn" onclick="loadYouTubeId('36OZNo7qN_M', this, true)">
+<span class="icon">🔥</span>
+<span class="label"><span class="name">🔥 Treino — Bass Boosted EDM</span><small>~2h • EDM / treino intenso</small><span class="status"></span></span>
+</button>
+</div>
+<div class="media-item card-wide" data-nome="treino turbo bass boosted 2 horas">
+<button class="radio-btn" onclick="loadYouTubeId('wyill7oxkaA', this, true)">
+<span class="icon">🚀</span>
+<span class="label"><span class="name">🚀 Treino — Turbo Bass</span><small>~2h • Bass / alta energia</small><span class="status"></span></span>
 </button>
 </div>
 <div class="media-item card-wide" data-nome="break troy">
@@ -1180,6 +1211,8 @@ html.lite-mode .media-item { background: var(--surface-2); }
 <div class="stat-pill"><b id="stat-tracks">0</b><span>faixas salvas</span></div>
 </div>
 <ul class="changelog" style="margin-top:14px;">
+<li><strong>v6.8.1</strong> — Adiciona 5 presets YouTube de treino longo (~2h), preservando todos os presets existentes e a exclusividade de mídia.</li>
+<li><strong>v6.8.0</strong> — Legacy Engine: bootstrap diagnóstico ES5 para Safari iOS 9, captura de erros de inicialização e proteção dos controles no iPad 3.</li>
 <li><strong>v6.7.5</strong> — Estabilização do motor de mídia: reconexão com backoff preservado, parada segura da biblioteca, token único contra callbacks antigos e circuit breaker da metadata Total Hits.</li>
 <li><strong>v6.7.3</strong> — Mini-player fixo na base (estilo Total Hits); equalizador animado; warmup de áudio para iOS 9 e Puffin; capa dinâmica no mini-player.</li>
 <li><strong>v6.7.2</strong> — Equalizador animado no mini-player; mini-player mostra emoji da rádio quando sem metadata.</li>
@@ -1224,6 +1257,60 @@ html.lite-mode .media-item { background: var(--surface-2); }
 <span id="cc-now-playing" class="cc_streaminfo" data-type="song" data-username="breaktroy" hidden>Atualizando…</span>
 <div class="cc_recenttracks_list" data-username="breaktroy" hidden></div>
 
+
+<script id="legacy-bootstrap">
+(function(){
+  var ua=navigator.userAgent||'';
+  var legacy=/iPad/i.test(ua)&&/OS 9[_\.]/i.test(ua);
+  window.__PORTAL_LEGACY_IPAD3=legacy;
+  window.__PORTAL_BOOT={stage:'bootstrap',errors:[]};
+
+  function esc(s){
+    return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function panel(){
+    if(!legacy)return null;
+    var p=document.getElementById('legacy-diag');
+    if(p)return p;
+    p=document.createElement('div');
+    p.id='legacy-diag';
+    p.style.cssText='position:fixed;left:6px;right:6px;bottom:6px;z-index:2147483647;background:#111;color:#fff;padding:8px 10px;border-radius:8px;font:12px/1.35 Arial,sans-serif;max-height:34%;overflow:auto;box-shadow:0 2px 12px rgba(0,0,0,.45)';
+    p.innerHTML='<b>iPad Legacy v6.8</b> — <span id="legacy-stage">BOOT OK</span> <button type="button" id="legacy-hide" style="float:right;font-size:12px">fechar</button><div id="legacy-error" style="margin-top:4px;color:#ffd27a"></div>';
+    (document.body||document.documentElement).appendChild(p);
+    var b=document.getElementById('legacy-hide');
+    if(b)b.onclick=function(){p.style.display='none';};
+    return p;
+  }
+  function show(stage,msg){
+    window.__PORTAL_BOOT.stage=stage;
+    if(msg)window.__PORTAL_BOOT.errors.push(String(msg));
+    if(!legacy)return;
+    panel();
+    var s=document.getElementById('legacy-stage');
+    var e=document.getElementById('legacy-error');
+    if(s)s.innerHTML=esc(stage);
+    if(e&&msg)e.innerHTML=esc(msg);
+  }
+
+  window.__portalLegacyShow=show;
+  window.onerror=function(msg,url,line,col,err){
+    show('ERRO JS', String(msg||'erro')+' | linha '+String(line||'?')+(col?' coluna '+col:''));
+    return false;
+  };
+  if(document.addEventListener){
+    document.addEventListener('DOMContentLoaded',function(){
+      show('DOM OK');
+      setTimeout(function(){
+        var ok=typeof window.playChannel==='function'&&typeof window.stopAllMedia==='function';
+        show(ok?'CONTROLES OK':'CONTROLES AUSENTES',
+             ok?'':'O script principal não expôs playChannel/stopAllMedia.');
+      },300);
+    },false);
+  }
+  show('BOOT OK');
+}());
+</script>
+
 <script>
 (function(){
 'use strict';
@@ -1247,7 +1334,7 @@ html.lite-mode .media-item { background: var(--surface-2); }
   if(typeof Element!=='undefined'&&!Element.prototype.remove){Element.prototype.remove=function(){if(this.parentNode)this.parentNode.removeChild(this);};}
   if(typeof Element!=='undefined'&&!Element.prototype.replaceWith){Element.prototype.replaceWith=function(){var p=this.parentNode;if(!p)return;for(var i=0;i<arguments.length;i++){var n=arguments[i];p.insertBefore(typeof n==='string'?document.createTextNode(n):n,this);}p.removeChild(this);};}
   if(typeof Promise==='undefined'){
-    function MiniPromise(executor){var self=this;self.state=0;self.value=void 0;self.h=[];function f(v){if(self.state)return;self.state=1;self.value=v;fl();}function r(x){if(self.state)return;self.state=2;self.value=x;fl();}function fl(){setTimeout(function(){var h=self.h.slice();self.h=[];for(var i=0;i<h.length;i++){var x=h[i];try{if(self.state===1){if(x.ok){x.res(x.ok(self.value));}else{x.res(self.value);}}else{if(x.fail){x.res(x.fail(self.value));}else{x.rej(self.value);}}}catch(e){x.rej(e);}}},0);}self.then=function(ok,fail){return new MiniPromise(function(res,rej){self.h.push({ok:typeof ok==='function'?ok:null,fail:typeof fail==='function'?fail:null,res:res,rej:rej});if(self.state)fl();});};self.catch=function(fail){return self.then(null,fail);};try{executor(f,r);}catch(e){r(e);}}
+    var MiniPromise=function(executor){var self=this;self.state=0;self.value=void 0;self.h=[];function f(v){if(self.state)return;self.state=1;self.value=v;fl();}function r(x){if(self.state)return;self.state=2;self.value=x;fl();}function fl(){setTimeout(function(){var h=self.h.slice();self.h=[];for(var i=0;i<h.length;i++){var x=h[i];try{if(self.state===1){if(x.ok){x.res(x.ok(self.value));}else{x.res(self.value);}}else{if(x.fail){x.res(x.fail(self.value));}else{x.rej(self.value);}}}catch(e){x.rej(e);}}},0);}self.then=function(ok,fail){return new MiniPromise(function(res,rej){self.h.push({ok:typeof ok==='function'?ok:null,fail:typeof fail==='function'?fail:null,res:res,rej:rej});if(self.state)fl();});};self.catch=function(fail){return self.then(null,fail);};try{executor(f,r);}catch(e){r(e);}};
     MiniPromise.resolve=function(v){return new MiniPromise(function(res){res(v);});};MiniPromise.reject=function(v){return new MiniPromise(function(_,rej){rej(v);});};window.Promise=MiniPromise;
   }
 }());
@@ -1301,6 +1388,8 @@ function portalScrollHome(){
   try{document.addEventListener('touchend',unlock,false);}catch(_){}
   try{document.addEventListener('click',unlock,false);}catch(_){}
 }());
+
+if(window.__portalLegacyShow)window.__portalLegacyShow('POLYFILLS OK');
 
 // ---------- DADOS DE RÁDIOS ----------
 var RADIO_CHANNELS = {
@@ -2669,36 +2758,6 @@ function bindKeyboardShortcuts(){
   });
 }
 
-window.addEventListener('DOMContentLoaded',function(){
-  refreshAppearanceControls();
-  var sv=localStorage.getItem('radio-vol')||'50';
-  var sl=document.getElementById('volume-slider'); if(sl)sl.value=sv;
-  radioVolume=parseInt(sv,10)/100;
-  radioAudio.volume=radioVolume;
-  renderCanaisSalvos();
-  renderFavoritos();
-  sincronizarEstrelas();
-  renderHub();
-  renderLibrary();
-  setActiveQuickNav();
-  bindKeyboardShortcuts();
-  setupPwa();
-  setupWeather();
-  setupDebug();
-  setupNetworkAndWake();
-  setupMediaSession();
-  setupFastcastBridge();
-  updateStatsUi();
-  showYouTubeUi(false);
-  setYTDiag('origin',portalOrigin());
-  setYTDiag('api','em espera');
-  setYTDiag('state','não ativado');
-  setYouTubeStatus('Player em espera — ative quando quiser.','ready');
-  setStatusBar('idle','PRONTO','Toque em uma rádio');
-  var si=document.getElementById('search-input');
-  if(si)si.addEventListener('input',function(){ filtrarRadios(si.value); });
-});
-
 // ============ EXPOR FUNÇÕES GLOBALMENTE ============
 window.playChannel = playChannel;
 window.toggleFav = toggleFav;
@@ -2734,6 +2793,41 @@ window.goHome = goHome;
 window.compartilharAgora = compartilharAgora;
 window.promptPwaInstall = promptPwaInstall;
 window.dismissInstallBanner = dismissInstallBanner;
+
+if(window.__portalLegacyShow)window.__portalLegacyShow('CONTROLES EXPORTADOS');
+
+window.addEventListener('DOMContentLoaded',function(){
+  if(window.__portalLegacyShow)window.__portalLegacyShow('INIT DOM');
+  refreshAppearanceControls();
+  var sv=localStorage.getItem('radio-vol')||'50';
+  var sl=document.getElementById('volume-slider'); if(sl)sl.value=sv;
+  radioVolume=parseInt(sv,10)/100;
+  radioAudio.volume=radioVolume;
+  renderCanaisSalvos();
+  renderFavoritos();
+  sincronizarEstrelas();
+  renderHub();
+  renderLibrary();
+  setActiveQuickNav();
+  bindKeyboardShortcuts();
+  setupPwa();
+  setupWeather();
+  setupDebug();
+  setupNetworkAndWake();
+  setupMediaSession();
+  setupFastcastBridge();
+  updateStatsUi();
+  showYouTubeUi(false);
+  setYTDiag('origin',portalOrigin());
+  setYTDiag('api','em espera');
+  setYTDiag('state','não ativado');
+  setYouTubeStatus('Player em espera — ative quando quiser.','ready');
+  setStatusBar('idle','PRONTO','Toque em uma rádio');
+  if(window.__portalLegacyShow)window.__portalLegacyShow('PORTAL PRONTO');
+  var si=document.getElementById('search-input');
+  if(si)si.addEventListener('input',function(){ filtrarRadios(si.value); });
+});
+
 
 })();
 </script>
