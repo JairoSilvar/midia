@@ -50,6 +50,18 @@
       "destination": "https://eu8.fastcast4u.com/proxy/breaktroy?mp=/stream"
     },
     {
+      "source": "/api/stream/80er",
+      "destination": "https://80er.stream.laut.fm/80er"
+    },
+    {
+      "source": "/api/stream/eurodance",
+      "destination": "https://eurodance.stream.laut.fm/eurodance"
+    },
+    {
+      "source": "/api/stream/clubhits",
+      "destination": "https://clubhits.stream.laut.fm/clubhits"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
