@@ -14,10 +14,13 @@
 <meta name="apple-mobile-web-app-title" content="Painel Mídia"/>
 <meta name="application-name" content="Painel Mídia"/>
 <meta name="description" content="Rádios, YouTube e suas músicas em um player web leve e moderno."/>
-<title>Painel Mídia — Total Hits</title>
+<title>Painel Mídia</title>
 <style>
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { margin: 0; padding: 0; height: 100%; }
+html, body { margin: 0; padding: 0; height: 100%; max-width: 100%; overflow-x: hidden; }
+html { width: 100%; position: relative; }
+img, video, iframe, svg, canvas { max-width: 100%; height: auto; }
+#yt-player iframe, .video-container iframe { height: 100%; max-width: 100%; }
 :root {
 --bg: #0a0e1a;
 --surface: #121826;
@@ -35,6 +38,7 @@ html, body { margin: 0; padding: 0; height: 100%; }
 --radius: 16px;
 --radius-sm: 12px;
 --safe-bottom: 0px;
+--vv-bottom: 0px; /* compensação da barra do Chrome Android (visualViewport) */
 --card-pad: 20px;
 }
 @supports (padding: env(safe-area-inset-bottom)) {
@@ -46,13 +50,25 @@ background: var(--bg);
 background-image:
 radial-gradient(ellipse at top left, rgba(99,102,241,.10) 0%, transparent 50%),
 radial-gradient(ellipse at bottom right, rgba(236,72,153,.08) 0%, transparent 50%);
-background-attachment: fixed;
+/* fixed no body quebra position:fixed do mini-player no Chrome Android */
+background-attachment: scroll;
 color: var(--text);
-overflow-x: hidden;
+overflow-x: hidden !important;
 overflow-y: auto;
 -webkit-overflow-scrolling: touch;
 padding-bottom: calc(160px + var(--safe-bottom));
+width: 100%;
+max-width: 100vw;
+position: relative;
 }
+/* Evita overflow horizontal de flex/grid em mobile */
+.header-inner, .top-row, .status-strip, .section, .card-grid, .mini-inner, .mini-controls {
+  min-width: 0;
+  max-width: 100%;
+}
+.media-item, .radio-btn, .brand-copy { min-width: 0; }
+.card-grid { width: 100%; box-sizing: border-box; }
+.section { overflow-x: hidden; }
 header {
 padding: 12px 16px 10px;
 text-align: left;
@@ -401,21 +417,30 @@ color: #fff; border-radius: 10px; padding: 8px 12px; font: 700 .8rem inherit; cu
 .sw-note { font-size: .7em; color: var(--faint); text-align: center; margin-top: 8px; }
 /* ---------- MINI-PLAYER FIXO NA BASE (estilo Total Hits) ---------- */
 .mini-player {
-position: fixed;
-left: 0; right: 0;
-bottom: 0;
+position: fixed !important;
+left: 0 !important; right: 0 !important;
+/* --vv-bottom sobe a barra quando a URL do Chrome Android some/aparece */
+bottom: var(--vv-bottom, 0px) !important;
+top: auto !important;
 width: 100%; max-width: 100%; margin: 0;
 background: rgba(15,23,42,.98);
-backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
 border: none;
 border-top: 1px solid rgba(255,255,255,.12);
 border-radius: 0;
-padding: 10px 14px calc(10px + var(--safe-bottom));
-z-index: 20;
+padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+z-index: 9990;
 box-shadow: 0 -8px 24px -8px rgba(0,0,0,.55);
 display: none;
+-webkit-transform: translate3d(0,0,0);
+transform: translate3d(0,0,0);
+-webkit-backface-visibility: hidden;
+backface-visibility: hidden;
+will-change: transform, bottom;
 }
-.mini-player.visible { display: block; }
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .mini-player { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+}
+.mini-player.visible { display: block !important; }
 .mini-inner { display: flex; align-items: center; gap: 12px; }
 .mini-cover-wrap {
 width: 48px; height: 48px; border-radius: 12px; flex: 0 0 auto;
@@ -492,19 +517,20 @@ background: linear-gradient(135deg, #8b5cf6, #ec4899); border-radius: 50%; borde
 }
 footer { text-align: center; padding: 24px 16px 12px; margin-bottom: 12px;
 font-size: .78em; color: var(--faint); letter-spacing: .05em; text-transform: uppercase; }
+/* Light mode: variáveis SEM !important para permitir theme-* no claro */
 html.light-mode {
---bg: #f4f7fb !important;
---surface: #ffffff !important;
---surface-2: #f1f5f9 !important;
---surface-3: #e2e8f0 !important;
---text: #0f172a !important;
---muted: #334155 !important;
---faint: #475569 !important;
---line: rgba(15,23,42,.12) !important;
---accent: #6d28d9 !important;
---accent-2: #db2777 !important;
---accent-soft: rgba(109,40,217,.12) !important;
---good: #15803d !important;
+--bg: #f4f7fb;
+--surface: #ffffff;
+--surface-2: #f1f5f9;
+--surface-3: #e2e8f0;
+--text: #0f172a;
+--muted: #334155;
+--faint: #475569;
+--line: rgba(15,23,42,.12);
+--accent: #6d28d9;
+--accent-2: #db2777;
+--accent-soft: rgba(109,40,217,.12);
+--good: #15803d;
 }
 html.light-mode body { background-color: #f4f7fb !important;
 background-image:
@@ -556,6 +582,49 @@ html.theme-slate { --bg: #0c1017; --surface: #141a24; --surface-2: #1c2433; --su
 html.theme-neon { --bg: #050a08; --surface: #0a1210; --surface-2: #0f1a17; --surface-3: #14261f;
 --text: #e7fff6; --muted: #6ee7c8; --faint: #047857; --line: rgba(0,255,166,.16);
 --accent: #00ffa6; --accent-2: #7c3aed; --accent-soft: rgba(0,255,166,.14); --good: #00ffa6; }
+html.light-mode.theme-rose {
+  --accent: #e11d48 !important; --accent-2: #f43f5e !important; --accent-soft: rgba(225,29,72,.14) !important;
+  --bg: #fff5f7 !important; --surface: #ffffff !important; --surface-2: #ffe4e9 !important; --surface-3: #fecdd3 !important;
+  --text: #4c0519 !important; --muted: #9f1239 !important; --faint: #be123c !important; --line: rgba(225,29,72,.16) !important;
+}
+html.light-mode.theme-emerald {
+  --accent: #059669 !important; --accent-2: #10b981 !important; --accent-soft: rgba(5,150,105,.14) !important;
+  --bg: #f0fdf6 !important; --surface: #ffffff !important; --surface-2: #d1fae5 !important; --surface-3: #a7f3d0 !important;
+  --text: #064e3b !important; --muted: #047857 !important; --faint: #059669 !important; --line: rgba(5,150,105,.16) !important;
+}
+html.light-mode.theme-ocean {
+  --accent: #0284c7 !important; --accent-2: #0ea5e9 !important; --accent-soft: rgba(2,132,199,.14) !important;
+  --bg: #f0f9ff !important; --surface: #ffffff !important; --surface-2: #e0f2fe !important; --surface-3: #bae6fd !important;
+  --text: #0c4a6e !important; --muted: #0369a1 !important; --faint: #0284c7 !important; --line: rgba(2,132,199,.16) !important;
+}
+html.light-mode.theme-amber {
+  --accent: #d97706 !important; --accent-2: #f59e0b !important; --accent-soft: rgba(217,119,6,.14) !important;
+  --bg: #fffbeb !important; --surface: #ffffff !important; --surface-2: #fef3c7 !important; --surface-3: #fde68a !important;
+  --text: #78350f !important; --muted: #b45309 !important; --faint: #d97706 !important; --line: rgba(217,119,6,.16) !important;
+}
+html.light-mode.theme-slate {
+  --accent: #475569 !important; --accent-2: #64748b !important; --accent-soft: rgba(71,85,105,.14) !important;
+  --bg: #f8fafc !important; --surface: #ffffff !important; --surface-2: #f1f5f9 !important; --surface-3: #e2e8f0 !important;
+  --text: #0f172a !important; --muted: #475569 !important; --faint: #64748b !important; --line: rgba(71,85,105,.16) !important;
+}
+html.light-mode.theme-neon {
+  --accent: #059669 !important; --accent-2: #7c3aed !important; --accent-soft: rgba(5,150,105,.14) !important;
+  --bg: #ecfdf5 !important; --surface: #ffffff !important; --surface-2: #d1fae5 !important; --surface-3: #a7f3d0 !important;
+  --text: #064e3b !important; --muted: #047857 !important; --faint: #059669 !important; --line: rgba(5,150,105,.16) !important;
+}
+html.light-mode.theme-oled {
+  --accent: #334155 !important; --accent-2: #64748b !important; --accent-soft: rgba(51,65,85,.14) !important;
+  --bg: #f1f5f9 !important; --surface: #ffffff !important; --surface-2: #e2e8f0 !important; --surface-3: #cbd5e1 !important;
+  --text: #0f172a !important; --muted: #334155 !important; --faint: #64748b !important; --line: rgba(51,65,85,.18) !important;
+}
+html.light-mode.theme-violet {
+  --accent: #6d28d9 !important; --accent-2: #db2777 !important; --accent-soft: rgba(109,40,217,.12) !important;
+}
+/* Aplicar fundo claro por tema */
+html.light-mode body {
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+}
 .appearance-row.theme-row button { flex: 1 1 30%; min-width: 88px; font-size: .72rem; }
 .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 50%;
 margin-right: 5px; vertical-align: middle; border: 1px solid rgba(255,255,255,.25); }
@@ -593,15 +662,12 @@ html.lite-mode .media-item { background: var(--surface-2); }
 <img src="/total-hits-logo.svg" alt="Total Hits" onerror="this.style.display='none';this.parentNode.innerHTML='🎧';"/>
 </div>
 <div class="brand-copy" role="button" tabindex="0" title="Voltar ao início" onclick="goHome()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goHome();}">
-<h1>Painel Mídia — Total Hits</h1>
-<span class="version-tag">v6.8.1 • Legacy Engine + Treino</span>
+<h1>Painel Mídia</h1>
+<span class="version-tag">v6.10.1 • iPad streams + YT + claro</span>
 </div>
 <div class="header-actions">
 <button class="header-action" id="theme-menu-btn" type="button" onclick="toggleAppearancePanel()" aria-expanded="false" aria-controls="appearance-panel" title="Aparência">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-</button>
-<button class="header-action" id="compact-btn" type="button" onclick="toggleCompactMode()" aria-pressed="false" title="Modo compacto">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
 </button>
 <button class="header-action share-btn" type="button" onclick="compartilharAgora()" title="Compartilhar">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
@@ -646,6 +712,11 @@ html.lite-mode .media-item { background: var(--surface-2); }
 <button type="button" data-performance="auto" onclick="setPerformanceMode('auto')">⚙ Auto</button>
 <button type="button" data-performance="full" onclick="setPerformanceMode('full')">✨ Completo</button>
 <button type="button" data-performance="lite" onclick="setPerformanceMode('lite')">⚡ Econômico</button>
+</div>
+<div class="appearance-title" style="margin-top:10px">Densidade</div>
+<div class="appearance-row" role="group" aria-label="Densidade">
+<button type="button" id="compact-btn" data-density="normal" onclick="setCompactMode(false)" aria-pressed="false">Normal</button>
+<button type="button" data-density="compact" onclick="setCompactMode(true)" aria-pressed="false">Compacto</button>
 </div>
 </div>
 </div>
@@ -709,7 +780,7 @@ html.lite-mode .media-item { background: var(--surface-2); }
 <div class="section" data-section="youtube" id="section-youtube">
 <h2 class="section-title"><div class="left-group"><span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><polygon points="10 9 15 12 10 15 10 9" fill="currentColor"/></svg></span><span class="title-text">YouTube Dinâmico</span></div></h2>
 <button aria-label="Enviar mídia para Chromecast" class="cast-action" id="cast-btn" onclick="castCurrentMedia()" type="button">📺 Enviar para Chromecast</button>
-<div class="cast-note" id="cast-note">Rádio: use este botão. YouTube: o ícone de Cast aparece nos controles do próprio player.</div>
+<div class="cast-note" id="cast-note">Rádios: use este botão. YouTube: o Portal preserva o player oficial; quando o Cast não aparecer no iframe, use o Cast do app YouTube ou Transmitir guia/tela do navegador.</div>
 <div aria-label="Atalhos do YouTube" class="yt-presets">
 <div class="media-item card-wide" data-nome="miri soul">
 <button class="radio-btn" onclick="loadYouTubePlaylist('PLXL_qJWqUmyI','cbVjs8U2rdw', this, true)">
@@ -1211,6 +1282,14 @@ html.lite-mode .media-item { background: var(--surface-2); }
 <div class="stat-pill"><b id="stat-tracks">0</b><span>faixas salvas</span></div>
 </div>
 <ul class="changelog" style="margin-top:14px;">
+<li><strong>v6.10.1</strong> — iPad: URLs laut.fm diretas (sem 302); Paradise MP3; tema claro com cores reais; YouTube legado com capa + Abrir (Safari 9 não embute player moderno).</li>
+<li><strong>v6.10.0</strong> — Revisão completa: rádio iPad (sem corrida unlock/stream, proxy /api/stream/totalhits, &lt;source type&gt;); YouTube legado mais claro; overflow mobile; título “Painel Mídia”; temas de cor no modo claro; densidade no painel Aparência.</li>
+<li><strong>v6.9.5</strong> — iPad/Safari: desbloqueio do áudio no mesmo gesto do toque; &lt;audio&gt; fixo no DOM; Total Hits com URLs alternativas; corrige “Áudio direto 1/1” sem tocar.</li>
+<li><strong>v6.9.4</strong> — Mini-player acompanha a visualViewport (barra URL do Chrome); YouTube legado no iPad via youtube-nocookie; orientação: no iPad use sempre o Safari.</li>
+<li><strong>v6.9.3</strong> — Android moderno: mini-player realmente fixo na base (sem rolar com a página); ao tocar um vídeo YouTube a tela rola até o visualizador.</li>
+<li><strong>v6.9.2</strong> — Correção crítica: playChannel não chama mais stopAllMedia (que zerava o token e o src e impedia rádio/YouTube); detecção correta de src ativo; re-play após falha.</li>
+<li><strong>v6.9.1</strong> — Motor de rádio endurecido para dispositivos antigos: Audio fresco a cada tentativa, correção do fallback de URLs, timeouts maiores, progressive preferido no Android antigo, HLS nativo no Safari 9 sem load() agressivo.</li>
+<li><strong>v6.9.0</strong> — Safari/iPad 3: caminho de áudio legado e fallback direto de YouTube; modernos: Cast remoto para rádios e Media Session/artwork aprimorados.</li>
 <li><strong>v6.8.1</strong> — Adiciona 5 presets YouTube de treino longo (~2h), preservando todos os presets existentes e a exclusividade de mídia.</li>
 <li><strong>v6.8.0</strong> — Legacy Engine: bootstrap diagnóstico ES5 para Safari iOS 9, captura de erros de inicialização e proteção dos controles no iPad 3.</li>
 <li><strong>v6.7.5</strong> — Estabilização do motor de mídia: reconexão com backoff preservado, parada segura da biblioteca, token único contra callbacks antigos e circuit breaker da metadata Total Hits.</li>
@@ -1222,7 +1301,7 @@ html.lite-mode .media-item { background: var(--surface-2); }
 <p class="lib-mode-note" style="margin-top:12px;">Criado por Break Troy · tudo funciona dentro desta página · sem redirecionar para fora.</p>
 </div>
 
-<footer>Painel Mídia — Total Hits • Criado por Break Troy</footer>
+<footer>Painel Mídia • Criado por Break Troy</footer>
 
 <section id="debug-panel" hidden style="position:fixed;inset:12px;z-index:1000;background:#0b1220;color:#e5e7eb;border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.6);font:14px/1.5 -apple-system,Roboto,Arial,sans-serif;">
 <h2 style="margin:0 0 12px">🧪 Painel Debug</h2>
@@ -1275,7 +1354,7 @@ html.lite-mode .media-item { background: var(--surface-2); }
     p=document.createElement('div');
     p.id='legacy-diag';
     p.style.cssText='position:fixed;left:6px;right:6px;bottom:6px;z-index:2147483647;background:#111;color:#fff;padding:8px 10px;border-radius:8px;font:12px/1.35 Arial,sans-serif;max-height:34%;overflow:auto;box-shadow:0 2px 12px rgba(0,0,0,.45)';
-    p.innerHTML='<b>iPad Legacy v6.8</b> — <span id="legacy-stage">BOOT OK</span> <button type="button" id="legacy-hide" style="float:right;font-size:12px">fechar</button><div id="legacy-error" style="margin-top:4px;color:#ffd27a"></div>';
+    p.innerHTML='<b>iPad Legacy v6.10.1</b> — <span id="legacy-stage">BOOT OK</span> <button type="button" id="legacy-hide" style="float:right;font-size:12px">fechar</button><div id="legacy-error" style="margin-top:4px;color:#ffd27a"></div>';
     (document.body||document.documentElement).appendChild(p);
     var b=document.getElementById('legacy-hide');
     if(b)b.onclick=function(){p.style.display='none';};
@@ -1396,31 +1475,99 @@ var RADIO_CHANNELS = {
   atlantida_poa: { label:'Atlântida FM 94.3', urls:['https://1852747t.ha.azioncdn.net/primary/atl_poa.sdp/playlist.m3u8','https://liverdatlpoa.rbsdirect.com.br/primary/atl_poa.sdp/playlist.m3u8'] },
   '1023_poa': { label:'Rádio 102.3 FM', urls:['https://1192747t.ha.azioncdn.net/primary/ita_poa.sdp/playlist.m3u8','https://liverd102fm.rbsdirect.com.br/primary/ita_poa.sdp/playlist.m3u8'] },
   antena1_poa: { label:'Antena 1', urls:['https://antenaone.crossradio.com.br/stream/1'] },
-  continental_poa: { label:'Continental FM 98.3', urls:['https://rrdns-continental.webnow.com.br/imprensafm64k.mp3'] },
-  salamanca_quarai: { label:'Salamanca FM 101.3', urls:['https://live.paineldj.com.br/proxy/salamancahd?mp=/stream'] },
+  continental_poa: { label:'Continental FM 98.3', urls:[
+    'https://rrdns-continental.webnow.com.br/imprensafm64k.mp3',
+    'https://rrdns-continental.webnow.com.br/imprensafm.mp3'
+  ] },
+  salamanca_quarai: { label:'Salamanca FM 101.3', urls:[
+    'https://live.paineldj.com.br/proxy/salamancahd?mp=/stream',
+    'https://live.paineldj.com.br/proxy/salamancahd?mp=/stream/;.mp3'
+  ] },
   cbn: { label:'CBN Rio', urls:['https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_RJ_ADP.m3u8','https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_RJ_ADP.mp3','https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_RJ.mp3'] },
   bandnews: { label:'BandNews FM SP', urls:['https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.m3u8','https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.aac','https://playerservices.streamtheworld.com/api/livestream-redirect/BANDNEWSFM_SPAAC.mp3'] },
-  total_hits: { label:'Total Hits', urls:['https://eu8.fastcast4u.com/proxy/breaktroy?mp=/stream'] },
-  progressive: { label:'Progressive House', urls:['https://stream.laut.fm/house'] },
-  trance: { label:'Trance', urls:['https://stream.laut.fm/main'] },
-  techno: { label:'Techno', urls:['https://stream.laut.fm/techno'] },
-  reiki: { label:'Reiki & Meditação', urls:['https://streaming.positivity.radio/pr/reiki/icecast.audio'] },
-  anos80: { label:'Hits Anos 80', urls:['https://stream.laut.fm/80er'] },
-  dance90: { label:"Dance 90's", urls:['https://stream.laut.fm/eurodance'] },
-  dance2000: { label:'Dance / Club Hits', urls:['https://stream.laut.fm/clubhits'] },
-  rock: { label:'Classic Rock', urls:['https://stream.laut.fm/classicrock'] },
-  pop: { label:'Pop Hits', urls:['https://stream.laut.fm/pop'] },
-  lofi: { label:'Lofi Beats', urls:['https://stream.laut.fm/lofi'] },
-  classical: { label:'Clássica / Foco', urls:['https://stream.laut.fm/klassik'] },
+  total_hits: { label:'Total Hits', urls:[
+    '/api/stream/totalhits',
+    'https://eu8.fastcast4u.com/proxy/breaktroy?mp=/stream',
+    'https://eu8.fastcast4u.com/proxy/breaktroy/;stream.mp3'
+  ] },
+  /* laut.fm: host direto (sem 302) — Safari 9 falha em redirects no <audio> */
+  progressive: { label:'Progressive House', urls:['https://house.stream.laut.fm/house','https://stream.laut.fm/house'] },
+  trance: { label:'Trance', urls:['https://main.stream.laut.fm/main','https://stream.laut.fm/main'] },
+  techno: { label:'Techno', urls:['https://techno.stream.laut.fm/techno','https://stream.laut.fm/techno'] },
+  reiki: { label:'Reiki & Meditação', urls:['https://streaming.positivity.radio/pr/reiki/icecast.audio','https://ice5.somafm.com/dronezone-128-mp3'] },
+  anos80: { label:'Hits Anos 80', urls:['https://80er.stream.laut.fm/80er','https://stream.laut.fm/80er'] },
+  dance90: { label:"Dance 90's", urls:['https://eurodance.stream.laut.fm/eurodance','https://stream.laut.fm/eurodance'] },
+  dance2000: { label:'Dance / Club Hits', urls:['https://clubhits.stream.laut.fm/clubhits','https://stream.laut.fm/clubhits'] },
+  rock: { label:'Classic Rock', urls:['https://classicrock.stream.laut.fm/classicrock','https://stream.laut.fm/classicrock'] },
+  pop: { label:'Pop Hits', urls:['https://pop.stream.laut.fm/pop','https://stream.laut.fm/pop'] },
+  lofi: { label:'Lofi Beats', urls:['https://lofi.stream.laut.fm/lofi','https://stream.laut.fm/lofi'] },
+  classical: { label:'Clássica / Foco', urls:['https://klassik.stream.laut.fm/klassik','https://stream.laut.fm/klassik'] },
   mpb: { label:'Chill / Groove', urls:['https://ice5.somafm.com/groovesalad-128-mp3'] },
   soundscapes: { label:'Soundscapes Ambient', urls:['https://ice5.somafm.com/dronezone-128-mp3'] },
-  paradise: { label:'Radio Paradise', urls:['https://stream.radioparadise.com/aac-128'] }
+  paradise: { label:'Radio Paradise', urls:['https://stream.radioparadise.com/mp3-128','https://stream.radioparadise.com/aac-128'] }
 };
 
 // ---------- ESTADO GLOBAL ----------
-var radioAudio = new Audio();
-radioAudio.preload = 'none';
-radioAudio.autoplay = false;
+var SILENT_WAV='data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==';
+/**
+ * Cria o elemento de áudio do portal.
+ * No Safari/iOS 9 o Audio PRECISA estar no DOM e ser o MESMO elemento
+ * desbloqueado pelo toque do usuário — new Audio() solto perde o gesto.
+ */
+function createPortalAudio(){
+  var a=null;
+  try{ a=document.getElementById('portal-radio-audio'); }catch(_){}
+  if(!a){
+    try{
+      a=document.createElement('audio');
+      a.id='portal-radio-audio';
+      a.setAttribute('playsinline','');
+      a.setAttribute('webkit-playsinline','');
+      a.setAttribute('preload','none');
+      a.controls=false;
+      // Fora da tela, mas no DOM (requisito Safari legado)
+      a.style.cssText='position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;left:-9999px;bottom:0;';
+      var parent=document.body||document.documentElement;
+      if(parent)parent.appendChild(a);
+    }catch(_){
+      a=new Audio();
+    }
+  }
+  a.preload='none';
+  a.autoplay=false;
+  try{ a.playsInline=true; }catch(_){}
+  // Nunca definir crossOrigin em streams de rádio — quebra Icecast/Shoutcast.
+  return a;
+}
+/**
+ * Desbloqueia áudio no gesto do usuário SEM competir com o src do stream.
+ * v6.10: NÃO grava SILENT_WAV em radioAudio (isso causava corrida com o play real).
+ * Usa um Audio auxiliar só para “acordar” a política de autoplay do iOS.
+ */
+function unlockRadioAudioForGesture(){
+  try{
+    var u=new Audio(SILENT_WAV);
+    u.volume=0.001;
+    var p=u.play();
+    if(p&&typeof p.then==='function'){
+      p.then(function(){ try{u.pause();u.src='';}catch(_){} }).catch(function(){});
+    } else {
+      try{ u.pause(); }catch(_){}
+    }
+  }catch(_){}
+  // Garante que o elemento de rádio está no DOM e com volume
+  try{
+    if(radioAudio){
+      if(!radioAudio.parentNode){
+        var parent=document.body||document.documentElement;
+        if(parent)parent.appendChild(radioAudio);
+      }
+      radioAudio.muted=false;
+      radioAudio.volume=Math.max(0.01,radioVolume||0.5);
+    }
+  }catch(_){}
+}
+var radioAudio = createPortalAudio();
 var hlsInstance = null;
 var radioPlaying = false;
 var radioVolume = 0.5;
@@ -1471,8 +1618,8 @@ function applyColorTheme(name){
   name=name||getStoredValue('portal-color-theme','violet')||'violet';
   if(COLOR_THEMES.indexOf(name)<0)name='violet';
   clearColorThemeClasses();
-  var isLight=document.documentElement.classList.contains('light-mode');
-  if(!isLight&&name!=='violet')document.documentElement.classList.add('theme-'+name);
+  // v6.10: aplica tema de cor também no modo claro
+  if(name!=='violet')document.documentElement.classList.add('theme-'+name);
   document.querySelectorAll('[data-color-theme]').forEach(function(b){ b.classList.toggle('active',b.getAttribute('data-color-theme')===name); });
 }
 function setColorTheme(name){ name=name||'violet'; setStoredValue('portal-color-theme',name); applyColorTheme(name); }
@@ -1504,20 +1651,35 @@ function setPerformanceMode(m){
   document.documentElement.classList.toggle('lite-mode',lite);
   document.querySelectorAll('[data-performance]').forEach(function(b){ b.classList.toggle('active',b.dataset.performance===m); });
 }
-function toggleCompactMode(){ var a=document.documentElement.classList.toggle('compact-mode'); setStoredValue('portal-compact',a?'1':'0'); var b=document.getElementById('compact-btn'); if(b)b.setAttribute('aria-pressed',a?'true':'false'); }
+function setCompactMode(on){
+  var a=!!on;
+  document.documentElement.classList.toggle('compact-mode',a);
+  setStoredValue('portal-compact',a?'1':'0');
+  document.querySelectorAll('[data-density]').forEach(function(b){
+    var isC=b.getAttribute('data-density')==='compact';
+    b.classList.toggle('active',a?isC:!isC);
+    b.setAttribute('aria-pressed',(a?isC:!isC)?'true':'false');
+  });
+}
+function toggleCompactMode(){ setCompactMode(!document.documentElement.classList.contains('compact-mode')); }
 function toggleAppearancePanel(){ var p=document.getElementById('appearance-panel'),b=document.getElementById('theme-menu-btn'); if(!p)return; p.hidden=!p.hidden; if(b)b.setAttribute('aria-expanded',p.hidden?'false':'true'); }
 function refreshAppearanceControls(){
   var t=getStoredValue('portal-theme','auto'),pf=getStoredValue('portal-performance','auto');
   document.querySelectorAll('[data-theme]').forEach(function(b){ b.classList.toggle('active',b.dataset.theme===t); });
   document.querySelectorAll('[data-performance]').forEach(function(b){ b.classList.toggle('active',b.dataset.performance===pf); });
-  var c=document.getElementById('compact-btn'); if(c)c.setAttribute('aria-pressed',document.documentElement.classList.contains('compact-mode')?'true':'false');
+  var compact=document.documentElement.classList.contains('compact-mode');
+  document.querySelectorAll('[data-density]').forEach(function(b){
+    var isC=b.getAttribute('data-density')==='compact';
+    b.classList.toggle('active',compact?isC:!isC);
+    b.setAttribute('aria-pressed',(compact?isC:!isC)?'true':'false');
+  });
 }
 (function initAppearance(){
   applyThemeMode(getStoredValue('portal-theme','auto'));
   applyColorTheme(getStoredValue('portal-color-theme','violet'));
   applyVisualLevel(getStoredValue('portal-visual-level','full'));
   setPerformanceMode(getStoredValue('portal-performance','auto'));
-  if(getStoredValue('portal-compact','0')==='1'){ document.documentElement.classList.add('compact-mode'); var b=document.getElementById('compact-btn'); if(b)b.setAttribute('aria-pressed','true'); }
+  if(getStoredValue('portal-compact','0')==='1'){ setCompactMode(true); } else { setCompactMode(false); }
   try{
     if(window.matchMedia){
       var mm=window.matchMedia('(prefers-color-scheme: light)');
@@ -1713,6 +1875,18 @@ function setNowPlayingMetadata(meta,source){
   updateMediaSession(!radioAudio.paused);
   return true;
 }
+
+function mediaArtwork(src){
+  if(!src)return [];
+  var type=/\.svg(?:$|[?#])/i.test(src)?'image/svg+xml':(/\.png(?:$|[?#])/i.test(src)?'image/png':'image/jpeg');
+  return [{src:src,sizes:'512x512',type:type},{src:src,sizes:'256x256',type:type}];
+}
+function currentArtwork(){
+  if(trackInfo&&trackInfo.artwork)return trackInfo.artwork;
+  if(ytCurrentId)return 'https://img.youtube.com/vi/'+ytCurrentId+'/hqdefault.jpg';
+  return '/total-hits-logo.svg';
+}
+
 function updateMediaSession(playing){
   if(!('mediaSession' in navigator))return;
   try{
@@ -1723,7 +1897,7 @@ function updateMediaSession(playing){
         title:trackInfo.title||lastTrackTitle||currentChannelLabel||'Total Hits',
         artist:trackInfo.artist||'DJ Break Troy',
         album:alb,
-        artwork:[{src:art,sizes:'600x600',type:'image/jpeg'}]
+        artwork:mediaArtwork(art)
       });
     }
     navigator.mediaSession.playbackState=playing?'playing':'paused';
@@ -1823,15 +1997,64 @@ function updateMiniPlayer(title,isPaused){
 function setStatus(id,text){ var el=document.getElementById(id.indexOf('status-')===0?id:'status-'+id); if(el)el.textContent=text; }
 
 var hlsJsLoadPromise=null;
-function isLegacyIOSWebKit(){ var ua=navigator.userAgent||''; return /iPad|iPhone|iPod/i.test(ua)&&/OS 9_[0-9_]+/i.test(ua)&&/AppleWebKit/i.test(ua); }
-function preferNativeHlsOnLegacy(urls){ if(!isLegacyIOSWebKit()||!urls||urls.length<2)return urls; var h=[],o=[]; for(var i=0;i<urls.length;i++){ if(urlNeedsHls(urls[i]))h.push(urls[i]); else o.push(urls[i]); } return h.concat(o); }
-function urlNeedsHls(url){ return typeof url==='string'&&(/\.m3u8(?:$|[?#])/i.test(url)||/mpegurl/i.test(url)); }
-function canUseNativeHls(a){ return !!a&&typeof a.canPlayType==='function'&&!!a.canPlayType('application/vnd.apple.mpegurl'); }
+function isLegacyIOSWebKit(){
+  var ua=navigator.userAgent||'';
+  // iOS 9.x (iPad 3 / Safari 9) e também iOS 10 em WebKit antigo
+  return /iPad|iPhone|iPod/i.test(ua)&&/OS (9|10)_[0-9_]+/i.test(ua)&&/AppleWebKit/i.test(ua);
+}
+function isLegacyIPad3(){
+  var ua=navigator.userAgent||'';
+  return /iPad/i.test(ua)&&/OS 9[_\.]/i.test(ua);
+}
+function isLegacyAndroidMedia(){
+  var ua=navigator.userAgent||'';
+  var m=ua.match(/Android\s([0-9.]+)/i);
+  if(!m)return false;
+  var v=parseFloat(m[1]);
+  return isFinite(v)&&v<=7;
+}
+function isLegacyMediaDevice(){
+  return isLegacyIOSWebKit()||isLegacyAndroidMedia()||!!window.__PORTAL_LEGACY_IPAD3;
+}
+function legacyMediaNote(msg){
+  if(window.__portalLegacyShow&&isLegacyIPad3())window.__portalLegacyShow('MÍDIA LEGACY',msg||'');
+}
+
+/**
+ * Ordena URLs para o caminho de mídia legado:
+ * - Safari iOS 9/10: HLS nativo primeiro (único caminho confiável para .m3u8).
+ * - Android ≤7: progressive (mp3/aac) primeiro — HLS.js é pesado e nativo quase nunca existe.
+ * - Modernos: ordem original.
+ */
+function orderUrlsForDevice(urls){
+  if(!urls||!urls.length)return [];
+  var list=urls.slice?urls.slice(0):[].concat(urls);
+  if(list.length<2)return list;
+  var h=[],o=[];
+  for(var i=0;i<list.length;i++){
+    if(urlNeedsHls(list[i]))h.push(list[i]); else o.push(list[i]);
+  }
+  if(isLegacyIOSWebKit())return h.concat(o);
+  if(isLegacyAndroidMedia())return o.concat(h);
+  return list;
+}
+function urlNeedsHls(url){
+  return typeof url==='string'&&(/\.m3u8(?:$|[?#])/i.test(url)||/mpegurl/i.test(url)||/livestream-redirect/i.test(url)&&/\.m3u8/i.test(url));
+}
+function canUseNativeHls(a){
+  if(!a||typeof a.canPlayType!=='function')return false;
+  try{
+    var t=a.canPlayType('application/vnd.apple.mpegurl')||a.canPlayType('application/x-mpegURL')||'';
+    return t==='probably'||t==='maybe'||t.length>0;
+  }catch(_){ return false; }
+}
 function loadHlsJs(){
   if(typeof Hls!=='undefined')return Promise.resolve(Hls);
   if(hlsJsLoadPromise)return hlsJsLoadPromise;
   hlsJsLoadPromise=new Promise(function(res,rej){
-    var s=document.createElement('script'); s.src='https://cdn.jsdelivr.net/npm/hls.js@1.4.14/dist/hls.min.js'; s.async=true;
+    var s=document.createElement('script');
+    s.src='https://cdn.jsdelivr.net/npm/hls.js@1.4.14/dist/hls.min.js';
+    s.async=true;
     s.onload=function(){ if(typeof Hls!=='undefined')res(Hls); else { hlsJsLoadPromise=null; rej(new Error('Hls n/d')); } };
     s.onerror=function(){ hlsJsLoadPromise=null; rej(new Error('Falha HLS.js')); };
     document.head.appendChild(s);
@@ -1840,41 +2063,166 @@ function loadHlsJs(){
 }
 
 var radioController = { state:'IDLE', token:0, timeoutId:0, channelId:'', audio:null, hls:null };
-function safeStopAudio(a){ if(!a)return; try{a.pause();}catch(_){} try{a.removeAttribute('src');}catch(_){} try{a.load();}catch(_){} }
-function clearRadioTimeout(){ if(radioController.timeoutId){ clearTimeout(radioController.timeoutId); radioController.timeoutId=0; } }
-function destroyHls(){ if(!hlsInstance)return; try{hlsInstance.stopLoad();}catch(_){} try{hlsInstance.detachMedia();}catch(_){} try{hlsInstance.destroy();}catch(_){} hlsInstance=null; radioController.hls=null; }
+
+function safeStopAudio(a){
+  if(!a)return;
+  try{ a.pause(); }catch(_){}
+  try{ a.removeAttribute('src'); }catch(_){}
+  try{ a.src=''; }catch(_){}
+  // Safari 9: load() após remover src interfere no próximo play ligado a gesto.
+  if(!isLegacyIOSWebKit()){
+    try{ a.load(); }catch(_){}
+  }
+}
+
+function clearRadioTimeout(){
+  if(radioController.timeoutId){ clearTimeout(radioController.timeoutId); radioController.timeoutId=0; }
+}
+function destroyHls(){
+  if(!hlsInstance)return;
+  try{ hlsInstance.stopLoad(); }catch(_){}
+  try{ hlsInstance.detachMedia(); }catch(_){}
+  try{ hlsInstance.destroy(); }catch(_){}
+  hlsInstance=null;
+  radioController.hls=null;
+}
 function cleanupRadio(){
-  clearRadioTimeout(); destroyHls();
+  clearRadioTimeout();
+  destroyHls();
   if(radioAudio)safeStopAudio(radioAudio);
-  radioAudio.preload='none'; radioAudio.autoplay=false; radioAudio.volume=radioVolume;
-  radioController.audio=null; radioController.state='IDLE'; radioPlaying=false;
+  // Safari/iOS: NÃO recriar o Audio aqui — precisa ser o mesmo elemento
+  // desbloqueado pelo toque. Só garante que continua no DOM.
+  if(isLegacyIOSWebKit()){
+    try{
+      if(!radioAudio||!radioAudio.parentNode){
+        radioAudio=createPortalAudio();
+      }
+    }catch(_){}
+  } else if(isLegacyMediaDevice()){
+    // Android antigo: recriar pode ajudar após erro fatal
+    try{ radioAudio=createPortalAudio(); }catch(_){}
+  } else {
+    radioAudio.preload='none';
+    radioAudio.autoplay=false;
+  }
+  try{ radioAudio.volume=radioVolume; }catch(_){}
+  radioController.audio=null;
+  radioController.state='IDLE';
+  radioPlaying=false;
 }
 
 function scheduleRetry(reason){
-  if(intentionalPause||backoffTimer||!navigator.onLine)return;
+  if(intentionalPause||backoffTimer)return;
+  var online=true;
+  try{ online=navigator.onLine!==false; }catch(_){}
+  if(!online)return;
   backoffCount++;
   var delay=Math.min(30000,3000*Math.pow(2,Math.min(backoffCount-1,3)));
   setStatusBar('retry','RECONEXÃO','Tentando em '+Math.round(delay/1000)+'s');
   clearTimeout(backoffTimer);
   backoffTimer=setTimeout(function(){
     backoffTimer=null;
-    if(!intentionalPause&&navigator.onLine&&currentChannelId){
+    if(!intentionalPause&&currentChannelId){
+      try{ if(navigator.onLine===false)return; }catch(_){}
       playChannel(currentChannelId,null,null,true);
     }
   },delay);
 }
 function resetBackoff(){ if(backoffTimer){ clearTimeout(backoffTimer); backoffTimer=null; } backoffCount=0; }
 
+function guessAudioMime(url){
+  var u=String(url||'').toLowerCase();
+  if(/\.m3u8(?:$|[?#])/.test(u)||/mpegurl/.test(u))return 'application/vnd.apple.mpegurl';
+  if(/\.aac(?:$|[?#])/.test(u)||/aac/.test(u))return 'audio/aac';
+  if(/\.ogg(?:$|[?#])/.test(u))return 'audio/ogg';
+  return 'audio/mpeg';
+}
+/**
+ * Atribui stream e dá play no mesmo gesto (Safari 9 / Android antigo).
+ * v6.10: <source type> em progressive; sem corrida com unlock silencioso.
+ */
+function assignAndPlay(audio,url,onBlocked){
+  try{
+    try{ audio.volume=radioVolume; }catch(_){}
+    try{ audio.muted=false; }catch(_){}
+    try{
+      if(audio&&!audio.parentNode){
+        var parent=document.body||document.documentElement;
+        if(parent)parent.appendChild(audio);
+      }
+    }catch(_){}
+    try{
+      while(audio.firstChild)audio.removeChild(audio.firstChild);
+      audio.removeAttribute('src');
+    }catch(_){}
+    if(!urlNeedsHls(url)){
+      try{
+        var srcEl=document.createElement('source');
+        srcEl.src=url;
+        srcEl.type=guessAudioMime(url);
+        audio.appendChild(srcEl);
+      }catch(_){
+        audio.src=url;
+      }
+    } else {
+      audio.src=url;
+    }
+    try{ audio.load(); }catch(_){}
+    var p=audio.play();
+    if(p&&typeof p.then==='function'){
+      p.then(function(){},function(){ if(typeof onBlocked==='function')onBlocked(); });
+    }
+  }catch(_){
+    if(typeof onBlocked==='function')onBlocked();
+  }
+}
+
+function audioHasActiveSrc(a){
+  if(!a)return false;
+  var s='';
+  try{ s=String(a.getAttribute('src')||''); }catch(_){ s=''; }
+  if(!s){
+    try{
+      var srcChild=a.querySelector&&a.querySelector('source');
+      if(srcChild)s=String(srcChild.getAttribute('src')||srcChild.src||'');
+    }catch(_){}
+  }
+  if(!s){
+    try{ s=String(a.src||''); }catch(_){ s=''; }
+  }
+  if(!s)return false;
+  // Navegadores devolvem a URL da página quando src está vazio
+  try{
+    var loc=String(window.location.href||'');
+    if(s===loc||s===loc+'/')return false;
+    if(window.location.origin&&s.indexOf(window.location.origin)===0&&s.indexOf('/stream')<0&&!/\.(m3u8|mp3|aac|ogg|ice)(\?|$)/i.test(s)&&s.indexOf('icecast')<0&&s.indexOf('fastcast')<0&&s.indexOf('laut.fm')<0&&s.indexOf('stream')<0){
+      // src aponta para o próprio site sem ser stream → inválido
+      if(s.replace(/\/$/,'')===String(window.location.origin+window.location.pathname).replace(/\/$/,''))return false;
+    }
+  }catch(_){}
+  return true;
+}
+
 function playChannel(channelId,btnEl,statusIdOverride,isAutoRetry){
   var channel=RADIO_CHANNELS[channelId];
   var statusId=statusIdOverride||channelId;
   if(!channel){ setStatus(statusId,'Canal indisponível'); return; }
-  if(!isAutoRetry&&currentChannelId===channelId&&radioAudio&&radioAudio.src){
-    try{togglePlayPause();}catch(_){}
+  // Só alterna play/pause se já está tocando ESTE canal de verdade
+  if(!isAutoRetry&&currentChannelId===channelId&&radioPlaying&&radioAudio&&audioHasActiveSrc(radioAudio)&&!radioAudio.error){
+    try{ togglePlayPause(); }catch(_){}
     return;
   }
   var retryBackoff=isAutoRetry?backoffCount:0;
-  stopAllMedia();
+  // Para rádio, não usar stopAllMedia completo (incrementa token 2x e destrói YT desnecessariamente no meio).
+  // Para a exclusão Rádio↔YouTube, paramos o YT e a biblioteca de forma direta.
+  try{ stopNowPlayingPolling(); }catch(_){}
+  try{
+    ytLoadToken++;
+    if(ytPlayer&&typeof ytPlayer.stopVideo==='function'){ try{ ytPlayer.stopVideo(); }catch(_){} }
+    if(ytPlayer&&typeof ytPlayer.destroy==='function'){ try{ ytPlayer.destroy(); }catch(_){} }
+    ytPlayer=null; ytCurrentId='';
+  }catch(_){}
+  try{ stopLibrary(false); }catch(_){}
   if(isAutoRetry)backoffCount=retryBackoff; else resetBackoff();
   intentionalPause=false;
   radioController.token++;
@@ -1882,37 +2230,60 @@ function playChannel(channelId,btnEl,statusIdOverride,isAutoRetry){
   radioRetryCount=0; radioLastError='';
   var token=radioController.token;
   cleanupRadio();
+  // CRÍTICO iOS/Safari: desbloquear o MESMO <audio> no gesto do toque,
+  // antes de apontar para o stream. Sem isso o play() fica bloqueado e
+  // o diagnóstico mostra "Áudio direto … 1/1" sem nunca sair do Conectando.
+  if(!isAutoRetry){
+    try{ unlockRadioAudioForGesture(); }catch(_){}
+  }
   currentChannelId=channelId; currentChannelLabel=channel.label;
   radioController.channelId=channelId; radioController.state='RADIO_LOADING';
   trackInfo={artist:'',title:'',year:'',genre:'',album:'',artwork:''};
   lastTrackTitle='';
   var urlIndex=0;
-  var urls=preferNativeHlsOnLegacy(channel.urls.slice?channel.urls.slice(0):channel.urls);
-  setRadioMediaSession(channel);
+  var rawUrls=channel.urls?channel.urls:[];
+  var urls=orderUrlsForDevice(rawUrls.slice?rawUrls.slice(0):[].concat(rawUrls));
+  var totalUrls=urls.length;
+  if(!totalUrls){ setStatus(statusId,'Sem URL'); setStatusBar('offline','SEM URL',channel.label); return; }
+  try{ setRadioMediaSession(channel); }catch(_){}
   clearRadioUi();
   if(btnEl){
     btnEl.classList.add('playing');
     var p=btnEl.parentNode;
     if(p&&p.classList.contains('media-item'))p.classList.add('playing');
   }
-  var card=document.querySelector('.media-item .radio-btn[onclick*="'+channelId+'"]');
-  if(card){ var cp=card.parentNode; if(cp&&cp.classList.contains('media-item'))cp.classList.add('playing'); }
+  try{
+    var card=document.querySelector('.media-item .radio-btn[onclick*="'+channelId+'"]');
+    if(card){ var cp=card.parentNode; if(cp&&cp.classList.contains('media-item'))cp.classList.add('playing'); }
+  }catch(_){}
   setStatus(statusId,'Conectando…');
   setStatusBar('retry','CONECTANDO',channel.label);
   updateMiniPlayer(channel.label,true);
+  if(isLegacyIPad3())legacyMediaNote('Unlock+play no mesmo gesto: '+channel.label);
 
-  function stillCurrent(a){ return token===radioController.token && currentChannelId===channelId && radioAudio===a; }
+  function stillCurrent(a){
+    return token===radioController.token && currentChannelId===channelId && (!a||radioAudio===a);
+  }
   function failAttempt(msg){
     radioRetryCount++; radioLastError=msg||'Erro';
     if(token!==radioController.token)return;
-    clearRadioTimeout(); destroyHls();
+    clearRadioTimeout();
+    destroyHls();
     if(radioAudio)safeStopAudio(radioAudio);
-    radioController.audio=null; radioPlaying=false;
+    radioController.audio=null;
+    radioPlaying=false;
     urlIndex++;
-    if(urlIndex<channel.urls.length){
+    // BUGFIX v6.9.1: usar totalUrls (lista ordenada), NÃO channel.urls.length
+    if(urlIndex<totalUrls){
       radioController.state='RADIO_LOADING';
-      setStatus(statusId,'Tentando '+(urlIndex+1)+'/'+channel.urls.length+'…');
-      setTimeout(function(){ if(token===radioController.token)tryNextUrl(); },180);
+      setStatus(statusId,'Tentando '+(urlIndex+1)+'/'+totalUrls+'…');
+      // iOS: manter o MESMO <audio> (gesto já foi usado). Android antigo: pode recriar.
+      if(isLegacyAndroidMedia()){
+        try{ radioAudio=createPortalAudio(); radioAudio.volume=radioVolume; }catch(_){}
+      } else {
+        try{ radioAudio.volume=radioVolume; }catch(_){}
+      }
+      setTimeout(function(){ if(token===radioController.token)tryNextUrl(); }, isLegacyMediaDevice()?280:180);
       return;
     }
     currentRadioUrl='';
@@ -1924,8 +2295,10 @@ function playChannel(channelId,btnEl,statusIdOverride,isAutoRetry){
   }
   function markPlaying(a){
     if(!stillCurrent(a))return;
-    clearRadioTimeout(); resetBackoff();
-    radioController.state='RADIO_PLAYING'; radioPlaying=true;
+    clearRadioTimeout();
+    resetBackoff();
+    radioController.state='RADIO_PLAYING';
+    radioPlaying=true;
     radioStartedAt=radioStartedAt||new Date().getTime();
     radioRetryCount=0; radioLastError='';
     if(channelId==='total_hits')startNowPlayingPolling();
@@ -1940,54 +2313,106 @@ function playChannel(channelId,btnEl,statusIdOverride,isAutoRetry){
     try{ renderHub(); }catch(_){}
     currentRadioUrl=a.__portalUrl||'';
   }
-  function armTimeout(ms,msg){ clearRadioTimeout(); radioController.timeoutId=setTimeout(function(){ if(token===radioController.token&&!radioPlaying)failAttempt(msg||'Tempo esgotado'); },ms); }
+  function armTimeout(ms,msg){
+    clearRadioTimeout();
+    // Dispositivos antigos têm rede e decode mais lentos
+    var extra=isLegacyMediaDevice()?Math.round(ms*0.6):0;
+    radioController.timeoutId=setTimeout(function(){
+      if(token===radioController.token&&!radioPlaying)failAttempt(msg||'Tempo esgotado');
+    },ms+extra);
+  }
   function tryNextUrl(){
     if(token!==radioController.token)return;
-    if(urlIndex>=urls.length){ currentRadioUrl=''; failAttempt('Indisponível'); return; }
-    var url=urls[urlIndex]; currentRadioUrl=url;
+    if(urlIndex>=totalUrls){ currentRadioUrl=''; failAttempt('Indisponível'); return; }
+    var url=urls[urlIndex];
+    currentRadioUrl=url;
     var needsHls=urlNeedsHls(url);
-    setStatus(statusId,'Tentando '+(urlIndex+1)+'/'+channel.urls.length+'…');
+    if(isLegacyIPad3())legacyMediaNote((needsHls?'HLS nativo: ':'Áudio direto: ')+channel.label+' ['+(urlIndex+1)+'/'+totalUrls+']');
+    setStatus(statusId,'Tentando '+(urlIndex+1)+'/'+totalUrls+'…');
+
+    // Sempre usar o radioAudio atual (pode ter sido recriado)
     var audio=radioAudio;
+    try{ audio.volume=radioVolume; }catch(_){}
     audio.__portalUrl=url;
     radioController.audio=audio;
+
     addEventListenerOnce(audio,'playing',function(){ markPlaying(audio); });
-    addEventListenerOnce(audio,'error',function(){ if(stillCurrent(audio))failAttempt('Erro no stream'); });
-    addEventListenerOnce(audio,'stalled',function(){ if(stillCurrent(audio))scheduleRetry('stalled'); });
+    addEventListenerOnce(audio,'canplay',function(){
+      // Alguns Safari antigos disparam canplay mas precisam de play() extra
+      if(stillCurrent(audio)&&audio.paused&&!radioPlaying){
+        try{ var pp=audio.play(); if(pp&&typeof pp.then==='function')pp.then(function(){},function(){}); }catch(_){}
+      }
+    });
+    addEventListenerOnce(audio,'error',function(){
+      if(!stillCurrent(audio))return;
+      var code=(audio.error&&audio.error.code)?audio.error.code:'?';
+      var ns=audio.networkState, rs=audio.readyState;
+      var tip={1:'abortado',2:'rede',3:'decode',4:'formato/src'}[code]||'desconhecido';
+      if(isLegacyIPad3())legacyMediaNote('Erro c'+code+' ('+tip+') ns='+ns+' rs='+rs);
+      failAttempt('Erro no stream (c'+code+' '+tip+')');
+    });
+    addEventListenerOnce(audio,'stalled',function(){
+      if(stillCurrent(audio)&&radioPlaying)scheduleRetry('stalled');
+    });
+
     if(needsHls){
       if(canUseNativeHls(audio)){
-        armTimeout(10000,'Tempo esgotado');
-        try{ audio.src=url; audio.load(); var p=audio.play(); if(p&&typeof p.catch==='function')p.catch(function(){ if(stillCurrent(audio))failAttempt('Reprodução bloqueada'); }); }
-        catch(_){ failAttempt('Erro no stream'); }
+        armTimeout(14000,'Tempo esgotado (HLS)');
+        assignAndPlay(audio,url,function(){ if(stillCurrent(audio))failAttempt('Reprodução bloqueada'); });
         return;
       }
-      if(isLegacyIOSWebKit()){ failAttempt('HLS nativo não iniciou'); return; }
-      armTimeout(12000,'Tempo esgotado');
+      // Safari 9 sem canPlayType positivo: tenta mesmo assim (alguns builds reportam vazio)
+      if(isLegacyIOSWebKit()){
+        legacyMediaNote('Tentativa HLS forçada no Safari legado');
+        armTimeout(16000,'Tempo esgotado (HLS legado)');
+        assignAndPlay(audio,url,function(){ if(stillCurrent(audio))failAttempt('HLS incompatível no Safari 9'); });
+        return;
+      }
+      // Moderno / Android: HLS.js
+      armTimeout(14000,'Tempo esgotado');
       loadHlsJs().then(function(HL){
         if(!stillCurrent(audio))return;
         if(!HL||!HL.isSupported()){ failAttempt('HLS não suportado'); return; }
         var lite=document.documentElement.classList.contains('lite-mode');
-        hlsInstance=new HL({ enableWorker:!lite, maxBufferLength:lite?8:18, maxMaxBufferLength:lite?16:36, lowLatencyMode:false, backBufferLength:0 });
+        hlsInstance=new HL({
+          enableWorker:!lite&&!isLegacyAndroidMedia(),
+          maxBufferLength:lite||isLegacyAndroidMedia()?6:18,
+          maxMaxBufferLength:lite||isLegacyAndroidMedia()?12:36,
+          lowLatencyMode:false,
+          backBufferLength:0
+        });
         radioController.hls=hlsInstance;
-        hlsInstance.loadSource(url); hlsInstance.attachMedia(audio);
+        hlsInstance.loadSource(url);
+        hlsInstance.attachMedia(audio);
         hlsInstance.on(HL.Events.MANIFEST_PARSED,function(){
           if(!stillCurrent(audio))return;
-          try{ var p=audio.play(); if(p&&typeof p.then==='function'){ p.then(function(){markPlaying(audio);}).catch(function(){ if(stillCurrent(audio))failAttempt('Reprodução bloqueada'); }); } }
-          catch(_){ failAttempt('Erro HLS'); }
+          try{
+            var p=audio.play();
+            if(p&&typeof p.then==='function'){
+              p.then(function(){ markPlaying(audio); }).catch(function(){ if(stillCurrent(audio))failAttempt('Reprodução bloqueada'); });
+            } else {
+              markPlaying(audio);
+            }
+          }catch(_){ failAttempt('Erro HLS'); }
         });
-        hlsInstance.on(HL.Events.ERROR,function(_e,d){ if(!stillCurrent(audio)||!d||!d.fatal)return; failAttempt('Erro HLS'); });
+        hlsInstance.on(HL.Events.ERROR,function(_e,d){
+          if(!stillCurrent(audio)||!d||!d.fatal)return;
+          failAttempt('Erro HLS');
+        });
       }).catch(function(){ if(stillCurrent(audio))failAttempt('Falha ao carregar HLS'); });
       return;
     }
-    armTimeout(10000,'Tempo esgotado');
-    try{ audio.src=url; audio.load(); var p2=audio.play(); if(p2&&typeof p2.catch==='function')p2.catch(function(){ if(stillCurrent(audio))failAttempt('Reprodução bloqueada'); }); }
-    catch(_){ failAttempt('Erro no stream'); }
+
+    // Progressive (mp3/aac/icecast)
+    armTimeout(isLegacyMediaDevice()?16000:12000,'Tempo esgotado');
+    assignAndPlay(audio,url,function(){ if(stillCurrent(audio))failAttempt('Reprodução bloqueada'); });
   }
   tryNextUrl();
 }
 function setRadioMediaSession(ch){
   if(!('mediaSession' in navigator)||!ch)return;
   try{
-    navigator.mediaSession.metadata=new MediaMetadata({title:ch.label,artist:'DJ Break Troy'});
+    navigator.mediaSession.metadata=new MediaMetadata({title:ch.label,artist:'Painel Mídia',album:'Rádio ao vivo',artwork:mediaArtwork(currentArtwork())});
     try{navigator.mediaSession.setActionHandler('play',function(){togglePlayPause();});}catch(_){}
     try{navigator.mediaSession.setActionHandler('pause',function(){togglePlayPause();});}catch(_){}
     try{navigator.mediaSession.setActionHandler('stop',stopAllMedia);}catch(_){}
@@ -2009,16 +2434,36 @@ function togglePlayPause(){
     return;
   }
   var a=radioAudio;
-  if(!a||!currentChannelId||!a.src)return;
+  if(!a||!currentChannelId)return;
+  // Se o elemento perdeu o src real (comum após stop em legado), reabre o canal
+  if(typeof audioHasActiveSrc==='function'?!audioHasActiveSrc(a):(!a.src||a.src===window.location.href||a.src==='')){
+    playChannel(currentChannelId,null,null,true);
+    return;
+  }
   if(a.paused){
+    intentionalPause=false;
     radioController.state='RADIO_LOADING';
     var s=false;
-    addEventListenerOnce(a,'playing',function(){ if(s)return; s=true; if(a!==radioAudio)return; radioController.state='RADIO_PLAYING'; radioPlaying=true; updateMiniPlayer(currentChannelLabel,false); setStatusBar('live','AO VIVO',currentChannelLabel); });
-    try{ var p=a.play(); if(p&&typeof p.then==='function'){ p.then(function(){},function(){ if(a===radioAudio)updateMiniPlayer(currentChannelLabel,true); }); } }
-    catch(_){}
+    addEventListenerOnce(a,'playing',function(){
+      if(s)return; s=true;
+      if(a!==radioAudio)return;
+      radioController.state='RADIO_PLAYING'; radioPlaying=true;
+      updateMiniPlayer(currentChannelLabel,false);
+      setStatusBar('live','AO VIVO',currentChannelLabel);
+    });
+    try{
+      var p=a.play();
+      if(p&&typeof p.then==='function'){
+        p.then(function(){},function(){ if(a===radioAudio)updateMiniPlayer(currentChannelLabel,true); });
+      }
+    }catch(_){}
   } else {
-    a.pause(); intentionalPause=true; radioController.state='RADIO_PAUSED'; radioPlaying=false;
-    updateMiniPlayer(currentChannelLabel,true); setStatusBar('idle','PAUSADO',currentChannelLabel);
+    try{ a.pause(); }catch(_){}
+    intentionalPause=true;
+    radioController.state='RADIO_PAUSED';
+    radioPlaying=false;
+    updateMiniPlayer(currentChannelLabel,true);
+    setStatusBar('idle','PAUSADO',currentChannelLabel);
   }
 }
 function stopRadio(){
@@ -2309,6 +2754,68 @@ function extrairYouTubeId(v){
   }catch(_){}
   return null;
 }
+
+/**
+ * YouTube no Safari iOS 9: o embed moderno costuma mostrar
+ * "Erro de configuração do player". Oferecemos cartão com capa + abrir no YouTube,
+ * e ainda tentamos o iframe antigo (html5) por baixo.
+ */
+function loadYouTubeLegacyIframe(id,autoPlay){
+  var c=document.getElementById('yt-player'); if(!c)return;
+  destroyYouTubePlayer(); clearElement(c);
+  ytCurrentId=id;
+  showYouTubeUi(true);
+  setYTOverlay(false);
+  setYTDiag('id',id); setYTDiag('api','iframe legacy'); setYTDiag('state','capa+fallback'); setYTDiag('error','—');
+  setYouTubeStatus('iPad antigo: toque em Abrir no YouTube (embed limitado no Safari 9).','ready');
+  legacyMediaNote('YouTube: Safari 9 limita embed — use o botão Abrir.');
+
+  var watchUrl='https://www.youtube.com/watch?v='+encodeURIComponent(id);
+  var thumb='https://img.youtube.com/vi/'+encodeURIComponent(id)+'/hqdefault.jpg';
+
+  var wrap=document.createElement('div');
+  wrap.style.cssText='position:relative;width:100%;min-height:240px;background:#0f172a;border-radius:12px;overflow:hidden;text-align:center;';
+  var img=document.createElement('img');
+  img.src=thumb; img.alt='Capa do vídeo';
+  img.style.cssText='width:100%;max-height:280px;object-fit:cover;display:block;opacity:.85;';
+  img.onerror=function(){ img.style.display='none'; };
+  wrap.appendChild(img);
+
+  var actions=document.createElement('div');
+  actions.style.cssText='position:absolute;left:0;right:0;bottom:0;padding:16px;background:linear-gradient(transparent,rgba(0,0,0,.85));';
+  var btn=document.createElement('a');
+  btn.href=watchUrl;
+  btn.target='_blank';
+  btn.rel='noopener noreferrer';
+  btn.textContent='▶ Abrir no YouTube';
+  btn.style.cssText='display:inline-block;padding:12px 20px;border-radius:999px;background:#ff0000;color:#fff;font-weight:700;text-decoration:none;font-size:15px;';
+  actions.appendChild(btn);
+  var note=document.createElement('p');
+  note.style.cssText='margin:10px 0 0;color:#cbd5e1;font-size:12px;line-height:1.4;';
+  note.textContent='O Safari deste iPad não roda o player embutido do YouTube. O vídeo abre no app/site oficial.';
+  actions.appendChild(note);
+  wrap.appendChild(actions);
+  c.appendChild(wrap);
+
+  // Tentativa secundária de iframe (alguns vídeos ainda carregam)
+  try{
+    var f=document.createElement('iframe');
+    f.setAttribute('title','YouTube');
+    f.setAttribute('frameborder','0');
+    f.setAttribute('allowfullscreen','allowfullscreen');
+    f.setAttribute('webkitallowfullscreen','webkitallowfullscreen');
+    f.style.cssText='width:1px;height:1px;opacity:0;position:absolute;left:-9999px;';
+    f.src='https://www.youtube.com/embed/'+encodeURIComponent(id)+'?html5=1&playsinline=1&rel=0&controls=1';
+    c.appendChild(f);
+  }catch(_){}
+
+  trackInfo={artist:'YouTube',title:'Vídeo '+id,year:'',genre:'',album:'',artwork:thumb};
+  lastTrackTitle=trackInfo.title; renderTrackInfo();
+  scrollToYouTubeViewer();
+  setTimeout(scrollToYouTubeViewer,200);
+  setTimeout(scrollToYouTubeViewer,600);
+}
+
 function loadYouTubeApi(){
   if(window.YT&&window.YT.Player)return Promise.resolve(window.YT);
   if(ytApiPromise)return ytApiPromise;
@@ -2338,12 +2845,12 @@ function createYouTubePlayer(id,autoPlay){
       videoId:id, host:'https://www.youtube.com',
       playerVars:{autoplay:autoPlay?1:0,controls:1,playsinline:1,rel:0,origin:portalOrigin(),enablejsapi:1,modestbranding:1},
       events:{
-        onReady:function(e){ if(token!==ytLoadToken)return; setYTDiag('api','pronta'); setYTDiag('state','pronto'); setYouTubeStatus(autoPlay?'Tentando reproduzir…':'Pronto.','ready'); if(autoPlay){ try{e.target.playVideo();}catch(_){} } },
+        onReady:function(e){ if(token!==ytLoadToken)return; setYTDiag('api','pronta'); setYTDiag('state','pronto'); setYouTubeStatus(autoPlay?'Tentando reproduzir…':'Pronto.','ready'); if(autoPlay){ try{e.target.playVideo();}catch(_){} } scrollToYouTubeViewer(); },
         onStateChange:function(e){
           if(token!==ytLoadToken)return;
           var st={'-1':'não iniciado','0':'encerrado','1':'reproduzindo','2':'pausado','3':'bufferizando','5':'em fila'};
           setYTDiag('state',st[e.data]||String(e.data));
-          if(e.data===YL.PlayerState.PLAYING){ stopRadio(); var t='Vídeo no YouTube'; try{ var d=e.target.getVideoData&&e.target.getVideoData(); if(d&&d.title)t=d.title; }catch(_){} lastTrackTitle=t; trackInfo={artist:'YouTube',title:t,year:'',genre:'',album:'',artwork:''}; renderTrackInfo(); updateMediaSession(true); setYouTubeStatus('✅ Reproduzindo','ok'); }
+          if(e.data===YL.PlayerState.PLAYING){ stopRadio(); var t='Vídeo no YouTube'; try{ var d=e.target.getVideoData&&e.target.getVideoData(); if(d&&d.title)t=d.title; }catch(_){} lastTrackTitle=t; trackInfo={artist:'YouTube',title:t,year:'',genre:'',album:'YouTube',artwork:'https://img.youtube.com/vi/'+ytCurrentId+'/hqdefault.jpg'}; renderTrackInfo(); updateMediaSession(true); setYouTubeStatus('✅ Reproduzindo','ok'); }
           else if(e.data===YL.PlayerState.BUFFERING)setYouTubeStatus('⏳ Bufferizando…','loading');
           else if(e.data===YL.PlayerState.PAUSED)setYouTubeStatus('⏸ Pausado','ready');
           else if(e.data===YL.PlayerState.ENDED)setYouTubeStatus('⏹ Encerrado','ready');
@@ -2364,6 +2871,43 @@ function createYouTubePlayer(id,autoPlay){
     setYouTubeStatus('❌ '+err.message,'error');
   });
 }
+/** Rola a tela até o visualizador do YouTube (Android moderno / mobile). */
+function scrollToYouTubeViewer(){
+  try{
+    var targets=['yt-video-container','yt-player','section-youtube'];
+    var el=null;
+    for(var i=0;i<targets.length;i++){
+      el=document.getElementById(targets[i]);
+      if(el&&!el.hidden)break;
+      el=null;
+    }
+    if(!el)el=document.getElementById('section-youtube');
+    if(!el)return;
+    // Garante que a seção/player está visível antes de medir
+    try{
+      var sec=document.getElementById('section-youtube');
+      if(sec)sec.scrollIntoView({behavior:'smooth',block:'start'});
+    }catch(_){
+      try{ el.scrollIntoView(true); }catch(__){}
+    }
+    // Segunda passada após layout (player pode ter altura 0 enquanto hidden)
+    setTimeout(function(){
+      try{
+        var v=document.getElementById('yt-video-container')||document.getElementById('yt-player')||document.getElementById('section-youtube');
+        if(!v)return;
+        var rect=v.getBoundingClientRect();
+        var header=document.querySelector('header');
+        var headerH=header?header.offsetHeight:0;
+        var y=window.pageYOffset+rect.top-headerH-8;
+        if(y<0)y=0;
+        if(window.scrollTo){
+          try{ window.scrollTo({top:y,behavior:'smooth'}); }
+          catch(__){ window.scrollTo(0,y); }
+        }
+      }catch(__){}
+    },120);
+  }catch(_){}
+}
 function loadYouTubeId(id,btnEl,autoPlay){
   if(typeof btnEl==='undefined')btnEl=null;
   if(typeof autoPlay==='undefined')autoPlay=false;
@@ -2373,6 +2917,8 @@ function loadYouTubeId(id,btnEl,autoPlay){
   stopAllMedia();
   document.querySelectorAll('.yt-presets .media-item').forEach(function(b){ b.classList.remove('playing'); });
   if(btnEl){ var p=btnEl.parentNode; if(p&&p.classList.contains('media-item'))p.classList.add('playing'); }
+  scrollToYouTubeViewer();
+  if(isLegacyIPad3()){ loadYouTubeLegacyIframe(v,false); return; }
   createYouTubePlayer(v,autoPlay);
 }
 function loadYouTubePlaylist(listId,videoId,btnEl,autoPlay){
@@ -2383,6 +2929,8 @@ function loadYouTubePlaylist(listId,videoId,btnEl,autoPlay){
   if(btnEl){ var p=btnEl.parentNode; if(p&&p.classList.contains('media-item'))p.classList.add('playing'); }
   var id=videoId||'';
   ytCurrentId=id;
+  scrollToYouTubeViewer();
+  if(isLegacyIPad3()&&id){ loadYouTubeLegacyIframe(id,false); return; }
   setYTDiag('id',(id||'(playlist)')+(listId?' · list='+listId:''));
   setYouTubeStatus('Carregando playlist…','loading');
   destroyYouTubePlayer();
@@ -2393,7 +2941,7 @@ function loadYouTubePlaylist(listId,videoId,btnEl,autoPlay){
     if(token!==ytLoadToken)return;
     var cfg={ host:'https://www.youtube.com', playerVars:{autoplay:autoPlay?1:0,controls:1,playsinline:1,rel:0,origin:portalOrigin(),enablejsapi:1,modestbranding:1},
       events:{
-        onReady:function(e){ if(token!==ytLoadToken)return; setYTDiag('api','pronta'); setYTDiag('state','playlist pronta'); setYouTubeStatus('Playlist pronta','ready'); try{ if(listId&&e.target.loadPlaylist)e.target.loadPlaylist({list:listId,listType:'playlist',index:0}); else if(id)e.target.loadVideoById(id); if(autoPlay)e.target.playVideo(); }catch(_){} },
+        onReady:function(e){ if(token!==ytLoadToken)return; setYTDiag('api','pronta'); setYTDiag('state','playlist pronta'); setYouTubeStatus('Playlist pronta','ready'); try{ if(listId&&e.target.loadPlaylist)e.target.loadPlaylist({list:listId,listType:'playlist',index:0}); else if(id)e.target.loadVideoById(id); if(autoPlay)e.target.playVideo(); }catch(_){} scrollToYouTubeViewer(); },
         onStateChange:function(e){ if(token!==ytLoadToken)return; if(e.data===1){ stopRadio(); setYouTubeStatus('✅ Reproduzindo playlist','ok'); } },
         onError:function(e){ if(token!==ytLoadToken)return; setYouTubeStatus('❌ Erro na playlist ('+e.data+').','error'); if(id)loadYouTubeId(id,btnEl,autoPlay); }
       }};
@@ -2404,6 +2952,7 @@ function loadYouTubePlaylist(listId,videoId,btnEl,autoPlay){
 function showYouTubeUi(activated){
   var w=document.getElementById('yt-activate-wrap'), c=document.getElementById('yt-video-container'), d=document.querySelector('.yt-diagnostics');
   if(w)w.hidden=!!activated; if(c)c.hidden=!activated; if(d)d.hidden=!activated;
+  if(activated)scrollToYouTubeViewer();
 }
 function ativarYouTubePlayer(autoLoad){
   if(typeof autoLoad==='undefined')autoLoad=true;
@@ -2486,7 +3035,7 @@ function removerFaixaBiblioteca(id){
 function setLibraryMediaSession(t){
   if(!('mediaSession' in navigator)||!t)return;
   try{
-    navigator.mediaSession.metadata=new MediaMetadata({title:t.title,artist:t.artist||'Portal de Mídia',album:'Minhas músicas',artwork:t.artwork?[{src:t.artwork,sizes:'600x600'}]:[]});
+    navigator.mediaSession.metadata=new MediaMetadata({title:t.title,artist:t.artist||'Portal de Mídia',album:'Minhas músicas',artwork:mediaArtwork(t.artwork||'')});
     try{navigator.mediaSession.setActionHandler('play',function(){togglePlayPause();});}catch(_){}
     try{navigator.mediaSession.setActionHandler('pause',function(){togglePlayPause();});}catch(_){}
     try{navigator.mediaSession.setActionHandler('stop',stopAllMedia);}catch(_){}
@@ -2711,39 +3260,119 @@ function setupPwa(){
   if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').then(function(){ var n=document.getElementById('sw-note'); if(n)n.textContent='Modo app: interface pode abrir offline.'; }).catch(function(){}); }
 }
 
-function setCastUi(c,t){ var b=document.getElementById('cast-btn'), n=document.getElementById('cast-note'); if(b){ b.classList.toggle('connected',!!c); b.textContent=c?'📺 Chromecast conectado':'📺 Enviar para Chromecast'; } if(n&&t)n.textContent=t; }
+function setCastUi(c,t){
+  var b=document.getElementById('cast-btn'), n=document.getElementById('cast-note');
+  if(b){
+    b.classList.toggle('connected',!!c);
+    b.textContent=c?'📺 Chromecast conectado':'📺 Enviar para Chromecast';
+    if(isLegacyIOSWebKit())b.style.display='none';
+  }
+  if(n&&t)n.textContent=t;
+}
+var castRemotePlayer=null, castRemoteController=null;
+function castSupportedBrowser(){
+  if(isLegacyIOSWebKit())return false;
+  var ua=navigator.userAgent||'';
+  return /Chrome|Chromium|CriOS|Edg\//i.test(ua) && !/Firefox|FxiOS/i.test(ua);
+}
 function initCastApi(){
+  if(!castSupportedBrowser())return Promise.reject(new Error('Cast Web não suportado neste navegador'));
   if(castReady&&window.cast&&cast.framework)return Promise.resolve();
   if(castSdkPromise)return castSdkPromise;
   castSdkPromise=new Promise(function(res,rej){
+    var settled=false;
+    function fail(msg){ if(settled)return; settled=true; castSdkPromise=null; rej(new Error(msg)); }
     function init(av){
-      if(!av||!window.cast||!cast.framework||!window.chrome||!chrome.cast){ castSdkPromise=null; rej(new Error('Cast n/d')); return; }
+      if(settled)return;
+      if(!av||!window.cast||!cast.framework||!window.chrome||!chrome.cast){ fail('Cast indisponível'); return; }
       try{
         var ctx=cast.framework.CastContext.getInstance();
-        ctx.setOptions({receiverApplicationId:chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,autoJoinPolicy:chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED});
-        ctx.addEventListener(cast.framework.CastContextEventType.SESSION_STATE_CHANGED,function(e){ castConnected=e.sessionState===cast.framework.SessionState.SESSION_STARTED||e.sessionState===cast.framework.SessionState.SESSION_RESUMED; setCastUi(castConnected,castConnected?'Conectado.':'Cast disponível.'); });
-        castReady=true; res();
-      }catch(err){ castSdkPromise=null; rej(err); }
+        ctx.setOptions({
+          receiverApplicationId:chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
+          autoJoinPolicy:chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED,
+          resumeSavedSession:true
+        });
+        ctx.addEventListener(cast.framework.CastContextEventType.SESSION_STATE_CHANGED,function(e){
+          castConnected=e.sessionState===cast.framework.SessionState.SESSION_STARTED||e.sessionState===cast.framework.SessionState.SESSION_RESUMED;
+          setCastUi(castConnected,castConnected?'Conectado ao Chromecast.':'Cast disponível.');
+        });
+        castRemotePlayer=new cast.framework.RemotePlayer();
+        castRemoteController=new cast.framework.RemotePlayerController(castRemotePlayer);
+        castRemoteController.addEventListener(cast.framework.RemotePlayerEventType.ANY_CHANGE,function(){
+          if(!castConnected)return;
+          var n=document.getElementById('cast-note');
+          if(n)n.textContent=castRemotePlayer.isPaused?'Chromecast pausado.':'Reproduzindo no Chromecast.';
+        });
+        castReady=true; settled=true; res();
+      }catch(err){ fail(err&&err.message?err.message:'Falha ao iniciar Cast'); }
     }
     window.__onGCastApiAvailable=init;
     if(window.cast&&cast.framework&&window.chrome&&chrome.cast){ init(true); return; }
-    var s=document.createElement('script'); s.src='https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1'; s.async=true;
-    s.onerror=function(){ castSdkPromise=null; rej(new Error('Falha Cast')); };
+    var s=document.createElement('script');
+    s.src='https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1';
+    s.async=true;
+    s.onerror=function(){ fail('Falha ao carregar Google Cast'); };
     document.head.appendChild(s);
   });
   return castSdkPromise;
 }
-function guessCastType(u){ var v=String(u||'').toLowerCase(); if(/\.m3u8|mpegurl/.test(v))return 'application/x-mpegURL'; if(/\.aac/.test(v))return 'audio/aac'; if(/\.ogg|\.oga/.test(v))return 'audio/ogg'; return 'audio/mpeg'; }
-function castCurrentMedia(){ if(currentChannelId&&currentRadioUrl){ castCurrentRadio(); return; } setCastUi(false,'Selecione uma rádio antes.'); }
+function guessCastType(u){
+  var v=String(u||'').toLowerCase();
+  if(/\.m3u8(?:$|[?#])/.test(v))return 'application/x-mpegURL';
+  if(/\.aac(?:$|[?#])/.test(v)||/\/aac/.test(v))return 'audio/aac';
+  if(/\.ogg|\.oga/.test(v))return 'audio/ogg';
+  return 'audio/mpeg';
+}
+function castImage(src){
+  if(!src||!window.chrome||!chrome.cast)return null;
+  try{return new chrome.cast.Image(src);}catch(_){return null;}
+}
+function castCurrentMedia(){
+  if(ytCurrentId){
+    setCastUi(castConnected,'YouTube usa o player oficial. Se o ícone Cast não aparecer, use o app YouTube ou “Transmitir guia/tela” do Chrome.');
+    return;
+  }
+  if(currentChannelId){ castCurrentRadio(); return; }
+  setCastUi(false,'Selecione uma rádio antes.');
+}
 function castCurrentRadio(){
-  var ch=RADIO_CHANNELS[currentChannelId]; var url=currentRadioUrl||(ch&&ch.urls?ch.urls[0]:'');
+  var ch=RADIO_CHANNELS[currentChannelId];
+  var url=currentRadioUrl||(ch&&ch.urls?ch.urls[0]:'');
   if(!ch||!url){ setCastUi(false,'Selecione uma rádio.'); return; }
-  initCastApi().then(function(){ return cast.framework.CastContext.getInstance().requestSession(); }).then(function(){
-    var s=cast.framework.CastContext.getInstance().getCurrentSession(); if(!s)throw new Error('Sem sessão');
-    var m=new chrome.cast.media.MediaInfo(url,guessCastType(url)); m.streamType=chrome.cast.media.StreamType.LIVE;
-    m.metadata=new chrome.cast.media.MusicTrackMediaMetadata(); m.metadata.title=ch.label; m.metadata.artist='Painel Mídia';
-    return s.loadMedia(new chrome.cast.media.LoadRequest(m));
-  }).then(function(){ stopRadio(); setCastUi(true,'Enviado ao Chromecast.'); }).catch(function(){ setCastUi(false,'Não foi possível iniciar Cast.'); });
+  setCastUi(false,'Procurando Chromecast…');
+  initCastApi().then(function(){
+    var ctx=cast.framework.CastContext.getInstance();
+    var session=ctx.getCurrentSession();
+    if(session)return session;
+    return ctx.requestSession().then(function(){return ctx.getCurrentSession();});
+  }).then(function(s){
+    if(!s)throw new Error('Sem sessão Cast');
+    var m=new chrome.cast.media.MediaInfo(url,guessCastType(url));
+    m.streamType=chrome.cast.media.StreamType.LIVE;
+    var md=new chrome.cast.media.MusicTrackMediaMetadata();
+    md.title=trackInfo.title||lastTrackTitle||ch.label;
+    md.artist=trackInfo.artist||ch.label;
+    md.albumName=ch.label+' • Ao vivo';
+    var art=castImage(currentArtwork());
+    if(art)md.images=[art];
+    m.metadata=md;
+    m.customData={portal:'Painel Mídia',channelId:currentChannelId,label:ch.label,live:true};
+    var req=new chrome.cast.media.LoadRequest(m);
+    req.autoplay=true;
+    return s.loadMedia(req);
+  }).then(function(){
+    stopRadio();
+    castConnected=true;
+    setCastUi(true,'Reproduzindo '+ch.label+' no Chromecast.');
+  }).catch(function(err){
+    setCastUi(false,(err&&err.message)?err.message:'Não foi possível iniciar Cast.');
+  });
+}
+function castPlayPause(){
+  if(castRemoteController)try{castRemoteController.playOrPause();}catch(_){}
+}
+function castStop(){
+  if(castRemoteController)try{castRemoteController.stop();}catch(_){}
 }
 
 function bindKeyboardShortcuts(){
@@ -2782,11 +3411,14 @@ window.importarDadosPortal = importarDadosPortal;
 window.setSleepTimer = setSleepTimer;
 window.cancelSleepTimer = cancelSleepTimer;
 window.castCurrentMedia = castCurrentMedia;
+window.castPlayPause = castPlayPause;
+window.castStop = castStop;
 window.setThemeMode = setThemeMode;
 window.setColorTheme = setColorTheme;
 window.setVisualLevel = setVisualLevel;
 window.setPerformanceMode = setPerformanceMode;
 window.toggleCompactMode = toggleCompactMode;
+window.setCompactMode = setCompactMode;
 window.toggleAppearancePanel = toggleAppearancePanel;
 window.limparBusca = limparBusca;
 window.goHome = goHome;
@@ -2796,13 +3428,50 @@ window.dismissInstallBanner = dismissInstallBanner;
 
 if(window.__portalLegacyShow)window.__portalLegacyShow('CONTROLES EXPORTADOS');
 
+/**
+ * Mantém o mini-player colado na base VISÍVEL da tela.
+ * No Chrome Android a barra de URL some/aparece e muda o visualViewport —
+ * sem isso o player “sobe e desce” com a barra.
+ */
+function pinMiniPlayerToVisualViewport(){
+  try{
+    var root=document.documentElement;
+    var vv=window.visualViewport;
+    if(!vv){
+      root.style.setProperty('--vv-bottom','0px');
+      return;
+    }
+    var gap=Math.round(window.innerHeight-vv.height-vv.offsetTop);
+    if(!isFinite(gap)||gap<0)gap=0;
+    // Só compensar quando há diferença real (barra do browser)
+    if(gap>2) root.style.setProperty('--vv-bottom',gap+'px');
+    else root.style.setProperty('--vv-bottom','0px');
+  }catch(_){
+    try{ document.documentElement.style.setProperty('--vv-bottom','0px'); }catch(__){}
+  }
+}
+function setupMiniPlayerViewportPin(){
+  pinMiniPlayerToVisualViewport();
+  var vv=window.visualViewport;
+  if(vv&&vv.addEventListener){
+    vv.addEventListener('resize',pinMiniPlayerToVisualViewport,false);
+    vv.addEventListener('scroll',pinMiniPlayerToVisualViewport,false);
+  }
+  window.addEventListener('resize',pinMiniPlayerToVisualViewport,false);
+  window.addEventListener('orientationchange',function(){
+    setTimeout(pinMiniPlayerToVisualViewport,50);
+    setTimeout(pinMiniPlayerToVisualViewport,300);
+  },false);
+}
+
 window.addEventListener('DOMContentLoaded',function(){
+  if(isLegacyIOSWebKit()){ setCastUi(false,'Chromecast Web fica desativado no Safari 9; use aparelhos modernos para Cast.'); }
   if(window.__portalLegacyShow)window.__portalLegacyShow('INIT DOM');
   refreshAppearanceControls();
   var sv=localStorage.getItem('radio-vol')||'50';
   var sl=document.getElementById('volume-slider'); if(sl)sl.value=sv;
   radioVolume=parseInt(sv,10)/100;
-  radioAudio.volume=radioVolume;
+  try{ radioAudio.volume=radioVolume; }catch(_){}
   renderCanaisSalvos();
   renderFavoritos();
   sincronizarEstrelas();
@@ -2816,6 +3485,7 @@ window.addEventListener('DOMContentLoaded',function(){
   setupNetworkAndWake();
   setupMediaSession();
   setupFastcastBridge();
+  setupMiniPlayerViewportPin();
   updateStatsUi();
   showYouTubeUi(false);
   setYTDiag('origin',portalOrigin());
